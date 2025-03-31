@@ -1,0 +1,17 @@
+<div th:fragment="header(user)" class="header-container">
+    <span class="user-info">
+        <span th:text="${user.name}"></span>
+        <span> | </span>
+        <span th:text="${user.role}"></span>
+    </span>
+    <div class="dropdown">
+        <button class="dropdown-toggle logout-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-power-off"></i>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Actualizar Datos</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/logout">Cerrar Sesión</a></li>
+        </ul>
+    </div>
+</div>

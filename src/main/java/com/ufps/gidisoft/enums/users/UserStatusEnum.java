@@ -25,4 +25,13 @@ public enum UserStatusEnum {
     public String getStatus() {
         return status;
     }
+
+    public static UserStatusEnum getById(Long id) {
+        for (UserStatusEnum e : UserStatusEnum.values()) {
+            if (e.getId().equals(id)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }

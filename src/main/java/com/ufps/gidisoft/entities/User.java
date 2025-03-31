@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private Long id;
     @Column(name = "usercode", nullable = false, unique = true)
     private String usercode;
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     @JsonIgnore
     private String password;
     @Column(name = "email")

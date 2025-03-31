@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GIDISOFT</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+
+<!-- Menú lateral -->
+<div class="sidebar collapsed" id="sidebar">
+    <div th:replace="components/menu"></div>
+</div>
+
+<div class="content" id="content">
+    <div th:replace="components/header-user :: header(${user})"></div>
+    <div class="container-card">
+        <div th:if="${teachers != null}">
+            <div class="container-fluid">
+                <span>Gestión de docentes</span>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTeacherModal">
+                    Agregar Docente
+                </button>
+            </div>
+            <div th:replace="components/table :: table(${teachers})" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addTeacherModal" tabindex="-1" aria-labelledby="addTeacherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-modal-width">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title d-flex align-items-center" id="addTeacherModalLabel">Agregar Nuevo Docente</h5>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/users/save}" id="addTeacherForm" method="post">
+                    <div class="mb-1">
+                        <label for="usercode"></label>
+                        <input type="number"
+                               placeholder="Código"
+                               class="form-control"
+                               id="usercode"
+                               name="usercode"
+                               required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="name"></label>
+                        <input type="text"
+                               placeholder="Nombre"
+                               class="form-control"
+                               id="name"
+                               name="name"
+                               required>
+                    </div>
+                    <div class="mb-1">
+                        <label for="email"></label>
+                        <input type="email"
+                               placeholder="Correo electrónico"
+                               class="form-control"
+                               id="email"
+                               name="email">
+                    </div>
+                    <div class="mb-4">
+                        <label for="phoneNumber"></label>
+                        <input type="number"
+                               placeholder="Número de teléfono"
+                               class="form-control"
+                               id="phoneNumber"
+                               name="phoneNumber">
+                    </div>
+                    <div class="mb-3">
+                        <label for="role">
+                            <select class="form-select" id="role" name="roleId" required>
+                                <option value="" disabled selected hidden>Seleccione un rol</option>
+                                <option th:each="rol: ${roles}" th:value="${rol.id}" th:text="${rol.name}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap y JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/components/togglebtn.js}"></script>
+
+</body>
+</html>

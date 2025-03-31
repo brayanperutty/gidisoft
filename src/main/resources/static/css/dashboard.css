@@ -1,0 +1,281 @@
+/* ------------------------------- */
+/* ESTILOS GENERALES DEL DASHBOARD */
+/* ------------------------------- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+/* ------------------------------- */
+/* ESTILOS DEL MENÚ LATERAL        */
+/* ------------------------------- */
+.sidebar {
+    width: 250px;
+    transition: width 0.3s ease-in-out;
+    background-color: #8B0000; /* Rojo oscuro */
+    height: 100vh;
+    padding-top: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-divider {
+    border: white 1px solid;
+    height: 3px;
+    width: 80%;
+    background-color: white;
+    margin: 10px 15px;
+}
+
+.sidebar.collapsed .sidebar-divider {
+    width: 50%;
+    margin: 10px auto;
+}
+
+/* Cuando el menú está colapsado */
+.sidebar.collapsed {
+    width: 70px;
+}
+
+/* ------------------------------- */
+/* ESTILOS DEL HEADER DEL MENÚ     */
+/* ------------------------------- */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 10px;
+    white-space: nowrap;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar-header button, h4 {
+    padding: 10px 15px;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Ocultar título cuando el menú está colapsado */
+.sidebar.collapsed .sidebar-header h4 {
+    display: none;
+}
+
+/* ------------------------------- */
+/* ESTILOS DE LOS ITEMS DEL MENÚ   */
+/* ------------------------------- */
+.sidebar .nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre ícono y texto */
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    white-space: nowrap;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ------------------------------- */
+/* ESTILOS DE LOS ÍCONOS           */
+/* ------------------------------- */
+.sidebar i {
+    font-size: 20px;
+    width: 30px; /* Asegura que todos los íconos tengan el mismo ancho */
+    text-align: center;
+}
+
+/* ------------------------------- */
+/* OCULTAR EL TEXTO AL COLAPSAR    */
+/* ------------------------------- */
+.sidebar .menu-text {
+    transition: opacity 0.3s ease, margin-left 0.3s ease;
+}
+
+/* Cuando el menú está colapsado */
+.sidebar.collapsed .menu-text {
+    opacity: 0;
+    margin-left: -20px; /* Oculta el texto sin mover los íconos */
+}
+
+/* Asegurar alineación de íconos en el menú colapsado */
+.sidebar.collapsed .nav-link {
+    justify-content: center;
+    padding: 10px;
+}
+
+/* Mantener el tamaño de los íconos en el menú colapsado */
+.sidebar.collapsed i {
+    font-size: 20px;
+    width: 30px;
+    text-align: center;
+}
+.nav-link {
+    position: relative;
+}
+
+/* Tooltip personalizado */
+.nav-link::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    top: -35px;
+    transform: translateX(-50%);
+    background: white;
+    color: red;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Mostrar tooltip solo cuando el menú está recogido */
+.sidebar.collapsed .nav-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ------------------------------- */
+/* ESTILOS DEL ENCABEZADO PRINCIPAL */
+/* ------------------------------- */
+
+.content {
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Asegura alineación a la derecha */
+    padding: 10px 20px;
+    background: #eeeeee;
+    border-bottom: 1px solid #ddd;
+    width: 100%; /* Ocupa todo el ancho */
+}
+
+.header-container .user-info span {
+    margin-right: 20px;
+}
+
+.user-info {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.logout-icon {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #dc3545; /* Rojo */
+    cursor: pointer;
+}
+
+.logout-icon:hover {
+    color: #c82333;
+}
+
+.dropdown-menu {
+    min-width: 150px;
+    text-align: left;
+}
+
+.dropdown-item {
+    font-size: 14px;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #f8d7da;
+}
+
+.teachers-table {
+    width: 96%; /* Define el ancho de la tabla */
+    margin: 20px auto; /* Centrar horizontalmente */
+    border-collapse: collapse; /* Eliminar espacios entre bordes */
+    background-color: white; /* Fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    overflow: hidden; /* Evitar que los bordes sobresalgan */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra ligera */
+}
+
+.teachers-table th, .teachers-table td {
+    padding: 12px 15px;
+    text-align: center; /* Centrar el texto */
+    border-bottom: 1px solid #ddd; /* Línea divisoria entre filas */
+}
+
+.teachers-table thead {
+    background-color: #8B0000; /* Color rojo oscuro para la cabecera */
+    color: white;
+    font-weight: bold;
+}
+
+.teachers-table tbody tr:hover {
+    background-color: #f5f5f5; /* Cambio de color al pasar el mouse */
+}
+
+.teachers-table th {
+    text-transform: uppercase;
+}
+
+.teachers-table td {
+    font-size: 14px;
+}
+
+.content .container-card {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding: 10px 15px;
+    width: 100%;
+}
+
+.content .container-card .container-fluid{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px 15px;
+    width: 96%;
+}
+
+.content .container-card .container-fluid span {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.custom-modal-width {
+    max-width: 400px; /* Ajusta el ancho */
+    width: 80%; /* Se adapta en pantallas pequeñas */
+    margin: auto; /* Centra el modal */
+}
+
