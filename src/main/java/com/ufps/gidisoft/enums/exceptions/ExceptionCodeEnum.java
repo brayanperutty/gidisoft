@@ -9,6 +9,9 @@ public enum ExceptionCodeEnum {
     USER02("The login credentials are not correct", ExceptionEnum.REQUEST_EXCEPTION.getValue()),
 
     ROLE01("The role is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+
+    TOKEN01("The token has expiry", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    TOKEN02("The token is invalid", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     ;
 
     private final String code;

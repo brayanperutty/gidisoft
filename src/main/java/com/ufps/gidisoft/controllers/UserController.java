@@ -66,6 +66,40 @@ public class UserController {
         }
     }
 
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordForm() {
+        return "/recovery-password/forgot-password";
+    }
+
+    @PostMapping("/forgot-password")
+    public String processForgotPassword(@RequestParam String email, RedirectAttributes att) {
+        try {
+            userService.sendPasswordResetEmail(email);
+            att.addFlashAttribute("message", "Correo enviado con éxito.");
+        } catch (NotFoundException e) {
+            att.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/users/forgot-password";
+    }
+
+    @GetMapping("/reset-password")
+    public String showResetPasswordForm(@RequestParam String token, Model model) {
+        model.addAttribute("token", token);
+        return "/recovery-password/recovery-password";
+    }
+
+    @PostMapping("/reset-password")
+    public String processResetPassword(@RequestParam String token, @RequestParam String password, RedirectAttributes att) {
+        try {
+            userService.resetPassword(token, password);
+            att.addFlashAttribute("message", "Contraseña restablecida.");
+            return REDIRECT_LOGIN;
+        } catch (BadRequestException e) {
+            att.addFlashAttribute("error", e.getMessage());
+            return "redirect:/users/reset-password?token=" + token;
+        }
+    }
+
     // <-------- POST METHODS -------->
 
     @PostMapping(value = "/sign-in")
