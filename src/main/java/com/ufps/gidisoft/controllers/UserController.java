@@ -30,6 +30,10 @@ public class UserController {
 
     private static final String DASHBOARD = "dashboard";
     private static final String USERCODE = "usercode";
+    private static final String TEACHERS = "teachers";
+    private static final String ROLES = "roles";
+    private static final String REDIRECT_LOGIN = "redirect:/login";
+    private static final String REDIRECT_USERS = "redirect:/users";
 
     // <-------- GET METHODS -------->
 
@@ -46,15 +50,19 @@ public class UserController {
 
     @GetMapping("/teachers")
     public String getAllTeachers(Model model, HttpServletRequest request, RedirectAttributes att) {
-        try{
-            model.addAttribute("teachers", userService.findAllUsers());
-            model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
-                    .getAttribute(USERCODE).toString())));
-            model.addAttribute("roles", roleService.findAllRoles());
-            return DASHBOARD;
-        }catch (BadRequestException e){
-            att.addFlashAttribute("unauthorizeUser", "No tienes permisos para esta acción.");
-            return "redirect:/login";
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        }else{
+            try{
+                model.addAttribute(TEACHERS, userService.findAllUsers());
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+                model.addAttribute(ROLES, roleService.findAllRoles());
+                return DASHBOARD;
+            }catch (BadRequestException e){
+                att.addFlashAttribute("unauthorizeUser", "No tienes permisos para esta acción.");
+                return REDIRECT_LOGIN;
+            }
         }
     }
 
@@ -70,23 +78,47 @@ public class UserController {
             return "redirect:/users/dashboard";
         } catch (AuthenticationException | NotFoundException e) {
             att.addFlashAttribute("loginError", "Credenciales incorrectas.");
-            return "redirect:/login";
+            return REDIRECT_LOGIN;
         }
     }
 
     @PostMapping(value = "/save")
-    public String createUser(Model model, HttpServletRequest request, RedirectAttributes att,
+    public String createUser(RedirectAttributes att,
                              @Valid @ModelAttribute UserRequest userRequest) {
         try{
             userService.createDraftUser(userRequest);
-            model.addAttribute("teachers", userService.findAllUsers());
-            model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
-                    .getAttribute(USERCODE).toString())));
-            model.addAttribute("roles", roleService.findAllRoles());
+            att.addFlashAttribute("message", "¡Docente registrado con éxito!");
         }catch (BadRequestException e){
             att.addFlashAttribute("createError", "Ocurrió un error al crear el nuevo docente.");
         }
+        return REDIRECT_USERS + "/" + TEACHERS;
+    }
 
-        return DASHBOARD;
+    // <-------- PUT METHODS -------->
+
+    @GetMapping(value = "/activate/{usercode}")
+    public String activeUser(@PathVariable String usercode, @Valid @ModelAttribute UserRequest userRequest,
+                             RedirectAttributes att) {
+        try{
+            userService.activeUser(usercode);
+            att.addFlashAttribute("message", "¡Docente activado con éxito!");
+        }catch (BadRequestException e){
+            att.addFlashAttribute("createError", "Ocurrió un error al activar el docente.");
+        }
+        return REDIRECT_USERS + "/" + TEACHERS;
+    }
+
+    // <-------- DELETE METHODS -------->
+
+    @GetMapping(value = "/delete/{usercode}")
+    public String deleteUser(@PathVariable String usercode, RedirectAttributes att) {
+        try{
+            userService.deleteUserByUsercode(usercode);
+            att.addFlashAttribute("message", "¡Docente eliminado con éxito!");
+            return REDIRECT_USERS + "/" + TEACHERS;
+        }catch (BadRequestException e){
+            att.addFlashAttribute("createError", "Error al eliminar el docente.");
+            return REDIRECT_USERS + "/" + TEACHERS;
+        }
     }
 }

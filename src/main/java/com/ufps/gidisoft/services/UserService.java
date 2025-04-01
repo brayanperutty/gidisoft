@@ -66,15 +66,16 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User activeUser(Long idUser) {
-        User user = userRepository.findById(idUser).orElseThrow(()
-                -> new NotFoundException(ExceptionCodeEnum.USER01.getMessage()));
+    @Transactional
+    public void activeUser(String usercode) {
+        User user = this.getUserByUsercode(usercode);
         user.setUserStatus(UserStatusEnum.ACTIVE.getId());
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    @Transactional
+    public void deleteUserByUsercode(String usercode) {
+        userRepository.deleteUserByUsercode(usercode);
     }
 
     public List<UsersDto> findAllUsers() {
