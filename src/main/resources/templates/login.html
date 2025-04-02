@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesión - GIDISOFT</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
+
+<div id="successToast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-0 m-3"
+     role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="d-flex">
+        <div class="toast-body">
+            <span th:text="${message}"></span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
+<div id="errorToast" class="toast align-items-center text-white bg-danger border-0 position-fixed top-0 start-0 m-3"
+     role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="d-flex">
+        <div class="toast-body">
+            <span th:text="${loginError}"></span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
+<div class="card shadow p-4" style="width: 340px; height: auto;">
+    <h2 class="text-center text-danger mb-4">GIDISOFT</h2>
+    <form th:action="@{/users/sign-in}" method="post">
+        <div class="mb-4">
+                <input type="text" name="username" class="form-control" placeholder="Usuario" required>
+        </div>
+        <div class="mb-4">
+                <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+        </div>
+        <button type="submit" class="btn btn-danger w-100" id="loginButton">
+            <span id="buttonText">Ingresar</span>
+            <span id="loadingSpinner" class="spinner-border spinner-border-sm d-none" role="status"
+                  aria-hidden="true"></span>
+        </button>
+        <div class="mt-3 d-flex justify-content-center align-items-center">
+            <a class="text-decoration-none text-danger fw-bold" th:href="@{/users/forgot-password}">
+                Olvidé mi contraseña
+            </a>
+        </div>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/components/alert.js}"></script>
+<script>
+    document.querySelector("form").addEventListener("submit", function () {
+        let btn = document.getElementById("loginButton");
+        let text = document.getElementById("buttonText");
+        let spinner = document.getElementById("loadingSpinner");
+
+        // Deshabilita el botón y cambia el contenido
+        btn.disabled = true;
+        text.textContent = "Cargando...";
+        spinner.classList.remove("d-none");
+    });
+</script>
+</body>
+</html>
