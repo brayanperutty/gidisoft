@@ -44,10 +44,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JavaMailSender mailSender;
-    private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final PasswordResetTokenService passwordResetTokenService;
 
     @Value("${DEFEAT_PASSWORD}")
     private String defeatPassword;
+
+    @Value("${spring.mail.username}")
+    private String email;
 
 
     @Transactional
@@ -100,40 +103,44 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void sendPasswordResetEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(()
                 -> new NotFoundException(ExceptionCodeEnum.USER01.getMessage()));
 
         String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken();
-        resetToken.setToken(token);
-        resetToken.setUser(user);
-        resetToken.setExpirationDate(LocalDateTime.now().plusMinutes(30));
-
+        if(passwordResetTokenService.existsPasswordResetTokenByUser(user)) {
+            PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetTokenByUser(user);
+            passwordResetToken.setToken(token);
+            passwordResetTokenService.updateToken(passwordResetToken);
+        } else {
+            passwordResetTokenService.createPasswordResetToken(token, user);
+        }
         String resetLink = "http://localhost:8080/users/reset-password?token=" + token;
         sendEmail(user.getEmail(), "Haz clic en el siguiente enlace para restablecer tu contraseña: " + resetLink);
     }
 
     private void sendEmail(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(email);
         message.setTo(to);
         message.setSubject("Recuperación de contraseña");
         message.setText(text);
         mailSender.send(message);
     }
 
+    @Transactional
     public void resetPassword(String token, String newPassword) {
 
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new BadRequestException(ExceptionCodeEnum.TOKEN02));
+        PasswordResetToken resetToken = passwordResetTokenService.getPasswordResetToken(token);
 
         if (resetToken.isExpired()) {
             throw new BadRequestException(ExceptionCodeEnum.TOKEN01);
         }
 
         User user = resetToken.getUser();
-        user.setPassword(newPassword); // Recuerda encriptar antes de guardar
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        passwordResetTokenRepository.delete(resetToken);
+        passwordResetTokenService.deletePasswordResetToken(resetToken);
     }
 }

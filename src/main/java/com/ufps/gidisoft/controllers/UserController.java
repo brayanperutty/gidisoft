@@ -31,6 +31,8 @@ public class UserController {
     private static final String DASHBOARD = "dashboard";
     private static final String USERCODE = "usercode";
     private static final String TEACHERS = "teachers";
+    private static final String MESSAGE = "message";
+    private static final String CREATE_ERROR = "createError";
     private static final String ROLES = "roles";
     private static final String REDIRECT_LOGIN = "redirect:/login";
     private static final String REDIRECT_USERS = "redirect:/users";
@@ -75,7 +77,7 @@ public class UserController {
     public String processForgotPassword(@RequestParam String email, RedirectAttributes att) {
         try {
             userService.sendPasswordResetEmail(email);
-            att.addFlashAttribute("message", "Correo enviado con éxito.");
+            att.addFlashAttribute(MESSAGE, "Correo enviado con éxito.");
         } catch (NotFoundException e) {
             att.addFlashAttribute("error", e.getMessage());
         }
@@ -92,7 +94,7 @@ public class UserController {
     public String processResetPassword(@RequestParam String token, @RequestParam String password, RedirectAttributes att) {
         try {
             userService.resetPassword(token, password);
-            att.addFlashAttribute("message", "Contraseña restablecida.");
+            att.addFlashAttribute(MESSAGE, "Contraseña actualizada con éxito.");
             return REDIRECT_LOGIN;
         } catch (BadRequestException e) {
             att.addFlashAttribute("error", e.getMessage());
@@ -121,9 +123,9 @@ public class UserController {
                              @Valid @ModelAttribute UserRequest userRequest) {
         try{
             userService.createDraftUser(userRequest);
-            att.addFlashAttribute("message", "¡Docente registrado con éxito!");
+            att.addFlashAttribute(MESSAGE, "¡Docente registrado con éxito!");
         }catch (BadRequestException e){
-            att.addFlashAttribute("createError", "Ocurrió un error al crear el nuevo docente.");
+            att.addFlashAttribute(CREATE_ERROR, "Ocurrió un error al crear el nuevo docente.");
         }
         return REDIRECT_USERS + "/" + TEACHERS;
     }
@@ -135,9 +137,9 @@ public class UserController {
                              RedirectAttributes att) {
         try{
             userService.activeUser(usercode);
-            att.addFlashAttribute("message", "¡Docente activado con éxito!");
+            att.addFlashAttribute(MESSAGE, "¡Docente activado con éxito!");
         }catch (BadRequestException e){
-            att.addFlashAttribute("createError", "Ocurrió un error al activar el docente.");
+            att.addFlashAttribute(CREATE_ERROR, "Ocurrió un error al activar el docente.");
         }
         return REDIRECT_USERS + "/" + TEACHERS;
     }
@@ -148,10 +150,10 @@ public class UserController {
     public String deleteUser(@PathVariable String usercode, RedirectAttributes att) {
         try{
             userService.deleteUserByUsercode(usercode);
-            att.addFlashAttribute("message", "¡Docente eliminado con éxito!");
+            att.addFlashAttribute(MESSAGE, "¡Docente eliminado con éxito!");
             return REDIRECT_USERS + "/" + TEACHERS;
         }catch (BadRequestException e){
-            att.addFlashAttribute("createError", "Error al eliminar el docente.");
+            att.addFlashAttribute(CREATE_ERROR, "Error al eliminar el docente.");
             return REDIRECT_USERS + "/" + TEACHERS;
         }
     }
