@@ -111,6 +111,7 @@ public class UserController {
         try {
             User userLogged = this.userService.loginUser(user);
             request.getSession().setAttribute(USERCODE, userLogged.getUsercode());
+            att.addFlashAttribute(MESSAGE, "¡Bienvenido " + userLogged.getName() + "!");
             return "redirect:/users/dashboard";
         } catch (AuthenticationException | NotFoundException e) {
             att.addFlashAttribute("loginError", "Credenciales incorrectas.");

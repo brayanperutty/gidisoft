@@ -16,6 +16,7 @@ body {
     transition: width 0.3s ease-in-out;
     background-color: #8B0000; /* Rojo oscuro */
     height: 100vh;
+    position: fixed;
     padding-top: 10px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -169,7 +170,14 @@ body {
 /* ------------------------------- */
 
 .content {
-    width: 100%;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+.sidebar.collapsed ~ .content {
+    margin-left: 70px;
+    width: calc(100% - 70px);
 }
 
 .header-container {

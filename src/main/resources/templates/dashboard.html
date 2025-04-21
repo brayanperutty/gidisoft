@@ -10,6 +10,11 @@
 </head>
 <body>
 
+<!-- Menú lateral -->
+<div class="sidebar collapsed" id="sidebar">
+    <div th:replace="~{components/menu}"></div>
+</div>
+
 <div id="successToast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-0 m-3"
      role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
     <div class="d-flex">
@@ -30,11 +35,6 @@
     </div>
 </div>
 
-<!-- Menú lateral -->
-<div class="sidebar collapsed" id="sidebar">
-    <div th:replace="~{components/menu}"></div>
-</div>
-
 <div class="content" id="content">
     <div th:replace="~{components/header-user :: header(${user})}"></div>
     <div class="container-card">
@@ -45,7 +45,16 @@
                     Agregar Docente
                 </button>
             </div>
-            <div th:replace="~{components/table :: table(${teachers})}" style="display: none;"></div>
+            <div th:replace="~{components/table_teachers :: table(${teachers})}" style="display: none;"></div>
+        </div>
+        <div th:if="${formats != null}">
+            <div class="container-fluid">
+                <span>Gestión de formatos</span>
+                <a type="button" class="btn btn-success" th:href="@{/formats/create}">
+                    Agregar formato
+                </a>
+            </div>
+            <div th:replace="~{components/table_format :: table(${formats})}" style="display: none;"></div>
         </div>
     </div>
 </div>

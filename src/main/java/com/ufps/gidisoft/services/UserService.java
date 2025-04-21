@@ -65,6 +65,11 @@ public class UserService {
                 -> new NotFoundException(ExceptionCodeEnum.USER01.getMessage()));
     }
 
+    public User getUserById(Long id) {
+        return this.userRepository.findById(id).orElseThrow(()
+                -> new NotFoundException(ExceptionCodeEnum.USER01.getMessage()));
+    }
+
     @Transactional
     public void createDraftUser(UserRequest userRequest) {
         User user = new User();
@@ -95,6 +100,10 @@ public class UserService {
                 u -> !u.getRole().getId().equals(RolesEnum.ADMIN.getId())).map(UsersDto::new)
                 .sorted(Comparator.comparing(UsersDto::getUsercode))
                 .toList();
+    }
+
+    public UsersDto findAdminUser() {
+        return new UsersDto(userRepository.findByRole(this.roleService.getRole(RolesEnum.ADMIN.getId())));
     }
 
     public void invalidateSession(HttpServletRequest httpServletRequest) {
