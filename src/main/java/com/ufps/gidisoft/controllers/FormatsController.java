@@ -2,9 +2,9 @@ package com.ufps.gidisoft.controllers;
 
 import com.ufps.gidisoft.requests.formats.FormatRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
-import com.ufps.gidisoft.services.AcademicPeriodsService;
-import com.ufps.gidisoft.services.FormatService;
-import com.ufps.gidisoft.services.UserService;
+import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
+import com.ufps.gidisoft.services.formats.FormatService;
+import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -62,8 +62,7 @@ public class FormatsController {
             try {
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
-                model.addAttribute("years", this.academicPeriodsService.getAllYearsAcademicPeriods());
-                model.addAttribute("periods", this.academicPeriodsService.getAllPeriodssAcademicPeriods());
+                model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
                 model.addAttribute("director", this.userService.findAdminUser());
                 model.addAttribute("teachers", this.userService.findAllUsers());
             } catch (Exception e) {

@@ -1,8 +1,8 @@
 package com.ufps.gidisoft.controllers;
 
-import com.ufps.gidisoft.entities.Role;
+import com.ufps.gidisoft.entities.roles.Role;
 import com.ufps.gidisoft.responses.utils.DefaultResponse;
-import com.ufps.gidisoft.services.RoleService;
+import com.ufps.gidisoft.services.roles.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

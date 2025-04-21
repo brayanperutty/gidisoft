@@ -1,7 +1,7 @@
 package com.ufps.gidisoft.seeders;
 
-import com.ufps.gidisoft.entities.AcademicPeriods;
-import com.ufps.gidisoft.services.AcademicPeriodsService;
+import com.ufps.gidisoft.entities.academic_periods.AcademicPeriods;
+import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

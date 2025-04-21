@@ -1,6 +1,7 @@
-package com.ufps.gidisoft.entities;
+package com.ufps.gidisoft.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ufps.gidisoft.entities.roles.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

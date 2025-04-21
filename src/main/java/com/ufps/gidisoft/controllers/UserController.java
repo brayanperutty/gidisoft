@@ -1,13 +1,13 @@
 package com.ufps.gidisoft.controllers;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.exceptions.BadRequestException;
 import com.ufps.gidisoft.exceptions.NotFoundException;
-import com.ufps.gidisoft.requests.user.UserCredentialsRequest;
-import com.ufps.gidisoft.requests.user.UserRequest;
+import com.ufps.gidisoft.requests.users.UserCredentialsRequest;
+import com.ufps.gidisoft.requests.users.UserRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
-import com.ufps.gidisoft.services.RoleService;
-import com.ufps.gidisoft.services.UserService;
+import com.ufps.gidisoft.services.roles.RoleService;
+import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -73,16 +73,16 @@ public class UserController {
         return "/recovery-password/forgot-password";
     }
 
-    @PostMapping("/forgot-password")
-    public String processForgotPassword(@RequestParam String email, RedirectAttributes att) {
-        try {
-            userService.sendPasswordResetEmail(email);
-            att.addFlashAttribute(MESSAGE, "Correo enviado con éxito.");
-        } catch (NotFoundException e) {
-            att.addFlashAttribute("error", e.getMessage());
-        }
-        return "redirect:/users/forgot-password";
-    }
+//    @PostMapping("/forgot-password")
+//    public String processForgotPassword(@RequestParam String email, RedirectAttributes att) {
+//        try {
+//            userService.sendPasswordResetEmail(email);
+//            att.addFlashAttribute(MESSAGE, "Correo enviado con éxito.");
+//        } catch (NotFoundException e) {
+//            att.addFlashAttribute("error", e.getMessage());
+//        }
+//        return "redirect:/users/forgot-password";
+//    }
 
     @GetMapping("/reset-password")
     public String showResetPasswordForm(@RequestParam String token, Model model) {

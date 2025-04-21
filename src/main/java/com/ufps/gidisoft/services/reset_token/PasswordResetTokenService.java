@@ -1,6 +1,6 @@
-package com.ufps.gidisoft.services;
+package com.ufps.gidisoft.services.reset_token;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.entities.reset_token.PasswordResetToken;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.exceptions.BadRequestException;

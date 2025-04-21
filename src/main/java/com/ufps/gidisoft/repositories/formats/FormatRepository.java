@@ -1,6 +1,6 @@
-package com.ufps.gidisoft.repositories.format;
+package com.ufps.gidisoft.repositories.formats;
 
-import com.ufps.gidisoft.entities.format.Format;
+import com.ufps.gidisoft.entities.formats.Format;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

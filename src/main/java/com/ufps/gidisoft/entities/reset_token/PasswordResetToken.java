@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.entities.reset_token;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -1,9 +1,9 @@
-package com.ufps.gidisoft.services;
+package com.ufps.gidisoft.services.academic_periods;
 
-import com.ufps.gidisoft.entities.AcademicPeriods;
+import com.ufps.gidisoft.entities.academic_periods.AcademicPeriods;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
-import com.ufps.gidisoft.repositories.AcademicPeriodsRepository;
+import com.ufps.gidisoft.repositories.academic_periods.AcademicPeriodsRepository;
 import com.ufps.gidisoft.responses.academic_periods.AcademicPeriodsSelect;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,18 +29,11 @@ public class AcademicPeriodsService {
                 -> new NotFoundException(ExceptionCodeEnum.ACAPER01.getMessage()));
     }
 
-    public List<AcademicPeriodsSelect> getAllYearsAcademicPeriods() {
-        return this.academicPeriodsRepository.getAllYears().stream().map(academicPeriod -> {
+    public List<AcademicPeriodsSelect> findAllAcademicPeriods() {
+        return this.academicPeriodsRepository.findAll().stream().map(academicPeriod -> {
             AcademicPeriodsSelect years = new AcademicPeriodsSelect();
-            years.setValue(academicPeriod.getValue());
-            return years;
-        }).toList();
-    }
-
-    public List<AcademicPeriodsSelect> getAllPeriodssAcademicPeriods() {
-        return this.academicPeriodsRepository.getAllPeriods().stream().map(academicPeriod -> {
-            AcademicPeriodsSelect years = new AcademicPeriodsSelect();
-            years.setValue(academicPeriod.getValue());
+            years.setId(academicPeriod.getId());
+            years.setValue(academicPeriod.getYear() + " - " + academicPeriod.getPeriod());
             return years;
         }).toList();
     }

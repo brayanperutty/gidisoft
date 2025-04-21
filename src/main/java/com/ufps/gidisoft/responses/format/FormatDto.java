@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.responses.format;
 
-import com.ufps.gidisoft.entities.format.Format;
+import com.ufps.gidisoft.entities.formats.Format;
 import lombok.Data;
 
 @Data

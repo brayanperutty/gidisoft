@@ -1,32 +1,29 @@
-package com.ufps.gidisoft.services;
+package com.ufps.gidisoft.services.users;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.entities.reset_token.PasswordResetToken;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.enums.users.UserStatusEnum;
 import com.ufps.gidisoft.exceptions.BadRequestException;
 import com.ufps.gidisoft.exceptions.NotFoundException;
-import com.ufps.gidisoft.repositories.reset_token.PasswordResetTokenRepository;
 import com.ufps.gidisoft.responses.users.UsersDto;
-import com.ufps.gidisoft.repositories.UserRepository;
-import com.ufps.gidisoft.requests.user.UserCredentialsRequest;
-import com.ufps.gidisoft.requests.user.UserRequest;
+import com.ufps.gidisoft.repositories.users.UserRepository;
+import com.ufps.gidisoft.requests.users.UserCredentialsRequest;
+import com.ufps.gidisoft.requests.users.UserRequest;
+import com.ufps.gidisoft.services.reset_token.PasswordResetTokenService;
+import com.ufps.gidisoft.services.roles.RoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,14 +40,14 @@ public class UserService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JavaMailSender mailSender;
+//    private final JavaMailSender mailSender;
     private final PasswordResetTokenService passwordResetTokenService;
 
     @Value("${DEFEAT_PASSWORD}")
     private String defeatPassword;
 
-    @Value("${spring.mail.username}")
-    private String email;
+//    @Value("${spring.mail.username}")
+//    private String email;
 
 
     @Transactional
@@ -112,31 +109,31 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public void sendPasswordResetEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(()
-                -> new NotFoundException(ExceptionCodeEnum.USER01.getMessage()));
+//    @Transactional
+//    public void sendPasswordResetEmail(String email) {
+//        User user = userRepository.findByEmail(email).orElseThrow(()
+//                -> new NotFoundException(ExceptionCodeEnum.USER01.getMessage()));
+//
+//        String token = UUID.randomUUID().toString();
+//        if(passwordResetTokenService.existsPasswordResetTokenByUser(user)) {
+//            PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetTokenByUser(user);
+//            passwordResetToken.setToken(token);
+//            passwordResetTokenService.updateToken(passwordResetToken);
+//        } else {
+//            passwordResetTokenService.createPasswordResetToken(token, user);
+//        }
+//        String resetLink = "http://localhost:8080/users/reset-password?token=" + token;
+//        sendEmail(user.getEmail(), "Haz clic en el siguiente enlace para restablecer tu contraseña: " + resetLink);
+//    }
 
-        String token = UUID.randomUUID().toString();
-        if(passwordResetTokenService.existsPasswordResetTokenByUser(user)) {
-            PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetTokenByUser(user);
-            passwordResetToken.setToken(token);
-            passwordResetTokenService.updateToken(passwordResetToken);
-        } else {
-            passwordResetTokenService.createPasswordResetToken(token, user);
-        }
-        String resetLink = "http://localhost:8080/users/reset-password?token=" + token;
-        sendEmail(user.getEmail(), "Haz clic en el siguiente enlace para restablecer tu contraseña: " + resetLink);
-    }
-
-    private void sendEmail(String to, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(email);
-        message.setTo(to);
-        message.setSubject("Recuperación de contraseña");
-        message.setText(text);
-        mailSender.send(message);
-    }
+//    private void sendEmail(String to, String text) {
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom(email);
+//        message.setTo(to);
+//        message.setSubject("Recuperación de contraseña");
+//        message.setText(text);
+//        mailSender.send(message);
+//    }
 
     @Transactional
     public void resetPassword(String token, String newPassword) {

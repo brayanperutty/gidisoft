@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.config;
 
-import com.ufps.gidisoft.repositories.UserRepository;
+import com.ufps.gidisoft.repositories.users.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

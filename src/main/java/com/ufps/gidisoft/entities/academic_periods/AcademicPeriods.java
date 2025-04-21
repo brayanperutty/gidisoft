@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.entities;
+package com.ufps.gidisoft.entities.academic_periods;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

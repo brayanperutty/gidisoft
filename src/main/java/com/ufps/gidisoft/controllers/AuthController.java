@@ -1,9 +1,9 @@
 package com.ufps.gidisoft.controllers;
 
-import com.ufps.gidisoft.entities.User;
-import com.ufps.gidisoft.requests.user.UserCredentialsRequest;
+import com.ufps.gidisoft.entities.users.User;
+import com.ufps.gidisoft.requests.users.UserCredentialsRequest;
 import com.ufps.gidisoft.responses.utils.DefaultResponse;
-import com.ufps.gidisoft.services.UserService;
+import com.ufps.gidisoft.services.users.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;

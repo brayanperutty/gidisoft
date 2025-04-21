@@ -1,7 +1,7 @@
-package com.ufps.gidisoft.repositories;
+package com.ufps.gidisoft.repositories.users;
 
-import com.ufps.gidisoft.entities.Role;
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.roles.Role;
+import com.ufps.gidisoft.entities.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

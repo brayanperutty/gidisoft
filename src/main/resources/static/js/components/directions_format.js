@@ -11,7 +11,7 @@ function addDirection() {
                 <textarea class="form-control" name="projectTitle[]" rows="1" required></textarea>
             </div>
 
-            <div class=" mb-3">
+            <div class="mb-3">
                 <label class="form-label fw-bold">Tipo de proyecto (Trabajo de Grado - Tesis):</label>
                 <textarea class="form-control" name="projectType[]" rows="2" required></textarea>
             </div>

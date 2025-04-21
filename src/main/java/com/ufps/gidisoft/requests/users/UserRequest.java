@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.requests.user;
+package com.ufps.gidisoft.requests.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

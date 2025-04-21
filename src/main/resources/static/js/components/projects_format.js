@@ -17,15 +17,15 @@ function addProject() {
             </div>
 
             <div class="row mb-3">
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <label class="form-label fw-bold">Fecha de Inicio:</label>
                     <input type="date" class="form-control" name="fechaInicio[]" required>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <label class="form-label fw-bold">Fecha de Terminación:</label>
                     <input type="date" class="form-control" name="fechaFin[]" required>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <label class="form-label fw-bold">% de Cumplimiento:</label>
                     <input type="number" class="form-control" name="cumplimiento[]" min="0" max="100" step="1" required>
                 </div>

@@ -1,7 +1,7 @@
 package com.ufps.gidisoft.seeders;
 
-import com.ufps.gidisoft.entities.Role;
-import com.ufps.gidisoft.repositories.RoleRepository;
+import com.ufps.gidisoft.entities.roles.Role;
+import com.ufps.gidisoft.repositories.roles.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

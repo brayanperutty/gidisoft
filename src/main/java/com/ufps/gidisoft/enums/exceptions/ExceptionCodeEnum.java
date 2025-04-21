@@ -11,6 +11,8 @@ public enum ExceptionCodeEnum {
     ROLE01("The role is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     ACAPER01("The academic period is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
+    FORMAT01("The format is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+
     TOKEN01("The token has expiry", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     TOKEN02("The token is invalid", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     ;

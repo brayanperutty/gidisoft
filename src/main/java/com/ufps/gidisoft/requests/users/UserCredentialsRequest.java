@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.requests.user;
+package com.ufps.gidisoft.requests.users;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

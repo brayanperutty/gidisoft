@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.repositories.reset_token;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.entities.reset_token.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

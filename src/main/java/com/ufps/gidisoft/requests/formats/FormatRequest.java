@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Map;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -12,10 +12,22 @@ import java.util.Map;
 public class FormatRequest {
 
     private String code;
+
+    private String version;
+
+    private LocalDate date;
+
+    private ManagerUserFormatRequest managerUsers;
+
     private String name;
+
+    private String unity;
+
     private Long directorId;
+
     private String department;
+
     private String faculty;
+
     private Long academicPeriod;
-    private Map<String, Object> sectionsValues;
 }

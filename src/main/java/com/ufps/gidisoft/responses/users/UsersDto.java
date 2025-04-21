@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.responses.users;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.users.UserStatusEnum;
 import lombok.Data;
 

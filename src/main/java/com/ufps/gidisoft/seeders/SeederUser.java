@@ -1,12 +1,12 @@
 package com.ufps.gidisoft.seeders;
 
-import com.ufps.gidisoft.entities.User;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.enums.users.UserStatusEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
-import com.ufps.gidisoft.repositories.RoleRepository;
-import com.ufps.gidisoft.repositories.UserRepository;
+import com.ufps.gidisoft.repositories.roles.RoleRepository;
+import com.ufps.gidisoft.repositories.users.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;

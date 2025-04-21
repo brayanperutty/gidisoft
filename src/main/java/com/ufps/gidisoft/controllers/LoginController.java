@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.controllers;
 
-import com.ufps.gidisoft.services.UserService;
+import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
