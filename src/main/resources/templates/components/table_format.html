@@ -7,27 +7,30 @@
     <table class="table table-striped table-bordered teachers-table">
         <thead class="table-dark">
         <tr>
+            <th class="d-none">id</th>
             <th>Código</th>
             <th>Nombre</th>
-            <th>Correo</th>
-            <th>Rol</th>
+            <th>Director</th>
+            <th>Período</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
         </thead>
         <tbody th:each="format: ${formats}">
         <tr>
-            <td th:text="${format.code}" class="usercode"></td>
+            <td th:text="${format.id}" class="d-none id"></td>
+            <td th:text="${format.code}"></td>
             <td th:text="${format.name}"></td>
             <td th:text="${format.director}"></td>
-            <td th:text="${format.deparment}"></td>
-            <td th:text="${format.faculty}"></td>
-            <td th:text="${format.year}"></td>
             <td th:text="${format.period}"></td>
+            <td th:text="${format.status}"></td>
             <td>
-                <a class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                <a class="btn btn-primary btn-sm"
+                   th:href="@{/formats/{id}(id=${format.id})}"
+                   title="Editar"
+                   th:if="${user.roleType == 'admin'}"><i class="fas fa-edit"></i></a>
                 <a class="btn btn-danger btn-sm delete"
-                   data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                   data-bs-toggle="modal" data-bs-target="#confirmDeleteFormatModal">
                     <i class="fas fa-trash-alt"></i>
                 </a>
                 <a class="btn btn-warning btn-sm toggle-status activate"

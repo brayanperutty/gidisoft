@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "proyect_status")
+@Table(name = "project_status")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProyectStatus {
+public class ProjectStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

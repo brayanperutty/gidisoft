@@ -24,11 +24,4 @@ public class ManagerUserFormat {
     @OneToOne
     @JoinColumn(name = "format_id")
     private Format format;
-
-    public ManagerUserFormat(String createdBy, String reviewBy, String approveBy, Format format) {
-        this.createdBy = createdBy;
-        this.reviewBy = reviewBy;
-        this.approveBy = approveBy;
-        this.format = format;
-    }
 }

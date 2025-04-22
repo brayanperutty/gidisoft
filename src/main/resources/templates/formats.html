@@ -9,6 +9,12 @@
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
 </head>
 <body>
+
+<!-- Menú lateral -->
+<div class="sidebar collapsed" id="sidebar">
+    <div th:replace="~{components/menu}"></div>
+</div>
+
 <div id="successToast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-0 m-3"
      role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
     <div class="d-flex">
@@ -31,15 +37,10 @@
     </div>
 </div>
 
-<!-- Menú lateral -->
-<div class="sidebar collapsed" id="sidebar">
-    <div th:replace="~{components/menu}"></div>
-</div>
-
 <div class="content" id="content">
     <div th:replace="~{components/header-user :: header(${user})}"></div>
     <div class="container mt-5">
-        <form th:action="@{/formats}" method="post">
+        <form th:action="@{/formats}" method="post" th:object="${formatRequest}">
             <!-- Encabezado del formulario -->
             <div class="border p-3 mb-4 border border-dark">
                 <div class="row d-flex align-items-center justify-content-center">
@@ -53,15 +54,18 @@
                         <div class="row mb-2">
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Código:</label>
-                                <input type="text" class="form-control border border-dark" name="code">
+                                <input type="text" class="form-control border border-dark" name="code"
+                                th:field="*{code}">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Versión:</label>
-                                <input type="text" class="form-control border border-dark" name="version">
+                                <input type="text" class="form-control border border-dark" name="version"
+                                th:field="*{version}">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Fecha:</label>
-                                <input type="date" class="form-control border border-dark" name="date">
+                                <input type="date" class="form-control border border-dark" name="date"
+                                th:field="*{date}">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Página:</label>
@@ -81,7 +85,7 @@
                             <div class="card-header fw-bold bg-primary-subtle">Elaboró</div>
                             <div class="card-header">
                                 <input type="text" class="form-control border border-dark" id="createdBy"
-                                       name="managerUsers.createdBy" required>
+                                       th:field="*{managerUsers.createdBy}">
                             </div>
                         </div>
 
@@ -90,8 +94,7 @@
                             <div class="card-header fw-bold bg-primary-subtle">Revisó</div>
                             <div class="card-header">
                                 <input type="text" class="form-control border border-dark" id="reviewBy"
-                                       name="managerUsers.reviewBy"
-                                       required>
+                                       th:field="*{managerUsers.reviewBy}">
                             </div>
                         </div>
                         <!-- Aprobó -->
@@ -99,8 +102,7 @@
                             <div class="card-header fw-bold bg-primary-subtle">Aprobó</div>
                             <div class="card-header">
                                 <input type="text" class="form-control border border-dark" id="approveBy"
-                                       name="managerUsers.approveBy"
-                                       required>
+                                       th:field="*{managerUsers.approveBy}">
                             </div>
                         </div>
                     </div>
@@ -116,43 +118,45 @@
                             <label for="nombre" class="form-label fw-bold">NOMBRE DEL GRUPO DE
                                 INVESTIGACIÓN:</label>
                             <input type="text" class="form-control text-center border border-dark" id="nombre"
-                                   name="name"
-                                   required>
+                                   name="group" th:field="*{group}">
                         </div>
                         <div class="col-md-6">
                             <label for="drive" class="form-label fw-bold">UNIDAD ACADÉMICA A LA QUE SE ENCUENTRA
                                 ADSCRITA EL
                                 GRUPO:</label>
                             <input type="text" class="form-control text-center border border-dark" id="drive"
-                                   name="unity"
-                                   required>
+                                   name="unity" th:field="*{unity}">
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
+                        <div class="col-md-6" th:object="${director}">
                             <label for="director" class="form-label fw-bold">DIRECTOR:</label>
-                            <input type="hidden" name="directorId" th:value="${director.id}">
-                            <input type="text" class="form-control text-center border border-dark" id="director"
-                                   th:object="${director}" th:value="${director.getName()}" disabled required>
+                            <input type="hidden" name="directorId" th:field="${director.id}">
+                            <input type="text" name="directorName" class="form-control text-center border border-dark" id="director"
+                                    th:field="${director.name}" disabled>
                         </div>
                         <div class="col-md-6">
                             <label for="deparment" class="form-label fw-bold">DEPARTAMENTO:</label>
                             <input type="text" class="form-control text-center border border-dark"
                                    id="deparment"
-                                   name="deparment" required>
+                                   name="department" th:field="*{department}">
                         </div>
                     </div>
                     <div class="row mb-3 d-flex align-items-center justify-content-center">
                         <div class="col-md-6">
                             <label for="faculty" class="form-label fw-bold">FACULTAD:</label>
                             <input type="text" class="form-control text-center border border-dark" id="faculty"
-                                   name="faculty" required>
+                                   name="faculty" th:field="*{faculty}">
                         </div>
                         <div class="col-md-6">
-                            <label for="period" class="form-label fw-bold">SEMESTRE ACADÉMICO:</label>
+                            <label for="period" class="form-label fw-bold">PERÍODO ACADÉMICO:</label>
                             <select class="form-select text-center border border-dark" id="period" name="academicPeriod" required>
                                 <option value="" disabled selected hidden>Seleccione el periodo académico</option>
-                                <option th:each="year: ${years}" th:value="${year.getId()}" th:text="${year.getValue()}"></option>
+                                <option th:each="year: ${years}"
+                                        th:value="${year.getId()}"
+                                        th:text="${year.getValue()}"
+                                        th:selected="*{academicPeriod} == ${year.getId()}">
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -217,7 +221,7 @@
 
 
             <div class="mt-4 text-end mb-3">
-                <button type="submit" class="btn btn-primary">Enviar Informe</button>
+                <button type="submit" class="btn btn-primary">Guardar Informe</button>
             </div>
         </form>
     </div>
@@ -226,7 +230,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/components/togglebtn.js}"></script>
 <script th:src="@{/js/components/alert.js}"></script>
-<script th:src="@{/js/components/delete.js}"></script>
+<script th:src="@{/js/components/delete_teacher.js}"></script>
 <script th:src="@{/js/components/activate.js}"></script>
 <script th:src="@{/js/components/projects_format.js}"></script>
 <script th:src="@{/js/components/directions_format.js}"></script>

@@ -1,14 +1,13 @@
 package com.ufps.gidisoft.requests.formats;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NotNull
+@NoArgsConstructor
 public class ManagerUserFormatRequest {
-
     private String createdBy;
     private String reviewBy;
     private String approveBy;

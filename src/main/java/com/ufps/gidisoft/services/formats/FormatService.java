@@ -2,12 +2,16 @@ package com.ufps.gidisoft.services.formats;
 
 import com.ufps.gidisoft.entities.formats.Format;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
+import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
 import com.ufps.gidisoft.repositories.formats.FormatRepository;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
 import com.ufps.gidisoft.responses.format.FormatDto;
+import com.ufps.gidisoft.responses.format.FormatListDto;
+import com.ufps.gidisoft.responses.utils.SuccessResponse;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
 import com.ufps.gidisoft.services.users.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,18 +31,64 @@ public class FormatService {
      */
     private final UserService userService;
     private final AcademicPeriodsService academicPeriodsService;
+    private final ProjectStatusService projectStatusService;
+    private final ManagerUserFormatService managerUserFormatService;
 
-    public Format findFormatById(Long id) {
-        return formatRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage()));
+    public FormatDto findFormatById(Long formatId) {
+        return new FormatDto(formatRepository.findById(formatId).orElseThrow(()
+                -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage())),
+                managerUserFormatService.findByFormatId(formatId));
     }
 
-    public List<FormatDto> findAllFormats() {
-        return formatRepository.findAll().stream().map(FormatDto::new).toList();
+    public Format findByIdToRelations(Long formatId){
+        return this.formatRepository.findById(formatId).orElseThrow(()
+                -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage()));
     }
 
+    public List<FormatListDto> findAllFormats() {
+        return formatRepository.findAll().stream().map(FormatListDto::new).toList();
+    }
+
+    @Transactional
     public void createFormat(FormatRequest formatRequest) {
-        Format format = new Format(formatRequest, this.userService.getUserById(formatRequest.getDirectorId()),
-                this.academicPeriodsService.getAcademicPeriodById(formatRequest.getAcademicPeriod()));
+        this.validateIfExistsFormatByAcademicPeriod(formatRequest.getAcademicPeriod());
+        Format format = new Format();
+        format.setCode(formatRequest.getCode());
+        format.setVersion(formatRequest.getVersion());
+        format.setDate(formatRequest.getDate());
+        format.setName("INFORME DE GESTIÓN DE LOS GRUPOS DE INVESTIGACIÓN");
+        format.setGroup(formatRequest.getGroup());
+        format.setUnity(formatRequest.getUnity());
+        format.setDirector(this.userService.getUserById(formatRequest.getDirectorId()));
+        format.setDepartment(formatRequest.getDepartment());
+        format.setFaculty(formatRequest.getFaculty());
+        format.setAcademicPeriod(this.academicPeriodsService.getAcademicPeriodById(formatRequest.getAcademicPeriod()));
+        format.setStatus(this.projectStatusService.findById(ProjectStatusEnum.DRAFT.getId()));
         this.formatRepository.save(format);
+
+        if(formatRequest.getManagerUsers() != null){
+            this.managerUserFormatService.createManagerUserFormat(formatRequest.getManagerUsers(), format);
+        }
+    }
+
+    private void validateIfExistsFormatByAcademicPeriod(Long academicPeriodId){
+        if(this.formatRepository.existsByAcademicPeriodId(academicPeriodId)){
+            throw new IllegalArgumentException(ExceptionCodeEnum.FORMAT02.getMessage());
+        }
+    }
+
+    public boolean existsFormatById(Long formatId){
+        return this.formatRepository.existsById(formatId);
+    }
+
+    @Transactional
+    public void deleteById(Long formatId){
+        if(this.existsFormatById(formatId)){
+            if(this.managerUserFormatService.existsManagerUserFormatByFormatId(formatId)){
+                this.managerUserFormatService.deleteByFormatId(formatId);
+            }
+
+            this.formatRepository.deleteById(formatId);
+        }else throw new IllegalArgumentException(ExceptionCodeEnum.FORMAT01.getMessage());
     }
 }

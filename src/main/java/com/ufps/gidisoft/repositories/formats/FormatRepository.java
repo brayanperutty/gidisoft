@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FormatRepository extends JpaRepository<Format, Long> {
+    boolean existsByAcademicPeriodId(Long academicPeriodId);
 }

@@ -1,6 +1,10 @@
 package com.ufps.gidisoft.services.formats;
 
+import com.ufps.gidisoft.entities.formats.Format;
+import com.ufps.gidisoft.entities.formats.ManagerUserFormat;
 import com.ufps.gidisoft.repositories.formats.ManagerUserFormatRepository;
+import com.ufps.gidisoft.requests.formats.ManagerUserFormatRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +17,25 @@ public class ManagerUserFormatService {
      */
     private final ManagerUserFormatRepository managerUserFormatRepository;
 
-    public void createManagerUserFormat(String createdBy, String reviewBy, String approvedBy, Long formatId) {
+    public void createManagerUserFormat(ManagerUserFormatRequest managerUserFormatRequest, Format format) {
+        ManagerUserFormat managerUserFormat = new ManagerUserFormat();
+        managerUserFormat.setCreatedBy(managerUserFormatRequest.getCreatedBy());
+        managerUserFormat.setReviewBy(managerUserFormatRequest.getReviewBy());
+        managerUserFormat.setApproveBy(managerUserFormatRequest.getApproveBy());
+        managerUserFormat.setFormat(format);
+        this.managerUserFormatRepository.save(managerUserFormat);
+    }
 
+    public ManagerUserFormat findByFormatId(Long formatId) {
+        return this.managerUserFormatRepository.findByFormatId(formatId);
+    }
+
+    public boolean existsManagerUserFormatByFormatId(Long formatId) {
+        return this.managerUserFormatRepository.existsByFormatId(formatId);
+    }
+
+    @Transactional
+    public void deleteByFormatId(Long formatId){
+        this.managerUserFormatRepository.deleteByFormatId(formatId);
     }
 }

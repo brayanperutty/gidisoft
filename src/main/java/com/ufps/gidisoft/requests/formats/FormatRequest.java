@@ -1,14 +1,14 @@
 package com.ufps.gidisoft.requests.formats;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-@NotNull
+@NoArgsConstructor
 public class FormatRequest {
 
     private String code;
@@ -19,7 +19,7 @@ public class FormatRequest {
 
     private ManagerUserFormatRequest managerUsers;
 
-    private String name;
+    private String group;
 
     private String unity;
 

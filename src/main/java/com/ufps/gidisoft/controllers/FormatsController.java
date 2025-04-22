@@ -7,7 +7,6 @@ import com.ufps.gidisoft.services.formats.FormatService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +30,29 @@ public class FormatsController {
     private static final String MESSAGE = "message";
     private static final String DASHBOARD = "dashboard";
     private static final String REDIRECT_LOGIN = "redirect:/login";
+    private static final String FORMAT_NOT_FOUND = "Formato no encontrado.";
+    private static final String FORMAT_REQUEST = "formatRequest";
 
 
     // <-------- GET METHODS -------->
+
+    @GetMapping(value = "/{id}")
+    public String getFormats(Model model, HttpServletRequest request, RedirectAttributes att, @PathVariable Long id) {
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        }else {
+            try {
+                model.addAttribute(FORMAT_REQUEST, this.formatService.findFormatById(id));
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+                model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
+                model.addAttribute("director", this.userService.findAdminUser());
+            } catch (Exception e) {
+                att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
+            }
+        }
+        return FORMATS;
+    }
 
     @GetMapping(value = "/list")
     public String formats(Model model, HttpServletRequest request, RedirectAttributes att) {
@@ -43,26 +62,36 @@ public class FormatsController {
             try {
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
-                model.addAttribute(FORMATS, formatService.findAllFormats());
+                model.addAttribute(FORMATS, this.formatService.findAllFormats());
             } catch (Exception e) {
-                att.addFlashAttribute(CREATE_ERROR, "Formato no encontrado.");
+                att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
         }
         return DASHBOARD;
     }
 
     @GetMapping(value = "/create")
-    public String createFormat(Model model, HttpServletRequest request, RedirectAttributes att) {
+    public String createFormat(Model model, HttpServletRequest request, RedirectAttributes att,
+                               @ModelAttribute(FORMAT_REQUEST) FormatRequest formatRequest) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else {
             try {
+                UsersDto director = this.userService.findAdminUser();
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
-                model.addAttribute("director", this.userService.findAdminUser());
+                model.addAttribute("director", director);
+
+                if (!model.containsAttribute(FORMAT_REQUEST)) {
+                    FormatRequest formatRequestEmpty = new FormatRequest();
+                    formatRequest.setDirectorId(director.getId());
+                    model.addAttribute(FORMAT_REQUEST, formatRequestEmpty);
+                    model.addAttribute("director", director);
+                }
+
             } catch (Exception e) {
-                att.addFlashAttribute(CREATE_ERROR, "Formato no encontrado.");
+                att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
         }
         return FORMATS;
@@ -75,13 +104,29 @@ public class FormatsController {
             return REDIRECT_LOGIN;
         }else {
             try {
-                System.out.println(formatRequest);
                 this.formatService.createFormat(formatRequest);
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
                 att.addFlashAttribute(MESSAGE, "Formato creado con éxito.");
+                return "redirect:/formats/list";
             } catch (Exception e) {
-                att.addFlashAttribute(CREATE_ERROR, "Formato no encontrado.");
+                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+                att.addFlashAttribute(FORMAT_REQUEST, formatRequest);
+                return "redirect:/formats/create";
+            }
+        }
+    }
+
+    @GetMapping(value = "/delete/{id}")
+    public String deleteFormat(Model model, HttpServletRequest request, RedirectAttributes att, @PathVariable Long id) {
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        }else {
+            try {
+                this.formatService.deleteById(id);
+                att.addFlashAttribute(MESSAGE, "Formato eliminado con éxito.");
+            } catch (Exception e) {
+                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
         return "redirect:/formats/list";

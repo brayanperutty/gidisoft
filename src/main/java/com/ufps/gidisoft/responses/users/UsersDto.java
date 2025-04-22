@@ -13,7 +13,8 @@ public class UsersDto {
     private String usercode;
     private String name;
     private String email;
-    private String role;
+    private String roleType;
+    private String roleName;
     private String status;
 
     public UsersDto(User user) {
@@ -21,7 +22,8 @@ public class UsersDto {
         this.usercode = user.getUsercode();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.role = user.getRole().getName();
+        this.roleType = user.getRole().getType();
+        this.roleName = user.getRole().getName();
         this.status = Objects.requireNonNull(UserStatusEnum.getById(user.getUserStatus())).getStatus();
     }
 }

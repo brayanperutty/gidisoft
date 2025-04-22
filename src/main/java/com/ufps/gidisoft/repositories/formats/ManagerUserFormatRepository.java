@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ManagerUserFormatRepository extends JpaRepository<ManagerUserFormat, Long> {
+    ManagerUserFormat findByFormatId(Long formatId);
+
+    boolean existsByFormatId(Long formatId);
+
+    void deleteByFormatId(Long formatId);
 }

@@ -1,25 +1,47 @@
 package com.ufps.gidisoft.responses.format;
 
 import com.ufps.gidisoft.entities.formats.Format;
+import com.ufps.gidisoft.entities.formats.ManagerUserFormat;
+import com.ufps.gidisoft.requests.formats.ManagerUserFormatRequest;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class FormatDto {
 
     private String code;
-    private String name;
-    private String director;
-    private String deparment;
-    private String faculty;
-    private String year;
-    private String period;
 
-    public FormatDto(Format format) {
+    private String version;
+
+    private LocalDate date;
+
+    private ManagerUserFormatRequest managerUsers;
+
+    private String group;
+
+    private String unity;
+
+    private Long directorId;
+
+    private String department;
+
+    private String faculty;
+
+    private Long academicPeriod;
+
+    public FormatDto(Format format, ManagerUserFormat managerUserFormat) {
         this.code = format.getCode();
-        this.name = format.getName();
-        this.director = format.getDirector().getName();
-        this.year = format.getAcademicPeriod().getYear().toString();
-        this.period = format.getAcademicPeriod().getPeriod();
+        this.version = format.getVersion();
+        this.date = format.getDate();
+        this.managerUsers = new ManagerUserFormatRequest(managerUserFormat.getCreatedBy(),
+                managerUserFormat.getReviewBy(), managerUserFormat.getApproveBy());
+        this.group = format.getGroup();
+        this.unity = format.getUnity();
+        this.directorId = format.getDirector().getId();
+        this.department = format.getDepartment();
+        this.faculty = format.getFaculty();
+        this.academicPeriod = format.getAcademicPeriod().getId();
     }
 
 }

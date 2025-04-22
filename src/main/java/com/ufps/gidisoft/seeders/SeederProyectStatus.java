@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.seeders;
 
-import com.ufps.gidisoft.services.formats.ProyectStatusService;
+import com.ufps.gidisoft.services.formats.ProjectStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -8,17 +8,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class SeederProyectStatus {
 
-    private final ProyectStatusService proyectStatusService;
+    private final ProjectStatusService projectStatusService;
 
     public void seed() {
-        getProyectStatus(proyectStatusService);
+        getProyectStatus(projectStatusService);
     }
 
-    private static void getProyectStatus(ProyectStatusService proyectStatusService) {
-        if (proyectStatusService.existsProyectStatus("Borrador") &&
-                proyectStatusService.existsProyectStatus("Publicado")) {
-            proyectStatusService.createProyectStatus("Borrador");
-            proyectStatusService.createProyectStatus("Publicado");
+    private static void getProyectStatus(ProjectStatusService projectStatusService) {
+        if (!projectStatusService.existsProyectStatus("Borrador") &&
+                !projectStatusService.existsProyectStatus("Publicado")) {
+            projectStatusService.createProyectStatus("Borrador");
+            projectStatusService.createProyectStatus("Publicado");
         }
     }
 }

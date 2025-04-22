@@ -1,11 +1,11 @@
 package com.ufps.gidisoft.repositories.formats;
 
-import com.ufps.gidisoft.entities.formats.ProyectStatus;
+import com.ufps.gidisoft.entities.formats.ProjectStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProyectStatusRepository extends JpaRepository<ProyectStatus, Long> {
+public interface ProyectStatusRepository extends JpaRepository<ProjectStatus, Long> {
 
     boolean existsByName(String name);
 }
