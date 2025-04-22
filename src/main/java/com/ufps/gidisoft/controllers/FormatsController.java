@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -64,7 +61,6 @@ public class FormatsController {
                         .getAttribute(USERCODE).toString())));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
                 model.addAttribute("director", this.userService.findAdminUser());
-                model.addAttribute("teachers", this.userService.findAllUsers());
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, "Formato no encontrado.");
             }
@@ -72,13 +68,14 @@ public class FormatsController {
         return FORMATS;
     }
 
-    @PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "")
     public String saveFormat(Model model, HttpServletRequest request, RedirectAttributes att,
-                             @RequestBody FormatRequest formatRequest) {
+                             @ModelAttribute FormatRequest formatRequest) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else {
             try {
+                System.out.println(formatRequest);
                 this.formatService.createFormat(formatRequest);
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));

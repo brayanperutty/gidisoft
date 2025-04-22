@@ -9,6 +9,7 @@ import java.util.Objects;
 @Data
 public class UsersDto {
 
+    private Long id;
     private String usercode;
     private String name;
     private String email;
@@ -16,6 +17,7 @@ public class UsersDto {
     private String status;
 
     public UsersDto(User user) {
+        this.id = user.getId();
         this.usercode = user.getUsercode();
         this.name = user.getName();
         this.email = user.getEmail();

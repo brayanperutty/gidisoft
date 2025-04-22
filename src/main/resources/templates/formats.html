@@ -39,7 +39,7 @@
 <div class="content" id="content">
     <div th:replace="~{components/header-user :: header(${user})}"></div>
     <div class="container mt-5">
-        <form th:action="@{/guardar-informe}" method="post">
+        <form th:action="@{/formats}" method="post">
             <!-- Encabezado del formulario -->
             <div class="border p-3 mb-4 border border-dark">
                 <div class="row d-flex align-items-center justify-content-center">
@@ -53,18 +53,15 @@
                         <div class="row mb-2">
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Código:</label>
-                                <input type="text" class="form-control border border-dark" name="code"
-                                       value="FO-IN-13">
+                                <input type="text" class="form-control border border-dark" name="code">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Versión:</label>
-                                <input type="text" class="form-control border border-dark" name="version"
-                                       value="04">
+                                <input type="text" class="form-control border border-dark" name="version">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Fecha:</label>
-                                <input type="text" class="form-control border border-dark" name="date"
-                                       value="20/10/2022">
+                                <input type="date" class="form-control border border-dark" name="date">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="form-label fw-bold">Página:</label>
@@ -84,7 +81,7 @@
                             <div class="card-header fw-bold bg-primary-subtle">Elaboró</div>
                             <div class="card-header">
                                 <input type="text" class="form-control border border-dark" id="createdBy"
-                                       name="reviewBy" required>
+                                       name="managerUsers.createdBy" required>
                             </div>
                         </div>
 
@@ -93,7 +90,7 @@
                             <div class="card-header fw-bold bg-primary-subtle">Revisó</div>
                             <div class="card-header">
                                 <input type="text" class="form-control border border-dark" id="reviewBy"
-                                       name="reviewBy"
+                                       name="managerUsers.reviewBy"
                                        required>
                             </div>
                         </div>
@@ -102,7 +99,7 @@
                             <div class="card-header fw-bold bg-primary-subtle">Aprobó</div>
                             <div class="card-header">
                                 <input type="text" class="form-control border border-dark" id="approveBy"
-                                       name="approveBy"
+                                       name="managerUsers.approveBy"
                                        required>
                             </div>
                         </div>
@@ -127,15 +124,16 @@
                                 ADSCRITA EL
                                 GRUPO:</label>
                             <input type="text" class="form-control text-center border border-dark" id="drive"
-                                   name="drive"
+                                   name="unity"
                                    required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="director" class="form-label fw-bold">DIRECTOR:</label>
+                            <input type="hidden" name="directorId" th:value="${director.id}">
                             <input type="text" class="form-control text-center border border-dark" id="director"
-                                   name="director" th:object="${director}" th:value="${director.getName()}" disabled required>
+                                   th:object="${director}" th:value="${director.getName()}" disabled required>
                         </div>
                         <div class="col-md-6">
                             <label for="deparment" class="form-label fw-bold">DEPARTAMENTO:</label>
@@ -145,14 +143,14 @@
                         </div>
                     </div>
                     <div class="row mb-3 d-flex align-items-center justify-content-center">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="faculty" class="form-label fw-bold">FACULTAD:</label>
                             <input type="text" class="form-control text-center border border-dark" id="faculty"
                                    name="faculty" required>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label for="period" class="form-label fw-bold">SEMESTRE ACADÉMICO:</label>
-                            <select class="form-select border border-dark" id="period" name="period" required>
+                            <select class="form-select text-center border border-dark" id="period" name="academicPeriod" required>
                                 <option value="" disabled selected hidden>Seleccione el periodo académico</option>
                                 <option th:each="year: ${years}" th:value="${year.getId()}" th:text="${year.getValue()}"></option>
                             </select>
