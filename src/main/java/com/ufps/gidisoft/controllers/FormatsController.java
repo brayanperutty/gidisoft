@@ -4,6 +4,7 @@ import com.ufps.gidisoft.requests.formats.FormatRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
 import com.ufps.gidisoft.services.formats.FormatService;
+import com.ufps.gidisoft.services.formats.ProjectService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class FormatsController {
     private final UserService userService;
     private final FormatService formatService;
     private final AcademicPeriodsService academicPeriodsService;
+    private final ProjectService projectService;
 
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
@@ -32,6 +34,7 @@ public class FormatsController {
     private static final String REDIRECT_LOGIN = "redirect:/login";
     private static final String FORMAT_NOT_FOUND = "Formato no encontrado.";
     private static final String FORMAT_REQUEST = "formatRequest";
+    private static final String DIRECTOR = "director";
 
 
     // <-------- GET METHODS -------->
@@ -43,10 +46,11 @@ public class FormatsController {
         }else {
             try {
                 model.addAttribute(FORMAT_REQUEST, this.formatService.findFormatById(id));
+                model.addAttribute("projects", this.projectService.findByFormatId(id));
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
-                model.addAttribute("director", this.userService.findAdminUser());
+                model.addAttribute(DIRECTOR, this.userService.findAdminUser());
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
@@ -71,25 +75,18 @@ public class FormatsController {
     }
 
     @GetMapping(value = "/create")
-    public String createFormat(Model model, HttpServletRequest request, RedirectAttributes att,
-                               @ModelAttribute(FORMAT_REQUEST) FormatRequest formatRequest) {
+    public String createFormat(Model model, HttpServletRequest request, RedirectAttributes att) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else {
             try {
-                UsersDto director = this.userService.findAdminUser();
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
-                model.addAttribute("director", director);
-
+                model.addAttribute(DIRECTOR, this.userService.findAdminUser());
                 if (!model.containsAttribute(FORMAT_REQUEST)) {
-                    FormatRequest formatRequestEmpty = new FormatRequest();
-                    formatRequest.setDirectorId(director.getId());
-                    model.addAttribute(FORMAT_REQUEST, formatRequestEmpty);
-                    model.addAttribute("director", director);
+                    model.addAttribute(FORMAT_REQUEST, new FormatRequest());
                 }
-
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }

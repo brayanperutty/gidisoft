@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NotNull
-public class ProyectRequest {
+public class ProjectRequest {
 
     private String name;
     private String activities;

@@ -1,0 +1,139 @@
+<div th:fragment="formularioBasico(formatRequest)">
+        <!-- Encabezado del formulario -->
+        <div class="border p-3 mb-4 border border-dark">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-6 text-center">
+                    <img th:src="@{/img/Logo-vertical.jpg}" alt="Logo" class="img-fluid mb-2"
+                         style="max-height: 110px;">
+                    <p class="mb-0 fw-bold">FORMATO</p>
+                    <p class="mb-0">INFORME DE GESTIÓN DE GRUPOS DE INVESTIGACIÓN</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="row mb-2">
+                        <input type="hidden" class="form-control text-center border border-dark" name="formatId"
+                               id="id-format"
+                               th:field="${formatRequest.id}">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label fw-bold">CÓDIGO:</label>
+                            <input type="text" class="form-control text-center border border-dark" name="code"
+                                   th:field="${formatRequest.code}"
+                                   th:disabled="${user.roleType != 'admin'}">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label fw-bold">VERSIÓN:</label>
+                            <input type="text" class="form-control text-center border border-dark" name="version"
+                                   th:field="${formatRequest.version}"
+                                   th:disabled="${user.roleType != 'admin'}">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label fw-bold">FECHA:</label>
+                            <input type="date" class="form-control text-center border border-dark" name="date"
+                                   th:value="${formatRequest.date != null ? formatRequest.date.toString() : ''}"
+                                   th:disabled="${user.roleType != 'admin'}">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label fw-bold">PÁGINA:</label>
+                            <input type="text" class="form-control text-center border border-dark" name="pagina"
+                                   value="1 de 1" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3 border border-dark">
+            <div class="card-body">
+                <div class="row text-center">
+                    <!-- Elaboró -->
+                    <div class="col-md-4">
+                        <div class="card-header fw-bold bg-primary-subtle">ELABORÓ</div>
+                        <div class="card-header">
+                            <input type="text" class="form-control text-center border border-dark" id="createdBy"
+                                   th:field="${formatRequest.managerUsers.createdBy}"
+                                   th:disabled="${user.roleType != 'admin'}">
+                        </div>
+                    </div>
+
+                    <!-- Revisó -->
+                    <div class="col-md-4">
+                        <div class="card-header fw-bold bg-primary-subtle">REVISÓ</div>
+                        <div class="card-header">
+                            <input type="text" class="form-control text-center border border-dark" id="reviewBy"
+                                   th:field="${formatRequest.managerUsers.reviewBy}"
+                                   th:disabled="${user.roleType != 'admin'}">
+                        </div>
+                    </div>
+                    <!-- Aprobó -->
+                    <div class="col-md-4">
+                        <div class="card-header fw-bold bg-primary-subtle">APROBÓ</div>
+                        <div class="card-header">
+                            <input type="text" class="form-control text-center border border-dark" id="approveBy"
+                                   th:field="${formatRequest.managerUsers.approveBy}"
+                                   th:disabled="${user.roleType != 'admin'}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos del responsable -->
+        <div class="card mb-3 border border-dark">
+            <div class="card-header fw-bold">Datos del proyecto</div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label fw-bold">NOMBRE DEL GRUPO DE
+                            INVESTIGACIÓN:</label>
+                        <input type="text" class="form-control text-center border border-dark" id="nombre"
+                               name="group" th:field="${formatRequest.group}"
+                               th:disabled="${user.roleType != 'admin'}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="drive" class="form-label fw-bold">UNIDAD ACADÉMICA A LA QUE SE ENCUENTRA
+                            ADSCRITA EL
+                            GRUPO:</label>
+                        <input type="text" class="form-control text-center border border-dark" id="drive"
+                               name="unity" th:field="${formatRequest.unity}"
+                               th:disabled="${user.roleType != 'admin'}">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6" th:object="${director}">
+                        <label for="director" class="form-label fw-bold">DIRECTOR:</label>
+                        <input type="hidden" name="directorId" th:value="${director.id}">
+                        <input type="text" name="directorName" class="form-control text-center border border-dark"
+                               id="director"
+                               th:value="${director.name}" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="deparment" class="form-label fw-bold">DEPARTAMENTO:</label>
+                        <input type="text" class="form-control text-center border border-dark"
+                               id="deparment"
+                               name="department" th:field="${formatRequest.department}"
+                               th:disabled="${user.roleType != 'admin'}">
+                    </div>
+                </div>
+                <div class="row mb-3 d-flex align-items-center justify-content-center">
+                    <div class="col-md-6">
+                        <label for="faculty" class="form-label fw-bold">FACULTAD:</label>
+                        <input type="text" class="form-control text-center border border-dark" id="faculty"
+                               name="faculty" th:field="${formatRequest.faculty}"
+                               th:disabled="${user.roleType != 'admin'}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="period" class="form-label fw-bold">PERÍODO ACADÉMICO:</label>
+                        <select class="form-select text-center border border-dark" id="period" name="academicPeriod"
+                                th:disabled="${user.roleType != 'admin'}">
+                            <option value="" disabled selected hidden>Seleccione el periodo académico</option>
+                            <option th:each="year: ${years}"
+                                    th:value="${year.id}"
+                                    th:text="${year.value}"
+                                    th:selected="${formatRequest.academicPeriod} == ${year.id}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+</div>

@@ -1,0 +1,114 @@
+<div th:fragment="modulosExtra(projects)">
+    <div class="card border border-dark mb-3">
+        <div class="card-header fw-bold">1. Proyectos de investigación</div>
+        <div class="card-body" id="projects-container">
+            <div class="card mb-3 border border-secondary p-3" th:if="${!projects.isEmpty()}"
+                 th:each="project: ${projects}">
+                <form th:action="@{/projects}"
+                      method="post">
+                    <input type="hidden" class="form-control" name="id" th:value="${project.id}">
+                    <input type="hidden" class="form-control" name="formatId" th:value="${project.formatId}">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Proyecto:</label>
+                        <textarea class="form-control"
+                                  name="name"
+                                  th:text="${project.name}"
+                                  rows="1"
+                                  th:disabled="${user.id != project.createdBy}"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Actividades:</label>
+                        <textarea class="form-control"
+                                  name="activities"
+                                  th:text="${project.activities}"
+                                  rows="2"
+                                  th:disabled="${user.id != project.createdBy}"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Fecha de Inicio:</label>
+                            <input type="date" class="form-control" name="startDate"
+                                   th:value="${project.startDate != null ? project.startDate.toString() : ''}"
+                                   th:disabled="${user.id != project.createdBy}">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label fw-bold">Fecha de Terminación:</label>
+                            <input type="date" class="form-control"
+                                   th:value="${project.endDate != null ? project.endDate.toString() : ''}"
+                                   name="endDate"
+                                   th:disabled="${user.id != project.createdBy}">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-bold">% de Cumplimiento:</label>
+                            <input type="number" class="form-control" th:value="${project.compliancePercentage}"
+                                   name="compliancePercentage" min="0" max="100" step="1"
+                                   th:disabled="${user.id != project.createdBy}">
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end align-items-center">
+                        <button type="submit" class="btn btn-sm btn-primary"
+                                th:attr="hidden=${user.id != project.createdBy}">Guardar</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger ms-2"
+                                onclick="this.closest('.card').remove()"
+                                th:attr="hidden=${user.id != project.createdBy}">Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-success" onclick="addProject()">+ Agregar Proyecto
+            </button>
+        </div>
+    </div>
+
+    <div class="card border border-dark mb-3">
+        <div class="card-header fw-bold">2. Participación en Dirección de Trabajo de Grado y/o Tesis</div>
+        <div class="card-body" id="directions-container">
+            <!-- Las secciones de proyecto se insertan aquí -->
+        </div>
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-success" onclick="addDirection()">+ Agregar Participación
+            </button>
+        </div>
+    </div>
+
+    <div class="card border border-dark mb-3">
+        <div class="card-header fw-bold">3. Organización de Eventos de Investigación / Científicos</div>
+        <div class="card-body" id="events-container">
+            <!-- Las secciones de proyecto se insertan aquí -->
+        </div>
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-success" onclick="addEvent()">+ Agregar Evento
+            </button>
+        </div>
+    </div>
+
+    <div class="card border border-dark mb-3">
+        <div class="card-header fw-bold">4. Otras actividades de Investigación</div>
+        <div class="card-body" id="others-activities-container">
+            <!-- Las secciones de proyecto se insertan aquí -->
+        </div>
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-success" onclick="addOtherActivities()">+ Agregar Actividad
+            </button>
+        </div>
+    </div>
+
+    <div class="card border border-dark mb-3">
+        <div class="card-header fw-bold">5. Productos</div>
+        <div class="card-body" id="products-container">
+            <!-- Las secciones de proyecto se insertan aquí -->
+        </div>
+        <div class="card-footer text-end">
+            <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+            </button>
+        </div>
+    </div>
+</div>

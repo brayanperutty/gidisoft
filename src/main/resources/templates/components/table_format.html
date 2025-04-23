@@ -27,8 +27,8 @@
             <td>
                 <a class="btn btn-primary btn-sm"
                    th:href="@{/formats/{id}(id=${format.id})}"
-                   title="Editar"
-                   th:if="${user.roleType == 'admin'}"><i class="fas fa-edit"></i></a>
+                   title="Editar">
+                    <i class="fas fa-edit"></i></a>
                 <a class="btn btn-danger btn-sm delete"
                    data-bs-toggle="modal" data-bs-target="#confirmDeleteFormatModal">
                     <i class="fas fa-trash-alt"></i>

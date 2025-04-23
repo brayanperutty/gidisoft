@@ -8,7 +8,6 @@ import com.ufps.gidisoft.repositories.formats.FormatRepository;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
 import com.ufps.gidisoft.responses.format.FormatDto;
 import com.ufps.gidisoft.responses.format.FormatListDto;
-import com.ufps.gidisoft.responses.utils.SuccessResponse;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.transaction.Transactional;
@@ -33,16 +32,12 @@ public class FormatService {
     private final AcademicPeriodsService academicPeriodsService;
     private final ProjectStatusService projectStatusService;
     private final ManagerUserFormatService managerUserFormatService;
+    private final ProjectService projectService;
 
     public FormatDto findFormatById(Long formatId) {
         return new FormatDto(formatRepository.findById(formatId).orElseThrow(()
                 -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage())),
                 managerUserFormatService.findByFormatId(formatId));
-    }
-
-    public Format findByIdToRelations(Long formatId){
-        return this.formatRepository.findById(formatId).orElseThrow(()
-                -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage()));
     }
 
     public List<FormatListDto> findAllFormats() {

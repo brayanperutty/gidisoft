@@ -119,6 +119,13 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "/logout")
+    public String logout(HttpServletRequest request, RedirectAttributes att) {
+        request.getSession().removeAttribute(USERCODE);
+        att.addFlashAttribute(MESSAGE, "Sesión finalizada con éxito.");
+        return REDIRECT_LOGIN;
+    }
+
     @PostMapping(value = "/save")
     public String createUser(RedirectAttributes att,
                              @Valid @ModelAttribute UserRequest userRequest) {
