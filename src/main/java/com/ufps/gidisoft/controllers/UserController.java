@@ -41,11 +41,15 @@ public class UserController {
 
     @GetMapping(value = "/dashboard")
     public String dashboard(Model model, HttpServletRequest request, RedirectAttributes att) {
-        try {
-            model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
-                    .getAttribute(USERCODE).toString())));
-        }catch (NotFoundException e){
-            att.addFlashAttribute("userError", "Usuario no encontrado.");
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        }else{
+            try {
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+            }catch (NotFoundException e){
+                att.addFlashAttribute("userError", "Usuario no encontrado.");
+            }
         }
         return DASHBOARD;
     }
@@ -55,15 +59,20 @@ public class UserController {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else{
-            try{
-                model.addAttribute(TEACHERS, userService.findAllUsers());
-                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
-                        .getAttribute(USERCODE).toString())));
-                model.addAttribute(ROLES, roleService.findAllRoles());
-                return DASHBOARD;
-            }catch (BadRequestException e){
-                att.addFlashAttribute("unauthorizeUser", "No tienes permisos para esta acción.");
-                return REDIRECT_LOGIN;
+            User user = userService.getUserByUsercode(request.getSession()
+                    .getAttribute(USERCODE).toString());
+            if(!user.getRole().getType().equals("admin")){
+                return "error/403";
+            }else{
+                try{
+                    model.addAttribute(TEACHERS, userService.findAllUsers());
+                    model.addAttribute("user", new UsersDto(user));
+                    model.addAttribute(ROLES, roleService.findAllRoles());
+                    return DASHBOARD;
+                }catch (BadRequestException e){
+                    att.addFlashAttribute("unauthorizeUser", "No tienes permisos para esta acción.");
+                    return REDIRECT_LOGIN;
+                }
             }
         }
     }

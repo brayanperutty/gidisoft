@@ -6,7 +6,7 @@
 <hr class="sidebar-divider">
 
 <ul class="nav flex-column">
-  <li class="nav-item">
+  <li class="nav-item" th:if="${user.roleType == 'admin'}">
     <a th:href="@{/users/teachers}" class="nav-link" data-tooltip="Docentes">
       <i class="fas fa-chalkboard-teacher"></i>
       <span class="menu-text">Docentes</span>

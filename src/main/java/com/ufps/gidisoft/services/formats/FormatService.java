@@ -1,8 +1,10 @@
 package com.ufps.gidisoft.services.formats;
 
 import com.ufps.gidisoft.entities.formats.Format;
+import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
 import com.ufps.gidisoft.repositories.formats.FormatRepository;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
@@ -32,7 +34,7 @@ public class FormatService {
     private final AcademicPeriodsService academicPeriodsService;
     private final ProjectStatusService projectStatusService;
     private final ManagerUserFormatService managerUserFormatService;
-    private final ProjectService projectService;
+    private final FormatUserService formatUserService;
 
     public FormatDto findFormatById(Long formatId) {
         return new FormatDto(formatRepository.findById(formatId).orElseThrow(()
@@ -40,8 +42,12 @@ public class FormatService {
                 managerUserFormatService.findByFormatId(formatId));
     }
 
-    public List<FormatListDto> findAllFormats() {
-        return formatRepository.findAll().stream().map(FormatListDto::new).toList();
+    public List<FormatListDto> findAllFormatsByPermission(User user) {
+        if(user.getRole().getType().equals(RolesEnum.ADMIN.getRole())){
+            return this.formatRepository.findAll().stream().map(FormatListDto::new).toList();
+        }else {
+            return this.formatUserService.findAllFormatsByPermissionAndStatus(user, ProjectStatusEnum.PUBLICATED.getId());
+        }
     }
 
     @Transactional
@@ -60,6 +66,8 @@ public class FormatService {
         format.setAcademicPeriod(this.academicPeriodsService.getAcademicPeriodById(formatRequest.getAcademicPeriod()));
         format.setStatus(this.projectStatusService.findById(ProjectStatusEnum.DRAFT.getId()));
         this.formatRepository.save(format);
+
+        this.formatUserService.createFormatUser(format, this.userService.getUserById(formatRequest.getDirectorId()));
 
         if(formatRequest.getManagerUsers() != null){
             this.managerUserFormatService.createManagerUserFormat(formatRequest.getManagerUsers(), format);
@@ -82,8 +90,16 @@ public class FormatService {
             if(this.managerUserFormatService.existsManagerUserFormatByFormatId(formatId)){
                 this.managerUserFormatService.deleteByFormatId(formatId);
             }
-
+            this.formatUserService.deleteByFormatId(formatId);
             this.formatRepository.deleteById(formatId);
         }else throw new IllegalArgumentException(ExceptionCodeEnum.FORMAT01.getMessage());
+    }
+
+    public void createRelationsWithUsers(List<Long> users, Long formatId){
+        users.forEach(user -> {
+            Format format = this.formatRepository.findById(formatId).orElseThrow(()
+                    -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage()));
+            this.formatUserService.createFormatUser(format, this.userService.getUserById(user));
+        });
     }
 }

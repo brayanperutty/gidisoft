@@ -9,9 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -29,7 +27,6 @@ public class ProjectController {
     private static final String CREATE_ERROR = "createError";
     private static final String MESSAGE = "message";
     private static final String REDIRECT_LOGIN = "redirect:/login";
-    private static final String FORMAT_REQUEST = "formatRequest";
 
 
     @PostMapping(value = "")
@@ -37,9 +34,8 @@ public class ProjectController {
                              RedirectAttributes att) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
-        }else {
+        } else {
             try {
-                System.out.println(projectRequest);
                 Project project = this.projectService.
                         createProject(projectRequest, userService.getUserByUsercode(request.getSession()
                                 .getAttribute(USERCODE).toString()));
@@ -47,11 +43,28 @@ public class ProjectController {
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
                 att.addFlashAttribute(MESSAGE, "Proyecto creado con éxito.");
-                return "redirect:/formats/" + projectRequest.getFormatId();
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
-                return "redirect:/formats/" + projectRequest.getFormatId();
             }
         }
+        return "redirect:/formats/" + projectRequest.getFormatId();
+    }
+
+    @GetMapping(value = "/{id}/publish")
+    public String publishProject(Model model, HttpServletRequest request, @PathVariable Long id,
+                                 RedirectAttributes att, @RequestParam Long formatId){
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            try {
+                model.addAttribute("project", this.projectService.publishProject(id));
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+                att.addFlashAttribute(MESSAGE, "Proyecto publicado con éxito.");
+            } catch (Exception e) {
+                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+            }
+        }
+        return "redirect:/formats/" + formatId;
     }
 }

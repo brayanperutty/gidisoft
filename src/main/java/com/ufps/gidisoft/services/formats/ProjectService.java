@@ -2,7 +2,9 @@ package com.ufps.gidisoft.services.formats;
 
 import com.ufps.gidisoft.entities.formats.Project;
 import com.ufps.gidisoft.entities.users.User;
+import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.repositories.formats.ProyectRepository;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.format.ProjectDto;
@@ -11,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,13 +31,6 @@ public class ProjectService {
     private final FormatServiceSec formatServiceSec;
     private final ProjectStatusService projectStatusService;
     private final UserService userService;
-
-    @Transactional
-    public void createDraftProyect(List<ProjectRequest> projectsRequest, Long formatId, Long userId) {
-        projectsRequest.forEach(projectRequest ->
-            this.proyectRepository.save(getNewProject(projectRequest, formatId, userId))
-        );
-    }
 
     @Transactional
     public Project createProject(ProjectRequest projectRequest, User user) {
@@ -55,7 +51,22 @@ public class ProjectService {
         return project;
     }
 
-    public List<ProjectDto> findByFormatId(Long formatId) {
-        return this.proyectRepository.findByFormatId(formatId).stream().map(ProjectDto::new).toList();
+    public List<ProjectDto> findByFormatId(Long formatId, User user) {
+        List<ProjectDto> projectDtos = new ArrayList<>();
+        List<Project> projects = this.proyectRepository.findByFormatIdAndCreatedBy(formatId, user);
+        List<Project> otherProjects = this.proyectRepository.findByFormatId(formatId).stream()
+                .filter(project -> !project.getCreatedBy().equals(user))
+                .filter(project -> project.getStatus().getId().equals(ProjectStatusEnum.PUBLICATED.getId())).toList();
+        projectDtos.addAll(projects.stream().map(ProjectDto::new).toList());
+        projectDtos.addAll(otherProjects.stream().map(ProjectDto::new).toList());
+        return projectDtos;
+
+    }
+
+    public Project publishProject(Long id){
+        Project project = this.proyectRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage()));
+        project.setStatus(this.projectStatusService.findById(ProjectStatusEnum.PUBLICATED.getId()));
+        return this.proyectRepository.save(project);
     }
 }

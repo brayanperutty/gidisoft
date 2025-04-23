@@ -50,7 +50,7 @@
         <div th:if="${formats != null}">
             <div class="container-fluid">
                 <span>Gestión de formatos</span>
-                <a type="button" class="btn btn-success" th:href="@{/formats/create}">
+                <a th:if="${user.roleType == 'admin'}" type="button" class="btn btn-success" th:href="@{/formats/create}">
                     Agregar formato
                 </a>
             </div>

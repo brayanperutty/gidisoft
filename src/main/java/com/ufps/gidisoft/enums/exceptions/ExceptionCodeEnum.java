@@ -14,6 +14,7 @@ public enum ExceptionCodeEnum {
     FORMAT01("Formato no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     FORMAT02("Ya existe un formato para ese período académico.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     PROJSTS01("The project status is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    PROJ01("The project is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
     TOKEN01("The token has expiry", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     TOKEN02("The token is invalid", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),

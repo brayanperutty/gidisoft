@@ -16,6 +16,8 @@ public class ProjectDto {
     private Integer compliancePercentage;
     private Long formatId;
     private Long createdBy;
+    private String createdByName;
+    private Long statusId;
 
     public ProjectDto(Project project) {
         this.id = project.getId();
@@ -26,6 +28,8 @@ public class ProjectDto {
         this.compliancePercentage = project.getCompliancePercentage();
         this.formatId = project.getFormat().getId();
         this.createdBy = project.getCreatedBy().getId();
+        this.createdByName = project.getCreatedBy().getName();
+        this.statusId = project.getStatus().getId();
     }
 }
 
