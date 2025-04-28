@@ -1,7 +1,7 @@
 package com.ufps.gidisoft.responses.format;
 
-import com.ufps.gidisoft.entities.formats.Format;
-import com.ufps.gidisoft.entities.formats.ManagerUserFormat;
+import com.ufps.gidisoft.entities.formats.general.Format;
+import com.ufps.gidisoft.entities.formats.general.ManagerUserFormat;
 import com.ufps.gidisoft.requests.formats.ManagerUserFormatRequest;
 import lombok.Data;
 

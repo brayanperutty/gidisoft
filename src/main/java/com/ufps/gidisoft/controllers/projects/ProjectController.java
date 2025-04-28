@@ -1,0 +1,96 @@
+package com.ufps.gidisoft.controllers.projects;
+
+import com.ufps.gidisoft.entities.formats.projects.Project;
+import com.ufps.gidisoft.entities.users.User;
+import com.ufps.gidisoft.requests.formats.ProjectRequest;
+import com.ufps.gidisoft.responses.users.UsersDto;
+import com.ufps.gidisoft.services.formats.projects.ProjectService;
+import com.ufps.gidisoft.services.users.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping(value = "/projects")
+@RequiredArgsConstructor
+public class ProjectController {
+
+    /*
+     * Services
+     */
+    private final ProjectService projectService;
+    private final UserService userService;
+
+    private static final String USERCODE = "usercode";
+    private static final String CREATE_ERROR = "createError";
+    private static final String MESSAGE = "message";
+    private static final String REDIRECT_LOGIN = "redirect:/login";
+    private static final String REDIRECT_ERROR = "error/403";
+    private static final String REDIRECT_FORMAT = "redirect:/formats/";
+
+
+    @PostMapping(value = "")
+    public String addProject(Model model, HttpServletRequest request, @ModelAttribute ProjectRequest projectRequest,
+                             RedirectAttributes att) {
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            try {
+                this.projectService.
+                        createProject(projectRequest, userService.getUserByUsercode(request.getSession()
+                                .getAttribute(USERCODE).toString()));
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+                att.addFlashAttribute(MESSAGE, "Proyecto creado con éxito.");
+            } catch (Exception e) {
+                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+            }
+        }
+        return REDIRECT_FORMAT + projectRequest.getFormatId();
+    }
+
+    @GetMapping(value = "/{id}/publish")
+    public String publishProject(Model model, HttpServletRequest request, @PathVariable Long id,
+                                 RedirectAttributes att, @RequestParam Long formatId){
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            try {
+                model.addAttribute("project", this.projectService.publishProject(id));
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+                att.addFlashAttribute(MESSAGE, "Proyecto publicado con éxito.");
+            } catch (Exception e) {
+                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+            }
+        }
+        return REDIRECT_FORMAT + formatId;
+    }
+
+    @GetMapping(value = "/{id}/delete")
+    public String deleteProject(Model model, HttpServletRequest request, @PathVariable Long id,
+                                RedirectAttributes att, @RequestParam Long formatId) {
+        if(request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        }else{
+            User user = userService.getUserByUsercode(request.getSession()
+                    .getAttribute(USERCODE).toString());
+            if (!this.projectService.validateProjectWithUser(id, user)) {
+                return REDIRECT_ERROR;
+            }else{
+                try {
+                    this.projectService.deleteById(id);
+                    model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                            .getAttribute(USERCODE).toString())));
+                    att.addFlashAttribute(MESSAGE, "Proyecto eliminado con éxito.");
+                } catch (Exception e) {
+                    att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+                }
+            }
+        }
+        return REDIRECT_FORMAT + formatId;
+    }
+}

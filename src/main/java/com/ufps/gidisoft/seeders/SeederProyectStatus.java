@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.seeders;
 
-import com.ufps.gidisoft.services.formats.ProjectStatusService;
+import com.ufps.gidisoft.services.formats.projects.ProjectStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

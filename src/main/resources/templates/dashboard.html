@@ -12,7 +12,7 @@
 
 <!-- Menú lateral -->
 <div class="sidebar collapsed" id="sidebar">
-    <div th:replace="~{components/menu}"></div>
+    <div th:replace="~{components/utils/menu}"></div>
 </div>
 
 <div id="successToast" class="toast align-items-center text-white bg-success border-0 position-fixed top-0 start-0 m-3"
@@ -36,7 +36,7 @@
 </div>
 
 <div class="content" id="content">
-    <div th:replace="~{components/header-user :: header(${user})}"></div>
+    <div th:replace="~{components/utils/header-user :: header(${user})}"></div>
     <div class="container-card">
         <div th:if="${teachers != null}">
             <div class="container-fluid">
@@ -45,7 +45,7 @@
                     Agregar Docente
                 </button>
             </div>
-            <div th:replace="~{components/table_teachers :: table(${teachers})}" style="display: none;"></div>
+            <div th:replace="~{components/users/table/table_teachers :: table(${teachers})}" style="display: none;"></div>
         </div>
         <div th:if="${formats != null}">
             <div class="container-fluid">
@@ -54,7 +54,7 @@
                     Agregar formato
                 </a>
             </div>
-            <div th:replace="~{components/table_format :: table(${formats})}" style="display: none;"></div>
+            <div th:replace="~{components/formats/table/table_format :: table(${formats})}" style="display: none;"></div>
         </div>
     </div>
 </div>
@@ -155,6 +155,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="confirmPublishFormatModal" tabindex="-1" aria-labelledby="confirmActivateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmPublishFormatLabel">Confirmar Activación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Deseas publicar este formato?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a type="button" class="btn btn-danger" id="publishFormat">Confirmar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="confirmDeleteFormatModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -175,11 +193,12 @@
 
 <!-- Bootstrap y JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/components/togglebtn.js}"></script>
-<script th:src="@{/js/components/alert.js}"></script>
-<script th:src="@{/js/components/delete_teacher.js}"></script>
-<script th:src="@{/js/components/delete_format.js}"></script>
-<script th:src="@{/js/components/activate.js}"></script>
+<script th:src="@{/js/components/utils/togglebtn.js}"></script>
+<script th:src="@{/js/components/utils/alert.js}"></script>
+<script th:src="@{/js/components/users/delete_teacher.js}"></script>
+<script th:src="@{/js/components/formats/delete_format.js}"></script>
+<script th:src="@{/js/components/users/activate.js}"></script>
+<script th:src="@{/js/components/formats/activate_format.js}"></script>
 
 </body>
 </html>

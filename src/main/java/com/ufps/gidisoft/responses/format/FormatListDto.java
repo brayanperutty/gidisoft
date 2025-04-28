@@ -1,6 +1,6 @@
 package com.ufps.gidisoft.responses.format;
 
-import com.ufps.gidisoft.entities.formats.Format;
+import com.ufps.gidisoft.entities.formats.general.Format;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +16,7 @@ public class FormatListDto {
     private String director;
     private String period;
     private String status;
+    private Long statusId;
 
     public FormatListDto(Format format) {
         this.id = format.getId();
@@ -24,5 +25,6 @@ public class FormatListDto {
         this.director = format.getDirector().getName();
         this.period = format.getAcademicPeriod().getYear() + " - " + format.getAcademicPeriod().getPeriod();
         this.status = format.getStatus().getName();
+        this.statusId = format.getStatus().getId();
     }
 }
