@@ -45,7 +45,7 @@
                     Agregar Docente
                 </button>
             </div>
-            <div th:replace="~{components/users/table/table_teachers :: table(${teachers})}" style="display: none;"></div>
+            <div th:replace="~{components/users/table_teachers :: table(${teachers})}" style="display: none;"></div>
         </div>
         <div th:if="${formats != null}">
             <div class="container-fluid">

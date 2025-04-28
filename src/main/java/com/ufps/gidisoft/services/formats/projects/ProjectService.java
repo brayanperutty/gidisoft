@@ -3,8 +3,7 @@ package com.ufps.gidisoft.services.formats.projects;
 import com.ufps.gidisoft.entities.formats.projects.Project;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
-import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
-import com.ufps.gidisoft.repositories.formats.ProyectRepository;
+import com.ufps.gidisoft.repositories.formats.ProjectRepository;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.format.ProjectDto;
 import com.ufps.gidisoft.services.formats.general.FormatServiceSec;
@@ -24,60 +23,54 @@ public class ProjectService {
     /*
      * Repositories
      */
-    private final ProyectRepository proyectRepository;
+    private final ProjectRepository projectRepository;
 
     /*
      * Services
      */
     private final FormatServiceSec formatServiceSec;
-    private final ProjectStatusService projectStatusService;
     private final UserService userService;
+    private final ProjectUserService projectUserService;
 
     @Transactional
     public void createProject(ProjectRequest projectRequest, User user) {
-        this.proyectRepository.save(getNewProject(projectRequest, projectRequest.getFormatId(), user.getId()));
+        Project project = this.projectRepository.save(getNewProject(projectRequest, projectRequest.getFormatId(), user.getId()));
+        this.projectUserService.createProjectUser(project, user);
     }
 
     private Project getNewProject(ProjectRequest projectRequest, Long formatId, Long userId) {
         Project project = new Project();
         project.setName(projectRequest.getName());
         project.setActivities(projectRequest.getActivities());
-        project.setStartDate(projectRequest.getStartDate());
-        project.setEndDate(projectRequest.getEndDate());
         project.setCompliancePercentage(projectRequest.getCompliancePercentage());
         project.setFormat(this.formatServiceSec.findByIdToRelations(formatId));
-        project.setStatus(this.projectStatusService.findById(ProjectStatusEnum.DRAFT.getId()));
         project.setCreatedBy(this.userService.getUserById(userId));
-
         return project;
     }
 
-    public List<ProjectDto> findByFormatId(Long formatId, User user) {
-        List<ProjectDto> projectDtos = new ArrayList<>();
-        List<Project> projects = this.proyectRepository.findByFormatIdAndCreatedBy(formatId, user);
-        List<Project> otherProjects = this.proyectRepository.findByFormatId(formatId).stream()
-                .filter(project -> !project.getCreatedBy().equals(user))
-                .filter(project -> project.getStatus().getId().equals(ProjectStatusEnum.PUBLICATED.getId())).toList();
-        projectDtos.addAll(projects.stream().map(ProjectDto::new).toList());
-        projectDtos.addAll(otherProjects.stream().map(ProjectDto::new).toList());
-        projectDtos.sort(Comparator.comparing(ProjectDto::getId));
-        return projectDtos;
-    }
-
-    @Transactional
-    public Project publishProject(Long id){
-        Project project = this.proyectRepository.findById(id).orElseThrow(()
-                -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage()));
-        project.setStatus(this.projectStatusService.findById(ProjectStatusEnum.PUBLICATED.getId()));
-        return this.proyectRepository.save(project);
+    public List<ProjectDto> findByFormatId(Long formatId) {
+        List<ProjectDto> projects = new ArrayList<>();
+        for (Project project : this.projectRepository.findByFormatId(formatId)) {
+            projects.add(new ProjectDto(project, this.projectUserService.findUsersByProject(project.getId())));
+        }
+        projects.sort(Comparator.comparing(ProjectDto::getId));
+        return projects;
     }
 
     @Transactional
     public void deleteById(Long projectId) {
-        this.proyectRepository.deleteById(projectId);
+        this.projectRepository.deleteById(projectId);
     }
 
     public boolean validateProjectWithUser(Long projectId, User user) {
-        return this.proyectRepository.existsProjectByIdAndCreatedBy(projectId, user);
+        return this.projectRepository.existsProjectByIdAndCreatedBy(projectId, user);
+    }
+
+    public void createRelationsWithUsers(List<Long> users, Long projectId) {
+        users.forEach(user -> {
+            Project project = this.projectRepository.findById(projectId).orElseThrow(()
+                    -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage()));
+            this.projectUserService.createProjectUser(project, this.userService.getUserById(user));
+        });
     }
 }

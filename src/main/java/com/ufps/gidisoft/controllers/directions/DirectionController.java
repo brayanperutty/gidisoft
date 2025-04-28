@@ -44,20 +44,4 @@ public class DirectionController {
         }
         return REDIRECT_FORMAT + directionRequest.getFormatId();
     }
-
-    @GetMapping(value = "/{id}/publish")
-    public String publishProject(HttpServletRequest request, @PathVariable Long id,
-                                 RedirectAttributes att, @RequestParam Long formatId){
-        if(request.getSession().getAttribute(USERCODE) == null) {
-            return REDIRECT_LOGIN;
-        } else {
-            try {
-                this.directionService.publishDirection(id);
-                att.addFlashAttribute(MESSAGE, "Participación publicada con éxito.");
-            } catch (Exception e) {
-                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
-            }
-        }
-        return REDIRECT_FORMAT + formatId;
-    }
 }

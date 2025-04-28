@@ -20,7 +20,7 @@ public class FormatDto {
 
     private ManagerUserFormatRequest managerUsers;
 
-    private String group;
+    private Long group;
 
     private String unity;
 
@@ -28,7 +28,7 @@ public class FormatDto {
 
     private String department;
 
-    private String faculty;
+    private Long faculty;
 
     private Long academicPeriod;
 
@@ -39,11 +39,11 @@ public class FormatDto {
         this.date = format.getDate();
         this.managerUsers = new ManagerUserFormatRequest(managerUserFormat.getCreatedBy(),
                 managerUserFormat.getReviewBy(), managerUserFormat.getApproveBy());
-        this.group = format.getGroup();
+        this.group = format.getGroup().getId();
         this.unity = format.getUnity();
         this.directorId = format.getDirector().getId();
         this.department = format.getDepartment();
-        this.faculty = format.getFaculty();
+        this.faculty = format.getFaculty().getId();
         this.academicPeriod = format.getAcademicPeriod().getId();
     }
 

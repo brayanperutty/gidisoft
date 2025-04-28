@@ -4,10 +4,12 @@ import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
+import com.ufps.gidisoft.services.faculties.FacultyService;
 import com.ufps.gidisoft.services.formats.directions.DirectionService;
 import com.ufps.gidisoft.services.formats.general.FormatService;
-import com.ufps.gidisoft.services.formats.general.FormatUserService;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
+import com.ufps.gidisoft.services.formats.projects.ProjectUserService;
+import com.ufps.gidisoft.services.groups.InvestigationGroupService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,10 @@ public class FormatsController {
     private final FormatService formatService;
     private final AcademicPeriodsService academicPeriodsService;
     private final ProjectService projectService;
-    private final FormatUserService formatUserService;
+    private final ProjectUserService projectUserService;
     private final DirectionService directionService;
+    private final FacultyService facultyService;
+    private final InvestigationGroupService investigationGroupService;
 
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
@@ -59,10 +63,16 @@ public class FormatsController {
                         .getAttribute(USERCODE).toString());
                 model.addAttribute(FORMAT_REQUEST, this.formatService.findFormatById(id));
                 model.addAttribute("user", new UsersDto(user));
-                model.addAttribute("projects", this.projectService.findByFormatId(id, user));
+                model.addAttribute("projects", this.projectService.findByFormatId(id));
                 model.addAttribute("directions", this.directionService.findByFormatId(id, user));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
+                model.addAttribute("faculties", this.facultyService.findAllFaculties());
+                model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());
+                model.addAttribute("users", this.userService.findAllUsers(user));
+                List<Long> editableProjectsIds = this.projectUserService.getProjectIdsUserCanEdit(user);
+                model.addAttribute("editableProjectsIds", editableProjectsIds);
                 model.addAttribute(DIRECTOR, this.userService.findAdminUser());
+                System.out.println(model.getAttribute("users"));
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
@@ -79,8 +89,7 @@ public class FormatsController {
                 User user = userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString());
                 model.addAttribute("user", new UsersDto(user));
-                model.addAttribute("users", this.formatUserService.findAllUsersByPermission());
-                model.addAttribute(FORMATS, this.formatService.findAllFormatsByPermission(user));
+                model.addAttribute(FORMATS, this.formatService.findAllFormats());
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
@@ -103,6 +112,8 @@ public class FormatsController {
                             .getAttribute(USERCODE).toString())));
                     model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
                     model.addAttribute(DIRECTOR, this.userService.findAdminUser());
+                    model.addAttribute("faculties", this.facultyService.findAllFaculties());
+                    model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());
                     if (!model.containsAttribute(FORMAT_REQUEST)) {
                         model.addAttribute(FORMAT_REQUEST, new FormatRequest());
                     }
@@ -138,28 +149,6 @@ public class FormatsController {
                 }
             }
         }
-    }
-
-    @PostMapping(value = "/{id}/permissions")
-    public String createRelations(@PathVariable Long id, @RequestParam List<Long> users, RedirectAttributes att,
-                                  HttpServletRequest request) {
-        if(request.getSession().getAttribute(USERCODE) == null) {
-            return REDIRECT_LOGIN;
-        }else {
-            User user = userService.getUserByUsercode(request.getSession()
-                    .getAttribute(USERCODE).toString());
-            if(!user.getRole().getType().equals(ADMIN)){
-                return REDIRECT_ERROR;
-            }else {
-                try {
-                    this.formatService.createRelationsWithUsers(users, id);
-                    att.addFlashAttribute(MESSAGE, "Formato compartido con éxito.");
-                } catch (Exception e) {
-                    att.addFlashAttribute(CREATE_ERROR, e.getMessage());
-                }
-            }
-        }
-        return REDIRECT_FORMAT_LIST;
     }
 
     @GetMapping(value = "/delete/{id}")

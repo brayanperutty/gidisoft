@@ -1,7 +1,9 @@
 package com.ufps.gidisoft.entities.formats.general;
 
 import com.ufps.gidisoft.entities.academic_periods.AcademicPeriods;
+import com.ufps.gidisoft.entities.faculties.Faculty;
 import com.ufps.gidisoft.entities.formats.projects.ProjectStatus;
+import com.ufps.gidisoft.entities.groups.InvestigationGroup;
 import com.ufps.gidisoft.entities.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,8 +35,9 @@ public class Format {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "group_name")
-    private String group;
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private InvestigationGroup group;
 
     @Column(name = "unity")
     private String unity;
@@ -46,8 +49,9 @@ public class Format {
     @Column(name = "department")
     private String department;
 
-    @Column(name = "faculty")
-    private String faculty;
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
+    private Faculty faculty;
 
     @ManyToOne
     @JoinColumn(name = "academic_period_id")

@@ -11,7 +11,8 @@ public class DirectionRequest {
 
     private String name;
     private String projectType;
-    private String director;
+    private Long director;
+    private Long codirector;
     private String academicProgram;
     private Integer compliancePercentage;
     private Long formatId;

@@ -34,12 +34,6 @@
                    th:href="@{/formats/{id}(id=${format.id})}"
                    title="Editar">
                     <i class="fas fa-edit"></i></a>
-                <a class="btn btn-info btn-sm"
-                   th:if="${user.roleType == 'admin'}"
-                   data-bs-toggle="modal"
-                   th:attr="data-bs-target='#permisosModal__' + ${format.id}"
-                   title="Permisos">
-                    <i class="fas fa-user-shield"></i></a>
                 <a class="btn btn-danger btn-sm delete"
                    data-bs-toggle="modal" data-bs-target="#confirmDeleteFormatModal"
                    th:if="${user.roleType == 'admin'}"
@@ -56,38 +50,4 @@
         </tr>
         </tbody>
     </table>
-    <div th:each="format : ${formats}">
-        <div class="modal fade" th:id="'permisosModal__' + ${format.id}" tabindex="-1"
-             aria-labelledby="permisosModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header bg-info text-white">
-                        <h5 class="modal-title">Gestionar Permisos - Formato:
-                            <span th:text="${format.code} + ' - ' + ${format.period}"></span>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <form th:action="@{/formats/{id}/permissions(id=${format.id})}" method="post">
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="usuarios" class="mb-3">Selecciona los usuarios con acceso:</label>
-                                <select id="usuarios" class="form-select mb-3" multiple name="users">
-                                    <option th:each="usuario : ${users}"
-                                            th:value="${usuario.id}"
-                                            th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
-                                    </option>
-                                </select>
-                                <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
-                                    seleccionar múltiples usuarios.</small>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Guardar Permisos</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

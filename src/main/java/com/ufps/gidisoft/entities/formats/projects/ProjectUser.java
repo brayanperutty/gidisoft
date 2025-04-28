@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.entities.formats.general;
+package com.ufps.gidisoft.entities.formats.projects;
 
 import com.ufps.gidisoft.entities.users.User;
 import jakarta.persistence.*;
@@ -7,25 +7,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "format_user")
 @Data
+@Table(name = "project_user")
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormatUser {
+public class ProjectUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
-    @JoinColumn(name = "format_id")
-    private Format format;
+    @JoinColumn(name = "project_id")
+    private Project project;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public FormatUser(Format format, User user) {
-        this.format = format;
+    public ProjectUser(Project project, User user) {
+        this.project = project;
         this.user = user;
     }
 }

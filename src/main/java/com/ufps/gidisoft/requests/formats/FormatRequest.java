@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public class FormatRequest {
 
     private ManagerUserFormatRequest managerUsers;
 
-    private String group;
+    private Long group;
 
     private String unity;
 
@@ -30,7 +29,7 @@ public class FormatRequest {
 
     private String department;
 
-    private String faculty;
+    private Long faculty;
 
     private Long academicPeriod;
 }

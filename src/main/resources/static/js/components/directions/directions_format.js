@@ -1,4 +1,5 @@
 function addDirection() {
+
     const container = document.getElementById('directions-container');
     const idFormat = document.getElementById('id-format');
 
@@ -6,6 +7,18 @@ function addDirection() {
     form.action = '/directions'; // tu ruta
     form.method = 'post';
     form.classList.add('card', 'border', 'border-secondary', 'p-3');
+
+    let optionsDirector = '<option value="" disabled selected hidden>Seleccione al director</option>';
+    window.users.forEach(user => {
+        optionsDirector += `<option value="${user.id}">${user.name}</option>`;
+    });
+
+    // Construir las opciones para el select de codirector
+    let optionsCodirector = '<option value="" disabled selected hidden>Seleccione al codirector</option>';
+    window.users.forEach(user => {
+        optionsCodirector += `<option value="${user.id}">${user.name}</option>`;
+    });
+
     form.innerHTML = `
             
             <input type="hidden" class="form-control" name="formatId" value="${idFormat.value}">
@@ -14,20 +27,18 @@ function addDirection() {
                 <label class="form-label fw-bold">Título del proyecto:</label>
                 <textarea class="form-control" name="name" rows="1"></textarea>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Tipo de proyecto (Trabajo de Grado - Tesis):</label>
-                <textarea class="form-control" name="projectType" rows="1"></textarea>
-            </div>
-
             <div class="row mb-3">
                 <div class="col-md-5">
                     <label class="form-label fw-bold">Director:</label>
-                    <textarea class="form-control" name="director" rows="1"></textarea>
+                    <select class="form-select text-center director-select" id="director" name="director">
+                        ${optionsDirector}
+                    </select>
                 </div>
                 <div class="col-md-5">
-                    <label class="form-label fw-bold">Programa académico:</label>
-                    <textarea class="form-control" name="academicProgram" rows="1"></textarea>
+                    <label class="form-label fw-bold">¿Cuenta con codirector?</label>
+                    <select class="form-select text-center codirector-select" id="codirector" name="codirector">
+                        ${optionsCodirector}
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-bold">% de Cumplimiento:</label>
@@ -41,4 +52,34 @@ function addDirection() {
                 </div>
         `;
     container.appendChild(form);
+
+    const directorSelect = form.querySelector('.director-select');
+    const codirectorSelect = form.querySelector('.codirector-select');
+
+    directorSelect.addEventListener('change', function () {
+        const selectedDirectorId = this.value;
+
+        // Guardar la opción seleccionada actualmente del codirector
+        const selectedCodirectorId = codirectorSelect.value;
+
+        // Limpiar el codirector
+        codirectorSelect.innerHTML = '<option value="" disabled selected hidden>Seleccione al codirector</option>';
+
+        // Recargar opciones del codirector EXCLUYENDO al director seleccionado
+        window.users.forEach(user => {
+            if (user.id !== parseInt(selectedDirectorId)) {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.name;
+                codirectorSelect.appendChild(option);
+            }
+        });
+
+        // Si el codirector seleccionado ya no existe, poner el placeholder
+        if (!Array.from(codirectorSelect.options).some(option => option.value === selectedCodirectorId)) {
+            codirectorSelect.value = "";
+        } else {
+            codirectorSelect.value = selectedCodirectorId;
+        }
+    });
 }

@@ -65,7 +65,7 @@ public class UserController {
                 return "error/403";
             }else{
                 try{
-                    model.addAttribute(TEACHERS, userService.findAllUsers());
+                    model.addAttribute(TEACHERS, this.userService.findAllUsers(user));
                     model.addAttribute("user", new UsersDto(user));
                     model.addAttribute(ROLES, roleService.findAllRoles());
                     return DASHBOARD;

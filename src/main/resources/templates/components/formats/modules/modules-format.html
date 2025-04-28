@@ -1,74 +1,67 @@
 <div th:fragment="modulosExtra(projects)">
 
-    <div class="accordion mb-3" id="accordionExample">
-        <!-- 1. Proyectos de investigación -->
+    <!-- 1. Proyectos de investigación -->
+    <div class="accordion mb-3" id="accordionProjects">
         <div class="accordion-item border border-dark mb-3">
-            <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+            <h2 class="accordion-header" id="headingOneProjects">
+                <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProjects"
+                        aria-expanded="false" aria-controls="collapseOneProjects" style="background-color: #8B0000">
                     1. Proyectos de investigación
                 </button>
             </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
-                 data-bs-parent="#accordionExample">
+            <div id="collapseOneProjects" class="accordion-collapse collapse" aria-labelledby="headingOneProjects"
+                 data-bs-parent="#accordionProjects">
                 <div class="accordion-body">
-                    <!--                    <div class="card border border-dark mb-3">-->
                     <div class="card-body mb-3" id="projects-container">
                         <div class="card mb-3 border border-secondary p-3" th:if="${!projects.isEmpty()}"
                              th:each="project: ${projects}">
-                            <div th:if="${user.id != project.createdBy}">
+                            <div th:if="${user.id != project.createdBy and  !#lists.contains(editableProjectsIds, project.id)}">
                                 <input type="hidden" class="form-control projectId" name="id"
                                        th:value="${project.id}">
                                 <input type="hidden" class="form-control formatId" name="formatId"
                                        th:value="${project.formatId}">
-                                <div th:if="${project.createdByName != null}">
-                                    <label class="form-label fw-bold mb-3">Docente:</label>
-                                    <span name="name"
-                                          th:text="${project.createdByName}"></span>
+                                <div th:if="${project.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="name">
+                                        <span th:each="editor, iterStat : ${project.editorsNames}">
+                                            <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                        </span>
+                                    </span>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Proyecto:</label>
                                     <span name="name"
                                           th:text="${project.name}"></span>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Actividades:</label>
-                                    <span name="activities"
-                                          th:text="${project.activities}"></span>
-                                </div>
                                 <div class="row">
-                                    <div class="col-md-5">
-                                        <label class="form-label fw-bold">Fecha de Inicio:</label>
-                                        <span name="startDate"
-                                              th:text="${project.startDateFormatter != null ? project.startDateFormatter.toString() : ''}">
-                            </span>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="form-label fw-bold">Fecha de Terminación:</label>
-                                        <span th:text="${project.endDateFormatter != null ? project.endDateFormatter.toString() : ''}"
-                                              name="endDate">
-                            </span>
+                                    <div class="col-md-10">
+                                        <label class="form-label fw-bold">Actividades:</label>
+                                        <span name="activities"
+                                              th:text="${project.activities}"></span>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label fw-bold">% de Cumplimiento:</label>
                                         <span th:text="${project.compliancePercentage}"
                                               name="compliancePercentage">
-                            </span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            <div th:if="${user.id == project.createdBy}">
+                            <div th:if="${user.id == project.createdBy or #lists.contains(editableProjectsIds, project.id)}">
                                 <form th:action="@{/projects}"
                                       method="post">
                                     <input type="hidden" class="form-control projectId" name="id"
                                            th:value="${project.id}">
                                     <input type="hidden" class="form-control formatId" name="formatId"
                                            th:value="${project.formatId}">
-
-                                    <div th:if="${project.createdByName != null}">
-                                        <label class="form-label fw-bold mb-3">Docente:</label>
-                                        <span name="name"
-                                              th:text="${project.createdByName}"></span>
+                                    <div th:if="${project.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="name">
+                                        <span th:each="editor, iterStat : ${project.editorsNames}">
+                                            <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                        </span>
+                                    </span>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Proyecto:</label>
@@ -77,24 +70,13 @@
                                                   th:text="${project.name}"
                                                   rows="1"></textarea>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Actividades:</label>
-                                        <textarea class="form-control"
-                                                  name="activities"
-                                                  th:text="${project.activities}"
-                                                  rows="2"></textarea>
-                                    </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-5">
-                                            <label class="form-label fw-bold">Fecha de Inicio:</label>
-                                            <input type="date" class="form-control" name="startDate"
-                                                   th:value="${project.startDateFormatter != null ? project.startDateFormatter.toString() : ''}">
-                                        </div>
-                                        <div class="col-md-5">
-                                            <label class="form-label fw-bold">Fecha de Terminación:</label>
-                                            <input type="date" class="form-control"
-                                                   th:value="${project.endDate != null ? project.endDate.toString() : ''}"
-                                                   name="endDate">
+                                        <div class="col-md-10">
+                                            <label class="form-label fw-bold">Actividades:</label>
+                                            <textarea class="form-control"
+                                                      name="activities"
+                                                      th:text="${project.activities}"
+                                                      rows="1"></textarea>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label fw-bold">% de Cumplimiento:</label>
@@ -104,7 +86,12 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-end align-items-center">
-                                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                                        <a type="button" class="btn btn-info btn-sm"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModal__' + ${project.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
                                         <a type="button" class="btn btn-sm btn-warning ms-2 publish"
                                            data-bs-toggle="modal" data-bs-target="#publicarModal"
                                            th:attr="data-project-id=${project.id}"
@@ -168,155 +155,228 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-
-    <div class="card border border-dark mb-3">
-        <div class="card-header fw-bold">2. Participación en Dirección de Trabajo de Grado y/o Tesis</div>
-        <div class="card-body" id="directions-container">
-            <div class="card mb-3 border border-secondary p-3" th:if="${!directions.isEmpty()}"
-                 th:each="direction: ${directions}">
-                <div th:if="${user.id != direction.createdBy}">
-                    <input type="hidden" class="form-control projectId" name="id" th:value="${direction.id}">
-                    <input type="hidden" class="form-control formatId" name="formatId" th:value="${direction.formatId}">
-                    <div th:if="${direction.createdByName != null}">
-                        <label class="form-label fw-bold mb-3">Docente:</label>
-                        <span name="name"
-                              th:text="${direction.createdByName}"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Proyecto:</label>
-                        <span name="name"
-                              th:text="${direction.name}"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Tipo de proyecto (Trabajo de Grado - Tesis):</label>
-                        <span name="projectType"
-                              th:text="${direction.projectType}"></span>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold">Director:</label>
-                            <span name="projectType"
-                                  th:text="${direction.director}"></span>
-                        </div>
-                        <div class="col-md-5">
-                            <label class="form-label fw-bold">Programa académico:</label>
-                            <span name="projectType"
-                                  th:text="${direction.academicProgram}"></span>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label fw-bold">% de Cumplimiento:</label>
-                            <span th:text="${direction.compliancePercentage}"
-                                  name="compliancePercentage">
-                                </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div th:if="${user.id == direction.createdBy}">
-                    <form th:action="@{/directions}"
-                          method="post">
-                        <input type="hidden" class="form-control directionId" name="id" th:value="${direction.id}">
-                        <input type="hidden" class="form-control formatId" name="formatId"
-                               th:value="${direction.formatId}">
-
-                        <div th:if="${direction.createdByName != null}">
-                            <label class="form-label fw-bold mb-3">Docente:</label>
-                            <span name="name"
-                                  th:text="${direction.createdByName}"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Título del proyecto:</label>
-                            <textarea class="form-control"
-                                      name="name"
-                                      th:text="${direction.name}"
-                                      rows="1"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tipo de proyecto (Trabajo de Grado - Tesis):</label>
-                            <textarea class="form-control"
-                                      name="projectType"
-                                      th:text="${direction.projectType}"
-                                      rows="1"></textarea>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">Director:</label>
-                                <textarea class="form-control" name="director" rows="1"
-                                          th:text="${direction.director}"></textarea>
+            <div th:each="project : ${projects}">
+                <div class="modal fade" th:id="'permisosModal__' + ${project.id}" tabindex="-1"
+                     aria-labelledby="permisosModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title">Gestionar Permisos - Proyecto:
+                                    <span th:text="${project.name}"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
                             </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-bold">Programa académico:</label>
-                                <textarea class="form-control" name="academicProgram" rows="1"
-                                          th:text="${direction.academicProgram}"></textarea>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">% de Cumplimiento:</label>
-                                <input type="number" class="form-control" th:value="${direction.compliancePercentage}"
-                                       name="compliancePercentage" min="0" max="100" step="1">
-                            </div>
+                            <form th:action="@{/projects/{id}/permissions(id=${project.id})}" method="post">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control formatId" name="formatId"
+                                               th:value="${project.formatId}">
+                                        <label for="usuarios" class="mb-3">Selecciona los usuarios con acceso:</label>
+                                        <select id="usuarios" class="form-select mb-3" multiple name="users">
+                                            <option th:each="usuario : ${users}"
+                                                    th:value="${usuario.id}"
+                                                    th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                            </option>
+                                        </select>
+                                        <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                            seleccionar múltiples usuarios.</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="d-flex justify-content-end align-items-center">
-                            <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
-                            <a type="button" class="btn btn-sm btn-warning ms-2 publishDirection"
-                               data-bs-toggle="modal" data-bs-target="#publishDirectionModal"
-                               th:attr="data-project-id=${direction.id}"
-                               th:if="${direction.statusId != 2}">
-                                Publicar
-                            </a>
-                            <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProject"
-                               data-bs-toggle="modal" data-bs-target="#deleteProjectModal">Eliminar
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer text-end">
-            <button type="button" class="btn btn-success" onclick="addDirection()">+ Agregar Participación
-            </button>
-        </div>
-        <div class="modal fade" id="publishDirectionModal" tabindex="-1" aria-labelledby="publicarModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="publicDirectionLabel">Confirmar Publicación</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        ¿Estás seguro que deseas publicar esta participación?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <a type="button" class="btn btn-primary" id="publishDirectionConfirm">Confirmar</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card border border-dark mb-3">
-        <div class="card-header fw-bold">3. Organización de Eventos de Investigación / Científicos</div>
-        <div class="card-body" id="events-container">
-            <!-- Las secciones de proyecto se insertan aquí -->
-        </div>
-        <div class="card-footer text-end">
-            <button type="button" class="btn btn-success" onclick="addEvent()">+ Agregar Evento
-            </button>
+
+    <!-- 2. Participación en Dirección de Trabajo de Grado y/o Tesis -->
+    <div class="accordion mb-3" id="accordionDirections">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneDirections">
+                <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneDirections"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    2. Participación en Dirección de Trabajo de Grado y/o Tesis
+                </button>
+            </h2>
+
+            <div id="collapseOneDirections" class="accordion-collapse collapse" aria-labelledby="headingOneDirections"
+                 data-bs-parent="#accordionDirections">
+                <div class="accordion-body">
+                    <div class="card-body mb-3" id="directions-container">
+                        <script th:inline="javascript">
+                            window.users = /*[[${users}]]*/ [];
+                        </script>
+                        <div class="card mb-3 border border-secondary p-3" th:if="${!directions.isEmpty()}"
+                             th:each="direction: ${directions}">
+                            <div th:if="${user.id != direction.createdBy}">
+                                <input type="hidden" class="form-control projectId" name="id"
+                                       th:value="${direction.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${direction.formatId}">
+                                <div th:if="${direction.createdByName != null}">
+                                    <label class="form-label fw-bold mb-3">Docente:</label>
+                                    <span name="name"
+                                          th:text="${direction.createdByName}"></span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Proyecto:</label>
+                                        <span name="name"
+                                              th:text="${direction.name}"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Director:</label>
+                                        <span name="projectType"
+                                              th:text="${direction.director}"></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">% de Cumplimiento:</label>
+                                        <span th:text="${direction.compliancePercentage}"
+                                              name="compliancePercentage">
+                                            </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:if="${user.id == direction.createdBy}">
+                                <form th:action="@{/directions}"
+                                      method="post">
+                                    <input type="hidden" class="form-control directionId" name="id"
+                                           th:value="${direction.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${direction.formatId}">
+
+                                    <div th:if="${direction.createdByName != null}">
+                                        <label class="form-label fw-bold mb-3">Docente:</label>
+                                        <span name="name"
+                                              th:text="${direction.createdByName}"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Título del proyecto:</label>
+                                        <textarea class="form-control"
+                                                  name="name"
+                                                  th:text="${direction.name}"
+                                                  rows="1"></textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-bold">Director:</label>
+                                            <textarea class="form-control" name="director" rows="1"
+                                                      th:text="${direction.director}"></textarea>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-bold">Codirector:</label>
+                                            <textarea class="form-control" name="codirector" rows="1"
+                                                      th:text="${direction.codirector}"></textarea>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label fw-bold">% de Cumplimiento:</label>
+                                            <input type="number" class="form-control"
+                                                   th:value="${direction.compliancePercentage}"
+                                                   name="compliancePercentage" min="0" max="100" step="1">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProject"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProjectModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addDirection()">+ Agregar
+                            Participación
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="publishDirectionModal" tabindex="-1" aria-labelledby="publicarModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="publicDirectionLabel">Confirmar Publicación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Estás seguro que deseas publicar esta participación?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                            </button>
+                            <a type="button" class="btn btn-primary" id="publishDirectionConfirm">Confirmar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="card border border-dark mb-3">
-        <div class="card-header fw-bold">4. Otras actividades de Investigación</div>
-        <div class="card-body" id="others-activities-container">
-            <!-- Las secciones de proyecto se insertan aquí -->
+
+    <!-- 3. Organización de Eventos de Investigación / Científicos -->
+    <div class="accordion mb-3" id="accordionEvents">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneEvents">
+                <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneEvents"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    3. Organización de Eventos de Investigación / Científicos
+                </button>
+            </h2>
+
+            <div id="collapseOneEvents" class="accordion-collapse collapse" aria-labelledby="headingOneEvents"
+                 data-bs-parent="#accordionEvents">
+                <div class="accordion-body">
+                    <div class="card-body" id="events-container">
+                        <!-- Las secciones de proyecto se insertan aquí -->
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addEvent()">+ Agregar Evento
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-footer text-end">
-            <button type="button" class="btn btn-success" onclick="addOtherActivities()">+ Agregar Actividad
-            </button>
+    </div>
+
+
+    <!-- 4. Otras actividades de Investigación -->
+    <div class="accordion mb-3" id="accordionOtherActivities">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneOtherActivities">
+                <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneOtherActivities"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    4. Otras actividades de Investigacións
+                </button>
+            </h2>
+
+            <div id="collapseOneOtherActivities" class="accordion-collapse collapse" aria-labelledby="headingOneOtherActivities"
+                 data-bs-parent="#accordionOtherActivities">
+                <div class="accordion-body">
+                    <div class="card-body" id="others-activities-container">
+                        <!-- Las secciones de proyecto se insertan aquí -->
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addOtherActivities()">+ Agregar Actividad
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

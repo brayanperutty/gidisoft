@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProyectStatusRepository extends JpaRepository<ProjectStatus, Long> {
+public interface ProjectStatusRepository extends JpaRepository<ProjectStatus, Long> {
 
     boolean existsByName(String name);
 }

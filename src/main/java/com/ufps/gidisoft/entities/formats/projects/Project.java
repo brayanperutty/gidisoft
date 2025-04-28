@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Entity
 @Data
 @Table(name = "projects")
@@ -26,22 +24,12 @@ public class Project {
     @Column(name = "activities")
     private String activities;
 
-    @Column(name = "start_date")
-    private LocalDate startDate;
-
-    @Column(name = "end_date")
-    private LocalDate endDate;
-
     @Column(name = "compliance_percentage")
     private Integer compliancePercentage;
 
     @ManyToOne
     @JoinColumn(name = "format_id")
     private Format format;
-
-    @ManyToOne
-    @JoinColumn(name = "proyect_status_id")
-    private ProjectStatus status;
 
     @ManyToOne
     @JoinColumn(name = "created_by")

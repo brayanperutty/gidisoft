@@ -22,14 +22,13 @@ public class Direction {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "director")
-    private String director;
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    private User director;
 
-    @Column(name = "project_type")
-    private String projectType;
-
-    @Column(name = "academic_program")
-    private String academicProgram;
+    @ManyToOne
+    @JoinColumn(name = "codirector_id")
+    private User codirector;
 
     @Column(name = "compliance_percentage")
     private Integer compliancePercentage;
@@ -37,10 +36,6 @@ public class Direction {
     @ManyToOne
     @JoinColumn(name = "format_id")
     private Format format;
-
-    @ManyToOne
-    @JoinColumn(name = "proyect_status_id")
-    private ProjectStatus status;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
