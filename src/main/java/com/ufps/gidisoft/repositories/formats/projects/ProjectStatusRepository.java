@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.repositories.formats;
+package com.ufps.gidisoft.repositories.formats.projects;
 
 import com.ufps.gidisoft.entities.formats.projects.ProjectStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

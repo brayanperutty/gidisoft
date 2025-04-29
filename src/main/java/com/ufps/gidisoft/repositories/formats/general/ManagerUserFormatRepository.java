@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.repositories.formats;
+package com.ufps.gidisoft.repositories.formats.general;
 
 import com.ufps.gidisoft.entities.formats.general.ManagerUserFormat;
 import org.springframework.data.jpa.repository.JpaRepository;

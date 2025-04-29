@@ -1,4 +1,4 @@
-package com.ufps.gidisoft.repositories.formats;
+package com.ufps.gidisoft.repositories.formats.directions;
 
 import com.ufps.gidisoft.entities.formats.directions.Direction;
 import com.ufps.gidisoft.entities.users.User;

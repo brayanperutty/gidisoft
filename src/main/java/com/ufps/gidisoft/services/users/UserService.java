@@ -92,11 +92,8 @@ public class UserService {
         userRepository.deleteUserByUsercode(usercode);
     }
 
-    public List<UsersDto> findAllUsers(User user) {
-        return userRepository.findAll().stream().filter(
-                u -> !u.getId().equals(user.getId())).map(UsersDto::new)
-                .sorted(Comparator.comparing(UsersDto::getUsercode))
-                .toList();
+    public List<UsersDto> findAllUsers() {
+        return this.userRepository.findAll().stream().map(UsersDto::new).toList();
     }
 
     public UsersDto findAdminUser() {

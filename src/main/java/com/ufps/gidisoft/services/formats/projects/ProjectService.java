@@ -3,7 +3,7 @@ package com.ufps.gidisoft.services.formats.projects;
 import com.ufps.gidisoft.entities.formats.projects.Project;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
-import com.ufps.gidisoft.repositories.formats.ProjectRepository;
+import com.ufps.gidisoft.repositories.formats.projects.ProjectRepository;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.format.ProjectDto;
 import com.ufps.gidisoft.services.formats.general.FormatServiceSec;
@@ -59,11 +59,13 @@ public class ProjectService {
 
     @Transactional
     public void deleteById(Long projectId) {
+        this.projectUserService.deleteByProjectId(projectId);
         this.projectRepository.deleteById(projectId);
     }
 
     public boolean validateProjectWithUser(Long projectId, User user) {
-        return this.projectRepository.existsProjectByIdAndCreatedBy(projectId, user);
+        return this.projectUserService.validateExistProjecAndUser(this.projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage())), user);
     }
 
     public void createRelationsWithUsers(List<Long> users, Long projectId) {

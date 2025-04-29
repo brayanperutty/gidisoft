@@ -68,11 +68,10 @@ public class FormatsController {
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
                 model.addAttribute("faculties", this.facultyService.findAllFaculties());
                 model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());
-                model.addAttribute("users", this.userService.findAllUsers(user));
+                model.addAttribute("users", this.userService.findAllUsers());
                 List<Long> editableProjectsIds = this.projectUserService.getProjectIdsUserCanEdit(user);
                 model.addAttribute("editableProjectsIds", editableProjectsIds);
                 model.addAttribute(DIRECTOR, this.userService.findAdminUser());
-                System.out.println(model.getAttribute("users"));
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }

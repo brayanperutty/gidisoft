@@ -3,9 +3,8 @@ package com.ufps.gidisoft.services.formats.projects;
 import com.ufps.gidisoft.entities.formats.projects.Project;
 import com.ufps.gidisoft.entities.formats.projects.ProjectUser;
 import com.ufps.gidisoft.entities.users.User;
-import com.ufps.gidisoft.repositories.formats.ProjectUserRepository;
+import com.ufps.gidisoft.repositories.formats.projects.ProjectUserRepository;
 import com.ufps.gidisoft.responses.format.ProjectDto;
-import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +48,7 @@ public class ProjectUserService {
         return users;
     }
 
+    @Transactional
     public void deleteByProjectId(Long projectId){
         this.projectUserRepository.deleteAllByProjectId(projectId);
     }
@@ -59,6 +59,10 @@ public class ProjectUserService {
                 projectIds.add(projectUser.getProject().getId())
         );
         return projectIds;
+    }
+
+    public boolean validateExistProjecAndUser(Project project, User user){
+        return this.projectUserRepository.existsByProjectAndUser(project, user);
     }
 
 }

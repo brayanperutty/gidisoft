@@ -271,13 +271,25 @@
                                     <div class="row mb-3">
                                         <div class="col-md-5">
                                             <label class="form-label fw-bold">Director:</label>
-                                            <textarea class="form-control" name="director" rows="1"
-                                                      th:text="${direction.director}"></textarea>
+                                            <select class="form-select text-center" id="director" name="director">
+                                                <option value="" disabled selected hidden>Seleccione el director</option>
+                                                <option th:each="user: ${users}"
+                                                        th:value="${user.id}"
+                                                        th:text="${user.name}"
+                                                        th:selected="${direction.director} == ${user.id}">
+                                                </option>
+                                            </select>
                                         </div>
                                         <div class="col-md-5">
                                             <label class="form-label fw-bold">Codirector:</label>
-                                            <textarea class="form-control" name="codirector" rows="1"
-                                                      th:text="${direction.codirector}"></textarea>
+                                            <select class="form-select text-center" id="codirector" name="codirector">
+                                                <option value="" disabled selected hidden>¿Cuenta con codirector?</option>
+                                                <option th:each="user: ${users}"
+                                                        th:value="${user.id}"
+                                                        th:text="${user.name}"
+                                                        th:selected="${direction.codirector} == ${user.id}">
+                                                </option>
+                                            </select>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label fw-bold">% de Cumplimiento:</label>
@@ -288,8 +300,8 @@
                                     </div>
                                     <div class="d-flex justify-content-end align-items-center">
                                         <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
-                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProject"
-                                           data-bs-toggle="modal" data-bs-target="#deleteProjectModal">Eliminar
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteDirection"
+                                           data-bs-toggle="modal" data-bs-target="#deleteDirectionModal">Eliminar
                                         </a>
                                     </div>
                                 </form>
@@ -303,22 +315,22 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="publishDirectionModal" tabindex="-1" aria-labelledby="publicarModalLabel"
+            <!--        eliminar proyecto          -->
+            <div class="modal fade" id="deleteDirectionModal" tabindex="-1" aria-labelledby="deleteDirectionModal"
                  aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="publicDirectionLabel">Confirmar Publicación</h5>
+                            <h5 class="modal-title" id="deleteDirectionLabel">Confirmar eliminación</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
-                            ¿Estás seguro que deseas publicar esta participación?
+                            ¿Estás seguro que deseas eliminar este proyecto?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
-                            </button>
-                            <a type="button" class="btn btn-primary" id="publishDirectionConfirm">Confirmar</a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <a type="button" class="btn btn-danger" id="deleteDirectionConfirm">Confirmar</a>
                         </div>
                     </div>
                 </div>

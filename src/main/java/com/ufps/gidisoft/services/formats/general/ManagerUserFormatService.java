@@ -2,7 +2,7 @@ package com.ufps.gidisoft.services.formats.general;
 
 import com.ufps.gidisoft.entities.formats.general.Format;
 import com.ufps.gidisoft.entities.formats.general.ManagerUserFormat;
-import com.ufps.gidisoft.repositories.formats.ManagerUserFormatRepository;
+import com.ufps.gidisoft.repositories.formats.general.ManagerUserFormatRepository;
 import com.ufps.gidisoft.requests.formats.ManagerUserFormatRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

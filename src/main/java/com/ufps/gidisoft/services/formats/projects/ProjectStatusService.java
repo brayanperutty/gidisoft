@@ -3,7 +3,7 @@ package com.ufps.gidisoft.services.formats.projects;
 import com.ufps.gidisoft.entities.formats.projects.ProjectStatus;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
-import com.ufps.gidisoft.repositories.formats.ProjectStatusRepository;
+import com.ufps.gidisoft.repositories.formats.projects.ProjectStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

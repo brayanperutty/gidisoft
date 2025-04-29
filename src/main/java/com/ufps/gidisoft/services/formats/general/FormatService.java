@@ -4,7 +4,7 @@ import com.ufps.gidisoft.entities.formats.general.Format;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
-import com.ufps.gidisoft.repositories.formats.FormatRepository;
+import com.ufps.gidisoft.repositories.formats.general.FormatRepository;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
 import com.ufps.gidisoft.responses.format.FormatDto;
 import com.ufps.gidisoft.responses.format.FormatListDto;
