@@ -7,7 +7,7 @@
                 <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOneProjects"
                         aria-expanded="false" aria-controls="collapseOneProjects" style="background-color: #8B0000">
-                    1. Proyectos de investigación
+                    Proyectos de investigación
                 </button>
             </h2>
             <div id="collapseOneProjects" class="accordion-collapse collapse" aria-labelledby="headingOneProjects"
@@ -205,7 +205,7 @@
                 <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOneDirections"
                         aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
-                    2. Participación en Dirección de Trabajo de Grado y/o Tesis
+                    Participación en Dirección de Trabajo de Grado y/o Tesis
                 </button>
             </h2>
 
@@ -272,7 +272,8 @@
                                         <div class="col-md-5">
                                             <label class="form-label fw-bold">Director:</label>
                                             <select class="form-select text-center" id="director" name="director">
-                                                <option value="" disabled selected hidden>Seleccione el director</option>
+                                                <option value="" disabled selected hidden>Seleccione el director
+                                                </option>
                                                 <option th:each="user: ${users}"
                                                         th:value="${user.id}"
                                                         th:text="${user.name}"
@@ -283,7 +284,8 @@
                                         <div class="col-md-5">
                                             <label class="form-label fw-bold">Codirector:</label>
                                             <select class="form-select text-center" id="codirector" name="codirector">
-                                                <option value="" disabled selected hidden>¿Cuenta con codirector?</option>
+                                                <option value="" disabled selected hidden>¿Cuenta con codirector?
+                                                </option>
                                                 <option th:each="user: ${users}"
                                                         th:value="${user.id}"
                                                         th:text="${user.name}"
@@ -346,7 +348,7 @@
                 <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOneEvents"
                         aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
-                    3. Organización de Eventos de Investigación / Científicos
+                    Organización de Eventos de Investigación / Científicos
                 </button>
             </h2>
 
@@ -373,11 +375,12 @@
                 <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOneOtherActivities"
                         aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
-                    4. Otras actividades de Investigacións
+                    Otras actividades de Investigacións
                 </button>
             </h2>
 
-            <div id="collapseOneOtherActivities" class="accordion-collapse collapse" aria-labelledby="headingOneOtherActivities"
+            <div id="collapseOneOtherActivities" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneOtherActivities"
                  data-bs-parent="#accordionOtherActivities">
                 <div class="accordion-body">
                     <div class="card-body" id="others-activities-container">
@@ -392,14 +395,60 @@
         </div>
     </div>
 
-    <div class="card border border-dark mb-3">
-        <div class="card-header fw-bold">5. Productos</div>
-        <div class="card-body" id="products-container">
-            <!-- Las secciones de proyecto se insertan aquí -->
+    <h5 class="mt-2 mb-3 fw-bold">Productos</h5>
+    <section></section>
+        <!-- Producto uno -->
+        <div class="accordion mb-3" id="accordionProductGruplac">
+            <div class="accordion-item border border-dark">
+                <h2 class="accordion-header" id="headingOneProductGruplac">
+                    <button class="accordion-button collapsed text-white fw-bold" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseOneProductGruplac"
+                            aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                        Actualización GrupLAC / CGIS
+                    </button>
+                </h2>
+
+                <div id="collapseOneProductGruplac" class="accordion-collapse collapse"
+                     aria-labelledby="headingOneProductGruplac"
+                     data-bs-parent="#accordionProductGruplac">
+                    <div class="accordion-body">
+                        <div class="card-body" id="productGruplac">
+                        </div>
+                        <div class="card-footer text-end">
+                            <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-footer text-end">
-            <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
-            </button>
+
+        <!-- Producto dos -->
+        <div class="accordion mb-3" id="accordionOtherProducts">
+            <div class="accordion-item border border-dark mb-3">
+                <h2 class="accordion-header" id="headingOneOtherProducts">
+                    <button class="accordion-button collapsed text-white fw-bold" type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseOneOtherProducts"
+                            aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                        Participación convocatoria de reconocimiento MinCiencias
+                    </button>
+                </h2>
+
+                <div id="collapseOneOtherProducts" class="accordion-collapse collapse"
+                     aria-labelledby="headingOneOtherProducts"
+                     data-bs-parent="#accordionOtherProducts">
+                    <div class="accordion-body">
+                        <div class="card-body" id="products-container">
+                        </div>
+                        <div class="card-footer text-end">
+                            <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
 </div>

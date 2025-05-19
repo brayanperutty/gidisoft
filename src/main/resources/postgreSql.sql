@@ -55,162 +55,162 @@ ALTER SEQUENCE public.roles_id_seq RESTART 11;
 
 -- Faculties
 INSERT INTO public.faculties(id, "name")
-VALUES (1, 'CIENCIAS AGRARIAS Y DEL AMBIENTE');
+VALUES (1, 'Ciencias Agrarias Y Del Ambiente');
 INSERT INTO public.faculties(id, "name")
-VALUES (2, 'INGENIERÍA');
+VALUES (2, 'Ingeniería');
 INSERT INTO public.faculties(id, "name")
-VALUES (3, 'CIENCIAS BÁSICAS');
+VALUES (3, 'Ciencias Básicas');
 INSERT INTO public.faculties(id, "name")
-VALUES (4, 'CIENCIAS EMPRESARIALES');
+VALUES (4, 'Ciencias Empresariales');
 INSERT INTO public.faculties(id, "name")
-VALUES (5, 'EDUCACIÓN, ARTES Y HUMANIDADES');
+VALUES (5, 'Educación, Artes Y Humanidades');
 INSERT INTO public.faculties(id, "name")
-VALUES (6, 'CIENCIAS DE LA SALUD');
+VALUES (6, 'Ciencias De La Salud');
 ALTER SEQUENCE public.faculties_id_seq RESTART 7;
 
 -- Investigation Groups
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (1, 'GRUPO DE INVESTIGACIÓN AMBIENTE Y VIDA - GIAV', 1);
+VALUES (1, 'Grupo de Investigación Ambiente y Vida - GIAV', 1);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (2, 'GRUPO DE INVESTIGACIÓN EN CIENCIAS AGRONÓMICAS Y PECUARIAS - GICAP', 1);
+VALUES (2, 'Grupo De Investigación En Ciencias Agronómicas Y Pecuarias - GICAP', 1);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (3, 'GRUPO DE INVESTIGACIÓN EN CIENCIA Y TECNOLOGÍA AGROINDUSTRIAL - GICITECA', 1);
+VALUES (3, 'Grupo De Investigación En Ciencia Y Tecnología Agroindustrial - GICITECA', 1);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (4, 'GRUPO DE INVESTIGACIÓN EN REPRODUCCIÓN ANIMAL TROPICAL - TROPSYNC', 1);
+VALUES (4, 'Grupo De Investigación En Reproducción Animal Tropical - TROPSYNC', 1);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (5, 'GRUPO DE INVESTIGACIÓN EN PROCESOS AMBIENTALES - GIPROAM UFPS', 1);
+VALUES (5, 'Grupo De Investigación En Procesos Ambientales - GIPROAM UFPS', 1);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (6, 'GRUPO DE INVESTIGACIÓN EN DIAGNÓTICO Y MANEJO DE ENFERMEDADES EN PLANTAS - GIDMEP', 1);
+VALUES (6, 'Grupo De Investigación En Diagnóstico Y Manejo De Enfermedades En Plantas - GIDMEP', 1);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (7, 'GRUPO DE INVESTIGACIÓN EN FLUIDOS Y TÉRMICAS - FLUTER', 2);
+VALUES (7, 'Grupo De Investigación En Fluidos Y Térmicas - FLUTER', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (8, 'GRUPO DE INVESTIGACIÓN Y DESARROLLO DE INGENIERÍA DEL SOFTWARE - GIDISOFT', 2);
+VALUES (8, 'Grupo De Investigación Y Desarrollo De Ingeniería Del Software - GIDISOFT', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (9, 'GRUPO DE INVESTIGACIÓN EN DISEÑO MECÁNICO, MATERIALES Y PROCESOS - GIDIMA', 2);
+VALUES (9, 'Grupo De Investigación En Diseño Mecánico, Materiales Y Procesos - GIDIMA', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (10, 'GRUPO DE INVESTIGACIÓN EN GEOTECNIA AMBIENTAL - GIGA', 2);
+VALUES (10, 'Grupo De Investigación En Geotecnia Ambiental - GIGA', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (11, 'GRUPO DE INVESTIGACIÓN EN PRODUCTIVIDAD Y COMPETITIVIDAD - GIPYC', 2);
+VALUES (11, 'Grupo De Investigación En Productividad Y Competitividad - GIPYC', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (12, 'GRUPO DE INVESTIGACIÓN Y DESARROLLO EN ELECTRÓNICA Y TELECOMUNICACIONES - GT GIDET', 2);
+VALUES (12, 'Grupo De Investigación Y Desarrollo En Electrónica Y Telecomunicaciones - GT GIDET', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (13, 'GRUPO DE INVESTIGACIÓN Y DESARROLLO EN MICROELECTRÓNICA APLICADA Y CONTROL UFPS - GIDMAC', 2);
+VALUES (13, 'Grupo De Investigación Y Desarrollo En Microelectrónica Aplicada Y Control UFPS - GIDMAC', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (14, 'GRUPO DE INVESTIGACIÓN EN INNOVACIÓN Y GESTIÓN PRODUCTIVA - GIINGPRO', 2);
+VALUES (14, 'Grupo De Investigación En Innovación Y Gestión Productiva - GIINGPRO', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (15, 'GRUPO DE INVESTIGACIÓN EN AUTOMATIZACIÓN Y CONTROL - GIAC', 2);
+VALUES (15, 'Grupo De Investigación En Automatización Y Control - GIAC', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (16, 'GRUPO DE INVESTIGACIÓN EN GEOLOGÍA, GEOTECNIA Y MINERÍA - GI.GEOENERGIA', 2);
+VALUES (16, 'Grupo De Investigación En Geología, Geotecnia Y Minería - GI.GEOENERGIA', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (17, 'GRUPO DE INVESTIGACIÓN POLIMATAS', 2);
+VALUES (17, 'Grupo De Investigación Polimatas', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (18, 'GRUPO DE INVESTIGACIÓN EN HIDROLOGÍA Y RECURSOS HÍDRICOS - HYDROS', 2);
+VALUES (18, 'Grupo De Investigación En Hidrología Y Recursos Hídricos - HYDROS', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (19, 'GRUPO DE INVESTIGACIÓN EN TRANSPORTE Y OBRAS CIVILES - GITOC', 2);
+VALUES (19, 'Grupo De Investigación En Transporte Y Obras Civiles - GITOC', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (20, 'GRUPO DE INVESTIGACIÓN EN DESARROLLO DE PROCESOS INDUSTRIALES - GIDPI', 2);
+VALUES (20, 'Grupo De Investigación En Desarrollo De Procesos Industriales - GIDPI', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (21, 'GRUPO DE INVESTIGACIÓN INGENIERÍA Y DESARROLLO SOCIAL UFPS - INDES', 2);
+VALUES (21, 'Grupo De Investigación Ingeniería Y Desarrollo Social UFPS - INDES', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (22, 'GRUPO DE INVESTIGACIÓN Y DESARROLLO EN ENERGÍA - GRIDEN', 2);
+VALUES (22, 'Grupo De Investigación Y Desarrollo En Energía - GRIDEN', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (23, 'GRUPO DE INVESTIGACIÓN EN INTELIGENCIA ARTIFICIAL UPFS - GIA', 2);
+VALUES (23, 'Grupo De Investigación En Inteligencia Artificial UPFS - GIA', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (24, 'GRUPO DE INVESTIGACIÓN EN INFRAESTRUCTURA VIAL UFPS - GINFRAVIAL', 2);
+VALUES (24, 'Grupo De Investigación En Infraestructura Vial UFPS - GINFRAVIAL', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (25, 'GRUPO DE INVESTIGACIÓN EN TECNOLOGÍA, INNOVACIÓN Y SOCIEDAD UFPS - GITecInso', 2);
+VALUES (25, 'Grupo De Investigación En Tecnología, Innovación Y Sociedad UFPS - GITecInso', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (26, 'GRUPO DE INVESTIGACIÓN DE NUEVOS BIOMATERIALES - GINBIOMA', 2);
+VALUES (26, 'Grupo De Investigación De Nuevos Biomateriales - GINBIOMA', 2);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (27, 'GRUPO DE INVESTIGACIÓN EN TECNOLOGÍA CERÁMICA - GITEC', 3);
+VALUES (27, 'Grupo De Investigación En Tecnología Cerámica - GITEC', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (28, 'GRUPO DE INVESTIGACIÓN ENSEÑANZA DE LAS CIENCIAS - ARQUIMEDES', 3);
+VALUES (28, 'Grupo De Investigación Enseñanza De Las Ciencias - ARQUIMEDES', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (29, 'GRUPO DE INVESTIGACIÓN EN CIENCIAS BIOLÓGICAS - MAJUMBA', 3);
+VALUES (29, 'Grupo De Investigación En Ciencias Biológicas - MAJUMBA', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (30, 'GRUPO DE INVESTIGACIÓN EN QUÍMICA BÁSICA APLICADA - GIQUIBA', 3);
+VALUES (30, 'Grupo De Investigación En Química Básica Aplicada - GIQUIBA', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (31, 'GRUPO DE INVESTIGACIÓN EN FITOBIOQUÍMICA Y BIOLOGÍA MOLECULAR - FITOBIOMOL', 3);
+VALUES (31, 'Grupo De Investigación En Fitobioquímica Y Biología Molecular - FITOBIOMOL', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (32, 'GRUPO DE INVESTIGACIÓN EN MATERIALES POLIMÉRICOS - GIMAPOL', 3);
+VALUES (32, 'Grupo De Investigación En Materiales Poliméricos - GIMAPOL', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (33, 'GRUPO DE INVESTIGACIÓN EULER', 3);
+VALUES (33, 'Grupo De Investigación Euler', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (34, 'GRUPO DE INVESTIGACIÓN EN INSTRUMENTACIÓN Y FÍSICA DE LA MATERIA CONDENSADA - GIFIMAC', 3);
+VALUES (34, 'Grupo De Investigación En Instrumentación Y Física De La Materia Condensada - GIFIMAC', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (35, 'GRUPO DE INVESTIGACIÓN EN ESTADÍSTICA APLICADA - GRAUNT', 3);
+VALUES (35, 'Grupo De Investigación En Estadística Aplicada - GRAUNT', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (36, 'GRUPO DE INVESTIGACIÓN EN RECURSOS ENERGÉTICOS Y MATERIALES - GIREM', 3);
+VALUES (36, 'Grupo De Investigación En Recursos Energéticos Y Materiales - GIREM', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (37, 'GRUPO DE INVESTIGACIÓN EN FÍSICA DE MATERIALES NANOESTRUCTURADOS - GFMN', 3);
+VALUES (37, 'Grupo De Investigación En Física De Materiales Nanoestructurados - GFMN', 3);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (38, 'GRUPO DE INVESTIGACIÓN & DESARROLLO REGIONAL UFPS - IDR', 4);
+VALUES (38, 'Grupo De Investigación & Desarrollo Regional UFPS - IDR', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (39, 'CONTABLE CINERA - GICC', 4);
+VALUES (39, 'Grupo de Investigación Contable Cinera - GICC', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (40, 'GRUPO DE INVESTIGACIÓN PARA EL DESARROLLO SOCIOECONÓMICO - GIDSE', 4);
+VALUES (40, 'Grupo De Investigación Para El Desarrollo Socioeconómico - GIDSE', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (41, 'GRUPO DE INVESTIGACIÓN ZULIMA SCIENCE UFPS', 4);
+VALUES (41, 'Grupo De Investigación Zulima Science UFPS', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (42, 'GRUPO DE INVESTIGACIÓN CIENCIAS SOCIALES Y HUMANAS - GICSH', 4);
+VALUES (42, 'Grupo De Investigación Ciencias Sociales Y Humanas - GICSH', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (43, 'GRUPO DE INVESTIGACIÓN GERENCIA Y ESCENARIOS PARA EL DESARROLLO - GEDES', 4);
+VALUES (43, 'Grupo De Investigación Gerencia Y Escenarios Para El Desarrollo - GEDES', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (44, 'GRUPO DE INVESTIGACIÓN EN LOGÍSTICA, COMPETITIVIDAD Y NEGOCIOS INTERNACIONALES - GILOCNI', 4);
+VALUES (44, 'Grupo De Investigación En Logística, Competitividad Y Negocios Internacionales - GILOCNI', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (45, 'GRUPO DE INVESTIGACIÓN EN GESTIÓN Y ORGANIZACIONES - GYO', 4);
+VALUES (45, 'Grupo De Investigación En Gestión Y Organizaciones - GYO', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (46, 'GRUPO DE INVESTIGACIÓN CONTABLE, FINANCIERO Y FISCAL - GICOFF', 4);
+VALUES (46, 'Grupo De Investigación Contable, Financiero Y Fiscal - GICOFF', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (47, 'GRUPO DE INVESTIGACIÓN PROYECCIÓN EMPRESARIAL - GIPE', 4);
+VALUES (47, 'Grupo De Investigación Proyección Empresarial - GIPE', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (48, 'GRUPO DE INVESTIGACIÓN FORMACIÓN FINANCIERA UFPS - GIFOFI', 4);
+VALUES (48, 'Grupo De Investigación Formación Financiera UFPS - GIFOFI', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (49, 'GRUPO DE INVESTIGACIÓN & GESTIÓN UFPS - I&G', 4);
+VALUES (49, 'Grupo De Investigación & Gestión UFPS - I&G', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (50, 'GRUPO DE INVESTIGACIÓN CONTABLE, ADMINISTRATIVA Y FINANCIERA - GICAF', 4);
+VALUES (50, 'Grupo De Investigación Contable, Administrativa Y Financiera - GICAF', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (51, 'GRUPO DE INVESTIGACIÓN EN ADMINISTRACIÓN FINANCIERA Y DE PROYECTOS - GIAFPRO', 4);
+VALUES (51, 'Grupo De Investigación En Administración Financiera Y De Proyectos - GIAFPRO', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (52, 'GRUPO DE INVESTIGACIÓN SISTEMA DE GESTIÓN Y CONTROL EMPRESARIAL - SIG&CE', 4);
+VALUES (52, 'Grupo De Investigación Sistema De Gestión Y Control Empresarial - SIG&CE', 4);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (53, 'GRUPO DE INVESTIGACIÓN EN ESTUDIOS SOCIALES Y PEDAGOGÍA PARA LA PAZ - GIESPPAZ', 5);
+VALUES (53, 'Grupo De Investigación En Estudios Sociales Y Pedagogía Para La Paz - GIESPPAZ', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (54, 'GRUPO DE INVESTIGACIÓN EN ORIENTACIÓN EDUCATIVA, VOCACIONAL Y OCUPACIONAL UPFS - GIOEVO', 5);
+VALUES (54, 'Grupo De Investigación En Orientación Educativa, Vocacional Y Ocupacional UPFS - GIOEVO', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (55, 'GRUPO DE INVESTIGACIÓN EN PROBLEMAS SOCIOECONÓMICOS, REGIONALES Y FRONTERIZOS UFPS - GIPSERF', 5);
+VALUES (55, 'Grupo De Investigación En Problemas Socioeconómicos, Regionales Y Fronterizos UFPS - GIPSERF', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (56, 'GRUPO DE INVESTIGACIÓN JURÍDICO, COMERCIAL Y FRONTERIZO UFPS - GIJCF', 5);
+VALUES (56, 'Grupo De Investigación Jurídico, Comercial Y Fronterizo UFPS - GIJCF', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (57, 'GRUPO DE INVESTIGACIÓN EN ARQUITECTURA Y MATERIALES ALTERNATIVOS UFPS - GRAMA', 5);
+VALUES (57, 'Grupo De Investigación En Arquitectura Y Materiales Alternativos UFPS - GRAMA', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (58, 'GRUPO DE INVESTIGACIÓN EN COMUNICACIÓN - APIKUNA', 5);
+VALUES (58, 'Grupo De Investigación En Comunicación - APIKUNA', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (59, 'GRUPO DE INVESTIGACIÓN EN PEDAGOGÍA Y PRÁCTICA PEDAGÓGICA UFPS - INPEPRA', 5);
+VALUES (59, 'Grupo De Investigación En Pedagogía Y Práctica Pedagógica UFPS - INPEPRA', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (60, 'GRUPO DE INVESTIGACIÓN TALLER DE ARQUITECTURA Y GESTIÓN DEL TERRITORIO - TAR_GET', 5);
+VALUES (60, 'Grupo De Investigación Taller De Arquitectura Y Gestión Del Territorio - TAR_GET', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (61, 'GRUPO DE INVESTIGACIÓN TRABAJO SOCIAL UFPS - GITS', 5);
+VALUES (61, 'Grupo De Investigación Trabajo Social UFPS - GITS', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (62, 'GRUPO DE INVESTIGACIÓN DE LA CALIDAD Y EVALUACIÓN DE LA EDUCACIÓN - GCIES', 5);
+VALUES (62, 'Grupo De Investigación De La Calidad Y Evaluación De La Educación - GCIES', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (63, 'GRUPO DE INVESTIGACIÓN LABORATORIO DE INVESTIGACIÓN EN DISEÑO - d_lab', 5);
+VALUES (63, 'Grupo De Investigación Laboratorio De Investigación En Diseño - d_lab', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (64, 'GRUPO DE INVESTIGACIÓN EN COMUNICACIÓN Y MEDIOS - GICOM UFPS', 5);
+VALUES (64, 'Grupo De Investigación En Comunicación Y Medios - GICOM UFPS', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (65, 'GRUPO DE INVESTIGACIÓN EN JUSTICIA, DERECHOS HUMANOS Y DEMOCRACIA - JHUSDEM', 5);
+VALUES (65, 'Grupo De Investigación En Justicia, Derechos Humanos Y Democracia - JHUSDEM', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (66, 'GRUPO DE INVESTIGACIÓN PEDAGÓGICA, CIENCIA Y ESPIRITUALIDAD UNIVERSIDAD SANTO TOMAS - UFPS', 5);
+VALUES (66, 'Grupo De Investigación Pedagógica, Ciencia Y Espiritualidad Universidad Santo Tomas - UFPS', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (67, 'GRUPO DE INVESTIGACIÓN EN TECNOLOGÍA EDUCATIVA, INNOVACIÓN Y PRÁCTICAS FORMATIVAS UFPS - GITIP', 5);
+VALUES (67, 'Grupo De Investigación En Tecnología Educativa, Innovación Y Prácticas Formativas UFPS - GITIP', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (68, 'GRUPO DE INVESTIGACIÓN EN EDUCACIÓN EN CIENCIA, TECNOLOGÍA, INGENIERÍA, MATEMÁTICAS Y ARTE - GIESTEMA', 5);
+VALUES (68, 'Grupo De Investigación En Educación En Ciencia, Tecnología, Ingeniería, Matemáticas Y Arte - GIESTEMA', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (69, 'GRUPO DE INVESTIGACIÓN EN PEDAGOGÍA Y GESTIÓN AMBIENTAL UFPS - GIPGEAM', 5);
+VALUES (69, 'Grupo De Investigación En Pedagogía Y Gestión Ambiental UFPS - GIPGEAM', 5);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (70, 'GRUPO DE INVESTIGACIÓN DE SALUD PÚBLICA - GISP', 6);
+VALUES (70, 'Grupo De Investigación De Salud Pública - GISP', 6);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (71, 'GRUPO DE INVESTIGACIÓN PARA EL CUIDADO DE LA SALUD - UFPS GINCUS', 6);
+VALUES (71, 'Grupo De Investigación Para El Cuidado De La Salud - UFPS GINCUS', 6);
 INSERT INTO public.investigation_group(id, "name", faculty_id)
-VALUES (72, 'GRUPO DE INVESTIGACIÓN EN REGENCIA DE FARMACIA - GIRFAR UFPS', 6);
-ALTER SEQUENCE public.investigation_groups_id_seq RESTART 73;
+VALUES (72, 'Grupo De Investigación En Regencia De Farmacia - GIRFAR UFPS', 6);
+ALTER SEQUENCE public.investigation_group_id_seq RESTART 73;

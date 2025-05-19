@@ -83,12 +83,12 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="faculty" class="form-label fw-bold">FACULTAD:</label>
-                    <select class="form-select text-center border border-dark"
+                    <select class="form-select text-center border border-dark p-2"
                             id="faculty"
                             name="faculty"
                             onchange="filterGroups()"
                             th:disabled="${user.roleType != 'admin'}">
-                        <option value="" disabled selected hidden>Seleccione la facultad</option>
+                        <option value="" disabled selected hidden class="text-center">Seleccione la facultad</option>
                         <option th:each="faculty : ${faculties}"
                                 th:value="${faculty.id}"
                                 th:text="${faculty.name}"
@@ -105,7 +105,7 @@
                         const groupSelect = document.getElementById("group");
 
                         // Limpiar opciones actuales
-                        groupSelect.innerHTML = '<option value="" disabled selected hidden>Seleccione el grupo</option>';
+                        groupSelect.innerHTML = '<option value="" disabled selected hidden class="text-center">Seleccione el grupo</option>';
 
                         // Filtrar grupos según facultad seleccionada
                         allGroups.forEach(group => {
@@ -122,11 +122,11 @@
                 </script>
                 <div class="col-md-6">
                     <label for="group" class="form-label fw-bold">NOMBRE DEL GRUPO DE INVESTIGACIÓN:</label>
-                    <select class="form-select text-center border border-dark"
+                    <select class="form-select text-center border border-dark p-2"
                             id="group"
                             name="group"
                             th:disabled="${user.roleType != 'admin'}">
-                        <option value="" disabled selected hidden>Seleccione el grupo</option>
+                        <option value="" disabled selected hidden class="text-center">Seleccione el grupo</option>
                         <option th:each="group: ${groups}"
                                 th:value="${group.id}"
                                 th:text="${group.name}"
