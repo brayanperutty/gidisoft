@@ -6,12 +6,15 @@ import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.repositories.formats.projects.ProjectRepository;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.format.ProjectDto;
+import com.ufps.gidisoft.services.cloudinary.CloudinaryService;
 import com.ufps.gidisoft.services.formats.general.FormatServiceSec;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -31,20 +34,29 @@ public class ProjectService {
     private final FormatServiceSec formatServiceSec;
     private final UserService userService;
     private final ProjectUserService projectUserService;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional
-    public void createProject(ProjectRequest projectRequest, User user) {
+    public void createProject(ProjectRequest projectRequest, User user) throws IOException {
         Project project = this.projectRepository.save(getNewProject(projectRequest, projectRequest.getFormatId(), user.getId()));
         this.projectUserService.createProjectUser(project, user);
     }
 
-    private Project getNewProject(ProjectRequest projectRequest, Long formatId, Long userId) {
+    @Transactional
+    protected Project getNewProject(ProjectRequest projectRequest, Long formatId, Long userId) throws IOException {
         Project project = new Project();
         project.setName(projectRequest.getName());
         project.setActivities(projectRequest.getActivities());
         project.setCompliancePercentage(projectRequest.getCompliancePercentage());
         project.setFormat(this.formatServiceSec.findByIdToRelations(formatId));
         project.setCreatedBy(this.userService.getUserById(userId));
+        if(projectRequest.getFiles() != null && !projectRequest.getFiles().isEmpty()) {
+            List<String> files = new ArrayList<>();
+            for (MultipartFile file : projectRequest.getFiles()) {
+                files.add(cloudinaryService.upload(file, "projects"));
+            }
+            project.setFiles(files);
+        }
         return project;
     }
 

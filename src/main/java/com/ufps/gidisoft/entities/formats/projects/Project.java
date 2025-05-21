@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "projects")
@@ -34,4 +36,7 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
+
+    @Column(name = "files", length = 30000)
+    private List<String> files;
 }

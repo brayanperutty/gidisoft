@@ -187,7 +187,7 @@ body {
     padding: 10px 20px;
     background: #eeeeee;
     border-bottom: 1px solid #ddd;
-    width: 100%; /* Ocupa todo el ancho */
+    width: 100%;
 }
 
 .header-container .user-info span {
