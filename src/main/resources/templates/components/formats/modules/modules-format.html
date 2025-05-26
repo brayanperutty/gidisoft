@@ -47,17 +47,27 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div class="d-flex justify-content-end align-items-center" th:if="${user.roleType == 'admin'}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-project-name="${project.name}"
+                                            th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal">
+                                        Ver evidencias <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div th:if="${user.id == project.createdBy or #lists.contains(editableProjectsIds, project.id)}">
                                 <form th:action="@{/projects}"
-                                      method="post">
+                                      method="post" enctype="multipart/form-data">
                                     <input type="hidden" class="form-control projectId" name="id"
                                            th:value="${project.id}">
                                     <input type="hidden" class="form-control formatId" name="formatId"
                                            th:value="${project.formatId}">
                                     <div th:if="${project.editorsNames != null}">
                                         <label class="form-label fw-bold mb-3">Docentes Editores:</label>
-                                        <span name="name">
+                                        <span name="editors">
                                         <span th:each="editor, iterStat : ${project.editorsNames}">
                                             <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
                                         </span>
@@ -85,19 +95,38 @@
                                                    name="compliancePercentage" min="0" max="100" step="1">
                                         </div>
                                     </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold d-block mb-3">Evidencias del Proyecto:</label>
+
+                                        <!-- Input oculto -->
+                                        <input type="file" name="files" multiple id="fileInput-${project.id}" style="display: none;">
+
+                                        <!-- Botón para seleccionar archivos -->
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="fileButton-${project.id}">
+                                            Seleccionar archivos
+                                        </button>
+
+                                        <!-- Contador personalizado -->
+                                        <small id="fileCount-${project.id}" class="form-text text-muted ms-2">Ningún archivo seleccionado</small>
+
+                                        <!-- Contenedor para los nombres de los archivos -->
+                                        <div id="fileNamesContainer-${project.id}" class="mt-2"></div>
+                                    </div>
                                     <div class="d-flex justify-content-end align-items-center">
-                                        <a type="button" class="btn btn-info btn-sm"
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                th:data-project-name="${project.name}"
+                                                th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal">
+                                            Ver evidencias <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
                                            data-bs-toggle="modal"
                                            th:attr="data-bs-target='#permisosModal__' + ${project.id}"
                                            title="Permisos">Permisos
                                             <i class="fas fa-user-shield ms-2"></i></a>
                                         <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
-                                        <a type="button" class="btn btn-sm btn-warning ms-2 publish"
-                                           data-bs-toggle="modal" data-bs-target="#publicarModal"
-                                           th:attr="data-project-id=${project.id}"
-                                           th:if="${project.statusId != 2}">
-                                            Publicar
-                                        </a>
                                         <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProject"
                                            data-bs-toggle="modal" data-bs-target="#deleteProjectModal">Eliminar
                                         </a>
@@ -397,59 +426,59 @@
 
     <h5 class="mt-2 mb-3 fw-bold">Productos</h5>
     <section></section>
-        <!-- Producto uno -->
-        <div class="accordion mb-3" id="accordionProductGruplac">
-            <div class="accordion-item border border-dark">
-                <h2 class="accordion-header" id="headingOneProductGruplac">
-                    <button class="accordion-button collapsed text-white fw-bold" type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapseOneProductGruplac"
-                            aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
-                        Actualización GrupLAC / CGIS
-                    </button>
-                </h2>
+    <!-- Producto uno -->
+    <div class="accordion mb-3" id="accordionProductGruplac">
+        <div class="accordion-item border border-dark">
+            <h2 class="accordion-header" id="headingOneProductGruplac">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductGruplac"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Actualización GrupLAC / CGIS
+                </button>
+            </h2>
 
-                <div id="collapseOneProductGruplac" class="accordion-collapse collapse"
-                     aria-labelledby="headingOneProductGruplac"
-                     data-bs-parent="#accordionProductGruplac">
-                    <div class="accordion-body">
-                        <div class="card-body" id="productGruplac">
-                        </div>
-                        <div class="card-footer text-end">
-                            <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
-                            </button>
-                        </div>
+            <div id="collapseOneProductGruplac" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductGruplac"
+                 data-bs-parent="#accordionProductGruplac">
+                <div class="accordion-body">
+                    <div class="card-body" id="productGruplac">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Producto dos -->
-        <div class="accordion mb-3" id="accordionProductParticipation">
-            <div class="accordion-item border border-dark mb-3">
-                <h2 class="accordion-header" id="headingOneProductParticipation">
-                    <button class="accordion-button collapsed text-white fw-bold" type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapseOneProductParticipation"
-                            aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
-                        Participación convocatoria de reconocimiento MinCiencias
-                    </button>
-                </h2>
+    <!-- Producto dos -->
+    <div class="accordion mb-3" id="accordionProductParticipation">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductParticipation">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductParticipation"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Participación convocatoria de reconocimiento MinCiencias
+                </button>
+            </h2>
 
-                <div id="collapseOneProductParticipation" class="accordion-collapse collapse"
-                     aria-labelledby="headingOneProductParticipation"
-                     data-bs-parent="#accordionProductParticipation">
-                    <div class="accordion-body">
-                        <div class="card-body" id="productParticipation">
-                        </div>
-                        <div class="card-footer text-end">
-                            <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
-                            </button>
-                        </div>
+            <div id="collapseOneProductParticipation" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductParticipation"
+                 data-bs-parent="#accordionProductParticipation">
+                <div class="accordion-body">
+                    <div class="card-body" id="productParticipation">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <!-- Producto tres -->
     <div class="accordion mb-3" id="accordionProductProjects">
@@ -613,4 +642,148 @@
         </div>
     </div>
 
+    <!-- Modal con Carrusel -->
+    <div class="modal fade" id="evidenceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3 shadow-lg">
+                <div class="modal-header bg-light border-bottom">
+                    <h5 class="modal-title fw-semibold" id="evidenceModalTitle">Evidencias del Proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body p-0 bg-dark">
+                    <div id="carouselEvidences" class="carousel slide d-flex w-100 h-100" data-bs-ride="carousel">
+                        <div class="carousel-inner w-100 h-100" id="carouselInner">
+                            <!-- Se llena por JS -->
+                        </div>
+
+                        <!-- Controles de navegación -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvidences"
+                                data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-secondary rounded-circle p-2"
+                                  aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselEvidences"
+                                data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-secondary rounded-circle p-2"
+                                  aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="carousel-caption-custom">
+                    Imagen <span id="currentImageIndex">1</span> de <span id="totalImages">1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const inner = document.getElementById('carouselInner');
+            const currentIndex = document.getElementById('currentImageIndex');
+            const totalImages = document.getElementById('totalImages');
+            const modalTitle = document.getElementById('evidenceModalTitle');
+            const carouselElement = document.getElementById('carouselEvidences');
+
+            document.querySelectorAll('.view-evidences').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const files = btn.dataset.files.split(',');
+                    const name = btn.dataset.projectName;
+
+                    // Limpiar carrusel
+                    inner.innerHTML = '';
+                    files.forEach((url, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'carousel-item' + (index === 0 ? ' active' : '');
+                        item.innerHTML = `<div class="d-flex justify-content-center align-items-center w-100 h-100">
+                                            <img src="${url}" class="img-fluid" style="max-width: 100%; max-height:100%; object-fit: contain;" alt="Evidencia">
+                                          </div>`;
+                        inner.appendChild(item);
+                    });
+
+                    // Actualizar título e índice
+                    modalTitle.textContent = `Evidencias de ${name}`;
+                    currentIndex.textContent = 1;
+                    totalImages.textContent = files.length;
+
+                    // Reiniciar carrusel
+                    bootstrap.Carousel.getOrCreateInstance(carouselElement).to(0);
+                });
+            });
+
+            carouselElement.addEventListener('slid.bs.carousel', function (e) {
+                currentIndex.textContent = e.to + 1;
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[id^="fileButton-"]').forEach(button => {
+                const id = button.id.split('fileButton-')[1];
+
+                const fileInput = document.getElementById(`fileInput-${id}`);
+                const fileNamesContainer = document.getElementById(`fileNamesContainer-${id}`);
+                const fileCount = document.getElementById(`fileCount-${id}`);
+
+                let selectedFiles = [];
+
+                if (!fileInput || !fileNamesContainer || !fileCount) return;
+
+                fileNamesContainer.style.display = "flex";
+                fileNamesContainer.style.flexWrap = "wrap";
+                fileNamesContainer.style.gap = "10px";
+
+                button.addEventListener('click', () => fileInput.click());
+
+                fileInput.addEventListener("change", function (event) {
+                    selectedFiles = Array.from(event.target.files);
+                    renderFileNames();
+                });
+
+                function renderFileNames() {
+                    fileNamesContainer.innerHTML = "";
+
+                    fileCount.textContent = selectedFiles.length > 0
+                        ? `${selectedFiles.length} archivo(s) seleccionado(s)`
+                        : 'Ningún archivo seleccionado';
+
+                    selectedFiles.forEach((file, index) => {
+                        const fileDiv = document.createElement("div");
+                        fileDiv.textContent = file.name;
+
+                        Object.assign(fileDiv.style, {
+                            backgroundColor: "#f0f0f0",
+                            borderRadius: "15px",
+                            padding: "5px 10px",
+                            color: "#333",
+                            fontSize: "0.875rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            width: "max-content"
+                        });
+
+                        const removeButton = document.createElement("span");
+                        removeButton.innerHTML = "&times;";
+                        removeButton.style.cursor = "pointer";
+                        removeButton.style.marginLeft = "10px";
+
+                        removeButton.addEventListener("click", () => {
+                            selectedFiles.splice(index, 1);
+                            renderFileNames();
+                        });
+
+                        fileDiv.appendChild(removeButton);
+                        fileNamesContainer.appendChild(fileDiv);
+                    });
+                }
+            });
+        });
+    </script>
+
+
 </div>
+

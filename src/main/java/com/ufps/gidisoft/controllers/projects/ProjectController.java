@@ -25,7 +25,6 @@ public class ProjectController {
      */
     private final ProjectService projectService;
     private final UserService userService;
-    private final ProjectUserService projectUserService;
 
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
@@ -42,12 +41,17 @@ public class ProjectController {
             return REDIRECT_LOGIN;
         } else {
             try {
-                this.projectService.
-                        createProject(projectRequest, userService.getUserByUsercode(request.getSession()
-                                .getAttribute(USERCODE).toString()));
+                if (projectRequest.getId() != null) {
+                    this.projectService.updateProject(projectRequest, userService.getUserByUsercode(request.getSession()
+                            .getAttribute(USERCODE).toString()));
+                } else {
+                    this.projectService.
+                            createProject(projectRequest, userService.getUserByUsercode(request.getSession()
+                                    .getAttribute(USERCODE).toString()));
+                }
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
-                att.addFlashAttribute(MESSAGE, "Proyecto creado con éxito.");
+                att.addFlashAttribute(MESSAGE, "Proyecto guardado con éxito.");
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }

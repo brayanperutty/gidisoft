@@ -67,53 +67,55 @@ function addProject() {
     const fileButton = form.querySelector(`#fileButton-${timestamp}`);
     const fileCount = form.querySelector(`#fileCount-${timestamp}`);
 
-    // Aplicar estilo al contenedor para que los archivos se muestren horizontalmente
-    fileNamesContainer.style.display = "flex";  // Mostrar en fila
-    fileNamesContainer.style.flexWrap = "wrap";  // Permitir que los elementos se ajusten si son muchos
-    fileNamesContainer.style.gap = "10px";  // Espacio entre los elementos
+    if(fileInput != null){
+        // Aplicar estilo al contenedor para que los archivos se muestren horizontalmente
+        fileNamesContainer.style.display = "flex";  // Mostrar en fila
+        fileNamesContainer.style.flexWrap = "wrap";  // Permitir que los elementos se ajusten si son muchos
+        fileNamesContainer.style.gap = "10px";  // Espacio entre los elementos
 
-    fileButton.addEventListener('click', () => fileInput.click());
+        fileButton.addEventListener('click', () => fileInput.click());
 
-    fileInput.addEventListener("change", function(event) {
-        selectedFiles = Array.from(event.target.files);
-        renderFileNames();
-    });
-
-    function renderFileNames() {
-        fileNamesContainer.innerHTML = "";
-
-        fileCount.textContent = selectedFiles.length > 0
-            ? `${selectedFiles.length} archivo(s) seleccionado(s)`
-            : 'Ningún archivo seleccionado';
-
-        selectedFiles.forEach((file, index) => {
-            const fileDiv = document.createElement("div");
-            fileDiv.textContent = file.name;
-
-            Object.assign(fileDiv.style, {
-                backgroundColor: "#f0f0f0",
-                borderRadius: "15px",
-                padding: "5px 10px",
-                color: "#333",
-                fontSize: "0.875rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "max-content"
-            });
-
-            const removeButton = document.createElement("span");
-            removeButton.innerHTML = "&times;";
-            removeButton.style.cursor = "pointer";
-            removeButton.style.marginLeft = "10px";
-
-            removeButton.addEventListener("click", () => {
-                selectedFiles.splice(index, 1);
-                renderFileNames();
-            });
-
-            fileDiv.appendChild(removeButton);
-            fileNamesContainer.appendChild(fileDiv);
+        fileInput.addEventListener("change", function(event) {
+            selectedFiles = Array.from(event.target.files);
+            renderFileNames();
         });
+
+        function renderFileNames() {
+            fileNamesContainer.innerHTML = "";
+
+            fileCount.textContent = selectedFiles.length > 0
+                ? `${selectedFiles.length} archivo(s) seleccionado(s)`
+                : 'Ningún archivo seleccionado';
+
+            selectedFiles.forEach((file, index) => {
+                const fileDiv = document.createElement("div");
+                fileDiv.textContent = file.name;
+
+                Object.assign(fileDiv.style, {
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "15px",
+                    padding: "5px 10px",
+                    color: "#333",
+                    fontSize: "0.875rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    width: "max-content"
+                });
+
+                const removeButton = document.createElement("span");
+                removeButton.innerHTML = "&times;";
+                removeButton.style.cursor = "pointer";
+                removeButton.style.marginLeft = "10px";
+
+                removeButton.addEventListener("click", () => {
+                    selectedFiles.splice(index, 1);
+                    renderFileNames();
+                });
+
+                fileDiv.appendChild(removeButton);
+                fileNamesContainer.appendChild(fileDiv);
+            });
+        }
     }
 }

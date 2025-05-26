@@ -36,10 +36,27 @@ public class ProjectService {
     private final ProjectUserService projectUserService;
     private final CloudinaryService cloudinaryService;
 
+    public Project findById(Long id) {
+        return projectRepository.findById(id).orElseThrow(()
+                -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage()));
+    }
+
     @Transactional
     public void createProject(ProjectRequest projectRequest, User user) throws IOException {
         Project project = this.projectRepository.save(getNewProject(projectRequest, projectRequest.getFormatId(), user.getId()));
         this.projectUserService.createProjectUser(project, user);
+    }
+
+    @Transactional
+    public void updateProject(ProjectRequest projectRequest, User user) throws IOException {
+        Project project = this.findById(projectRequest.getId());
+        if(this.projectUserService.validateExistProjecAndUser(project, user)){
+            project.setName(projectRequest.getName());
+            project.setActivities(projectRequest.getActivities());
+            project.setCompliancePercentage(projectRequest.getCompliancePercentage());
+            getFilesNameList(projectRequest, project);
+            this.projectRepository.save(project);
+        }else throw new IllegalArgumentException(ExceptionCodeEnum.PROJ02.getMessage());
     }
 
     @Transactional
@@ -50,6 +67,11 @@ public class ProjectService {
         project.setCompliancePercentage(projectRequest.getCompliancePercentage());
         project.setFormat(this.formatServiceSec.findByIdToRelations(formatId));
         project.setCreatedBy(this.userService.getUserById(userId));
+        getFilesNameList(projectRequest, project);
+        return project;
+    }
+
+    private void getFilesNameList(ProjectRequest projectRequest, Project project) throws IOException {
         if(projectRequest.getFiles() != null && !projectRequest.getFiles().isEmpty()) {
             List<String> files = new ArrayList<>();
             for (MultipartFile file : projectRequest.getFiles()) {
@@ -57,7 +79,6 @@ public class ProjectService {
             }
             project.setFiles(files);
         }
-        return project;
     }
 
     public List<ProjectDto> findByFormatId(Long formatId) {

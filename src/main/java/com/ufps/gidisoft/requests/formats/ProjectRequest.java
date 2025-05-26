@@ -14,6 +14,7 @@ import java.util.List;
 @NotNull
 public class ProjectRequest {
 
+    private Long id;
     private String name;
     private String activities;
     private LocalDate startDate;

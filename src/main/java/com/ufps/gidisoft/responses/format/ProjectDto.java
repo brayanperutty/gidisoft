@@ -17,6 +17,7 @@ public class ProjectDto {
     private String createdByName;
     private Long statusId;
     private List<String> editorsNames;
+    private List<String> files;
 
     public ProjectDto(Project project, List<String> editorsNames) {
         this.id = project.getId();
@@ -27,6 +28,7 @@ public class ProjectDto {
         this.createdBy = project.getCreatedBy().getId();
         this.createdByName = project.getCreatedBy().getName();
         this.editorsNames = editorsNames;
+        this.files = project.getFiles();
     }
 }
 

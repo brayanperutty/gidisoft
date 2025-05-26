@@ -287,3 +287,39 @@ body {
     margin: auto; /* Centra el modal */
 }
 
+#evidenceModal .modal-dialog {
+    height: 80vh; /* 80% de la pantalla */
+    max-width: 80vw; /* ancho máximo del modal */
+}
+
+#evidenceModal .modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#evidenceModal .modal-body {
+    flex-grow: 1;
+    padding: 0;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+#evidenceModal .carousel-inner {
+    flex-grow: 1;
+    position: relative;
+}
+
+#evidenceModal .carousel-item {
+    height: 100%;
+}
+
+#evidenceModal .carousel-caption-custom {
+    color: rgb(33, 37, 41);
+    font-weight: bold;
+    font-size: 0.875rem;
+    text-align: right;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}

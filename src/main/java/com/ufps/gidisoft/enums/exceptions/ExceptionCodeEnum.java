@@ -15,6 +15,7 @@ public enum ExceptionCodeEnum {
     FORMAT02("Ya existe un formato para ese período académico.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     PROJSTS01("The project status is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     PROJ01("The project is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    PROJ02("No tienes permiso para editar este formato", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     DIR01("The direction is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     GROUP01("The investigation group is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     FAC01("The faculty is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
