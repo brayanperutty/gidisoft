@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 public class FormatDto {
 
-    private Long id;
+    private Long formatId;
 
     private String code;
 
@@ -33,7 +33,7 @@ public class FormatDto {
     private Long academicPeriod;
 
     public FormatDto(Format format, ManagerUserFormat managerUserFormat) {
-        this.id = format.getId();
+        this.formatId = format.getId();
         this.code = format.getCode();
         this.version = format.getVersion();
         this.date = format.getDate();

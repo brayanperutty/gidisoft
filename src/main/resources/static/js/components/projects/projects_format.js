@@ -59,6 +59,7 @@ function addProject() {
                     <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="this.closest('.card').remove()">🗑 Eliminar</button>
                 </div>
         `;
+
     container.appendChild(form);
 
     // Agregar el evento de carga de archivos al nuevo input creado
@@ -67,55 +68,66 @@ function addProject() {
     const fileButton = form.querySelector(`#fileButton-${timestamp}`);
     const fileCount = form.querySelector(`#fileCount-${timestamp}`);
 
-    if(fileInput != null){
-        // Aplicar estilo al contenedor para que los archivos se muestren horizontalmente
-        fileNamesContainer.style.display = "flex";  // Mostrar en fila
-        fileNamesContainer.style.flexWrap = "wrap";  // Permitir que los elementos se ajusten si son muchos
-        fileNamesContainer.style.gap = "10px";  // Espacio entre los elementos
+    // Aplicar estilo al contenedor para que los archivos se muestren horizontalmente
+    fileNamesContainer.style.display = "flex";  // Mostrar en fila
+    fileNamesContainer.style.flexWrap = "wrap";  // Permitir que los elementos se ajusten si son muchos
+    fileNamesContainer.style.gap = "10px";  // Espacio entre los elementos
 
-        fileButton.addEventListener('click', () => fileInput.click());
+    fileButton.addEventListener('click', () => fileInput.click());
 
-        fileInput.addEventListener("change", function(event) {
+    let selectedFiles = [];
+
+    if (fileInput != null) {
+        fileInput.addEventListener("change", function (event) {
             selectedFiles = Array.from(event.target.files);
             renderFileNames();
         });
-
-        function renderFileNames() {
-            fileNamesContainer.innerHTML = "";
-
-            fileCount.textContent = selectedFiles.length > 0
-                ? `${selectedFiles.length} archivo(s) seleccionado(s)`
-                : 'Ningún archivo seleccionado';
-
-            selectedFiles.forEach((file, index) => {
-                const fileDiv = document.createElement("div");
-                fileDiv.textContent = file.name;
-
-                Object.assign(fileDiv.style, {
-                    backgroundColor: "#f0f0f0",
-                    borderRadius: "15px",
-                    padding: "5px 10px",
-                    color: "#333",
-                    fontSize: "0.875rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "max-content"
-                });
-
-                const removeButton = document.createElement("span");
-                removeButton.innerHTML = "&times;";
-                removeButton.style.cursor = "pointer";
-                removeButton.style.marginLeft = "10px";
-
-                removeButton.addEventListener("click", () => {
-                    selectedFiles.splice(index, 1);
-                    renderFileNames();
-                });
-
-                fileDiv.appendChild(removeButton);
-                fileNamesContainer.appendChild(fileDiv);
-            });
-        }
     }
+
+    function renderFileNames() {
+        fileNamesContainer.innerHTML = "";
+
+        fileCount.textContent = selectedFiles.length > 0
+            ? `${selectedFiles.length} archivo(s) seleccionado(s)`
+            : 'Ningún archivo seleccionado';
+
+        selectedFiles.forEach((file, index) => {
+            const fileDiv = document.createElement("div");
+            fileDiv.textContent = file.name;
+
+            Object.assign(fileDiv.style, {
+                backgroundColor: "#f0f0f0",
+                borderRadius: "15px",
+                padding: "5px 10px",
+                color: "#333",
+                fontSize: "0.875rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "max-content"
+            });
+
+            const removeButton = document.createElement("span");
+            removeButton.innerHTML = "&times;";
+            removeButton.style.cursor = "pointer";
+            removeButton.style.marginLeft = "10px";
+
+            removeButton.addEventListener("click", () => {
+                selectedFiles.splice(index, 1);
+                renderFileNames();
+                const dataTransfer = new DataTransfer();
+                selectedFiles.forEach(file => dataTransfer.items.add(file));
+                fileInput.files = dataTransfer.files;
+            });
+
+            fileDiv.appendChild(removeButton);
+            fileNamesContainer.appendChild(fileDiv);
+        });
+    }
+
+    form.addEventListener("submit", function (e) {
+        if (fileInput && fileInput.files.length === 0) {
+            fileInput.remove(); // Elimina el input para que no se envíe
+        }
+    });
 }

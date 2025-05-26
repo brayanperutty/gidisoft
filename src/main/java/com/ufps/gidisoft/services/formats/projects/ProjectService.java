@@ -50,13 +50,13 @@ public class ProjectService {
     @Transactional
     public void updateProject(ProjectRequest projectRequest, User user) throws IOException {
         Project project = this.findById(projectRequest.getId());
-        if(this.projectUserService.validateExistProjecAndUser(project, user)){
+        if (this.projectUserService.validateExistProjecAndUser(project, user)) {
             project.setName(projectRequest.getName());
             project.setActivities(projectRequest.getActivities());
             project.setCompliancePercentage(projectRequest.getCompliancePercentage());
             getFilesNameList(projectRequest, project);
             this.projectRepository.save(project);
-        }else throw new IllegalArgumentException(ExceptionCodeEnum.PROJ02.getMessage());
+        } else throw new IllegalArgumentException(ExceptionCodeEnum.PROJ02.getMessage());
     }
 
     @Transactional
@@ -72,8 +72,11 @@ public class ProjectService {
     }
 
     private void getFilesNameList(ProjectRequest projectRequest, Project project) throws IOException {
-        if(projectRequest.getFiles() != null && !projectRequest.getFiles().isEmpty()) {
+        if (projectRequest.getFiles() != null && !projectRequest.getFiles().isEmpty()) {
             List<String> files = new ArrayList<>();
+            if (project.getFiles() != null && !project.getFiles().isEmpty()) {
+                files = project.getFiles();
+            }
             for (MultipartFile file : projectRequest.getFiles()) {
                 files.add(cloudinaryService.upload(file, "projects"));
             }
@@ -93,6 +96,10 @@ public class ProjectService {
     @Transactional
     public void deleteById(Long projectId) {
         this.projectUserService.deleteByProjectId(projectId);
+        Project project = this.findById(projectId);
+        for (String file : project.getFiles()) {
+
+        }
         this.projectRepository.deleteById(projectId);
     }
 

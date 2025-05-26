@@ -1,17 +1,18 @@
 package com.ufps.gidisoft.requests.formats;
 
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NotNull
+@NoArgsConstructor
 public class ProjectRequest {
 
     private Long id;
@@ -21,5 +22,5 @@ public class ProjectRequest {
     private LocalDate endDate;
     private Integer compliancePercentage;
     private Long formatId;
-    private List<MultipartFile> files;
+    private List<MultipartFile> files = new ArrayList<>();
 }

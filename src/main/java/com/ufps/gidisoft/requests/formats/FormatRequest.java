@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class FormatRequest {
 
-    private Long id;
+    private Long formatId;
 
     private String code;
 

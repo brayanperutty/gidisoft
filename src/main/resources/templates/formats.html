@@ -42,14 +42,13 @@
     <div class="container mt-5">
         <form th:action="@{/formats}" method="post" th:object="${formatRequest}">
             <div th:replace="~{components/formats/general_info/form-format :: formularioBasico(${formatRequest})}"></div>
-            <div th:if="${formatRequest.id != null}">
-                <div th:replace="~{components/formats/modules/modules-format :: modulosExtra(${projects})}"></div>
-            </div>
-
             <div class="mt-4 text-end mb-3">
-                <button type="submit" class="btn btn-primary">Guardar Informe</button>
+                <button type="submit" class="btn btn-primary">Guardar información general</button>
             </div>
         </form>
+        <div th:if="${formatRequest.formatId != null}">
+            <div th:replace="~{components/formats/modules/modules-format :: modulosExtra(${projects})}"></div>
+        </div>
     </div>
 </div>
 <!-- Bootstrap y JS -->

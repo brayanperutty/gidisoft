@@ -16,7 +16,7 @@
                     <div class="card-body mb-3" id="projects-container">
                         <div class="card mb-3 border border-secondary p-3" th:if="${!projects.isEmpty()}"
                              th:each="project: ${projects}">
-                            <div th:if="${user.id != project.createdBy and  !#lists.contains(editableProjectsIds, project.id)}">
+                            <div th:if="${user.id != project.createdBy and !#lists.contains(editableProjectsIds, project.id)}">
                                 <input type="hidden" class="form-control projectId" name="id"
                                        th:value="${project.id}">
                                 <input type="hidden" class="form-control formatId" name="formatId"
@@ -47,7 +47,9 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="d-flex justify-content-end align-items-center" th:if="${user.roleType == 'admin'}">
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(project.files != null and !project.files.isEmpty())
+                                   and (user.roleType == 'admin' or user.id == project.createdBy or #lists.contains(editableProjectsIds, project.id))}">
                                     <button type="button"
                                             class="btn btn-sm btn-secondary view-evidences"
                                             th:data-project-name="${project.name}"
@@ -96,21 +98,24 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label fw-bold d-block mb-3">Evidencias del Proyecto:</label>
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
 
                                         <!-- Input oculto -->
-                                        <input type="file" name="files" multiple id="fileInput-${project.id}" style="display: none;">
+                                        <input type="file" name="files" multiple th:id="'fileInput-' + ${project.id}"
+                                               style="display: none;">
 
                                         <!-- Botón para seleccionar archivos -->
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" id="fileButton-${project.id}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                th:id="'fileButton-' + ${project.id}">
                                             Seleccionar archivos
                                         </button>
 
                                         <!-- Contador personalizado -->
-                                        <small id="fileCount-${project.id}" class="form-text text-muted ms-2">Ningún archivo seleccionado</small>
+                                        <small th:id="'fileCount-' +${project.id}" class="form-text text-muted ms-2">Ningún
+                                            archivo seleccionado</small>
 
                                         <!-- Contenedor para los nombres de los archivos -->
-                                        <div id="fileNamesContainer-${project.id}" class="mt-2"></div>
+                                        <div th:id="'fileNamesContainer-' + ${project.id}" class="mt-2"></div>
                                     </div>
                                     <div class="d-flex justify-content-end align-items-center">
                                         <button type="button"
@@ -118,7 +123,8 @@
                                                 th:data-project-name="${project.name}"
                                                 th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#evidenceModal">
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${project.files != null and !project.files.isEmpty()}">
                                             Ver evidencias <i class="fas fa-images ms-2"></i>
                                         </button>
                                         <a type="button" class="btn btn-warning btn-sm ms-2"
@@ -139,27 +145,6 @@
                     <div class="card-footer text-end">
                         <button type="button" class="btn btn-success" onclick="addProject()">+ Agregar Proyecto
                         </button>
-                    </div>
-                </div>
-            </div>
-
-            <!--        publicar proyecto          -->
-            <div class="modal fade" id="publicarModal" tabindex="-1" aria-labelledby="publicarModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="publicarModalLabel">Confirmar Publicación</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            ¿Estás seguro que deseas publicar este proyecto?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <a type="button" class="btn btn-primary" id="confirmarPublicacion">Confirmar</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -721,40 +706,37 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[id^="fileButton-"]').forEach(button => {
-                const id = button.id.split('fileButton-')[1];
+            const fileButtons = document.querySelectorAll("[id^='fileButton-']");
 
-                const fileInput = document.getElementById(`fileInput-${id}`);
-                const fileNamesContainer = document.getElementById(`fileNamesContainer-${id}`);
-                const fileCount = document.getElementById(`fileCount-${id}`);
-
-                let selectedFiles = [];
-
-                if (!fileInput || !fileNamesContainer || !fileCount) return;
+            fileButtons.forEach(button => {
+                const projectId = button.id.split("-")[1];
+                const input = document.getElementById(`fileInput-${projectId}`);
+                const fileNamesContainer = document.getElementById(`fileNamesContainer-${projectId}`);
+                const fileCount = document.getElementById(`fileCount-${projectId}`);
 
                 fileNamesContainer.style.display = "flex";
                 fileNamesContainer.style.flexWrap = "wrap";
                 fileNamesContainer.style.gap = "10px";
 
-                button.addEventListener('click', () => fileInput.click());
+                button.addEventListener("click", () =>
+                    input.click());
 
-                fileInput.addEventListener("change", function (event) {
-                    selectedFiles = Array.from(event.target.files);
+                let files = [];
+                input.addEventListener("change", () => {
+                    files = input.files;
                     renderFileNames();
                 });
 
                 function renderFileNames() {
-                    fileNamesContainer.innerHTML = "";
-
-                    fileCount.textContent = selectedFiles.length > 0
-                        ? `${selectedFiles.length} archivo(s) seleccionado(s)`
+                    fileCount.textContent = files.length > 0
+                        ? `${files.length} archivo(s) seleccionado(s)`
                         : 'Ningún archivo seleccionado';
+                    fileNamesContainer.innerHTML = "";
+                    Array.from(files).forEach((file, index) => {
+                        const fileItem = document.createElement("div");
+                        fileItem.textContent = file.name;
 
-                    selectedFiles.forEach((file, index) => {
-                        const fileDiv = document.createElement("div");
-                        fileDiv.textContent = file.name;
-
-                        Object.assign(fileDiv.style, {
+                        Object.assign(fileItem.style, {
                             backgroundColor: "#f0f0f0",
                             borderRadius: "15px",
                             padding: "5px 10px",
@@ -772,18 +754,21 @@
                         removeButton.style.marginLeft = "10px";
 
                         removeButton.addEventListener("click", () => {
-                            selectedFiles.splice(index, 1);
+                            files.splice(index, 1);
                             renderFileNames();
+                            // ✅ Reconstruir fileInput.files
+                            const dataTransfer = new DataTransfer();
+                            files.forEach(file => dataTransfer.items.add(file));
+                            input.files = dataTransfer.files;
                         });
 
-                        fileDiv.appendChild(removeButton);
-                        fileNamesContainer.appendChild(fileDiv);
+                        fileItem.appendChild(removeButton);
+                        fileNamesContainer.appendChild(fileItem);
                     });
                 }
             });
         });
     </script>
-
 
 </div>
 

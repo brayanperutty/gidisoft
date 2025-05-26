@@ -40,6 +40,7 @@ public class FormatsController {
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
     private static final String FORMATS = "formats";
+    private static final String REDIRECT_FORMATS = "redirect:/formats/";
     private static final String MESSAGE = "message";
     private static final String DASHBOARD = "dashboard";
     private static final String REDIRECT_LOGIN = "redirect:/login";
@@ -136,11 +137,16 @@ public class FormatsController {
                 return REDIRECT_ERROR;
             }else {
                 try {
-                    this.formatService.createFormat(formatRequest);
                     model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString())));
-                    att.addFlashAttribute(MESSAGE, "Formato creado con éxito.");
-                    return REDIRECT_FORMAT_LIST;
+                    att.addFlashAttribute(MESSAGE, "Formato guardado con éxito.");
+                    if(formatRequest.getFormatId() != null){
+                        this.formatService.updateFormat(formatRequest);
+                        return REDIRECT_FORMATS + formatRequest.getFormatId();
+                    } else {
+                        this.formatService.createFormat(formatRequest);
+                        return REDIRECT_FORMAT_LIST;
+                    }
                 } catch (Exception e) {
                     att.addFlashAttribute(CREATE_ERROR, e.getMessage());
                     att.addFlashAttribute(FORMAT_REQUEST, formatRequest);

@@ -4,7 +4,6 @@ import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
-import com.ufps.gidisoft.services.formats.projects.ProjectUserService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +40,8 @@ public class ProjectController {
             return REDIRECT_LOGIN;
         } else {
             try {
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
                 if (projectRequest.getId() != null) {
                     this.projectService.updateProject(projectRequest, userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString()));
@@ -49,8 +50,6 @@ public class ProjectController {
                             createProject(projectRequest, userService.getUserByUsercode(request.getSession()
                                     .getAttribute(USERCODE).toString()));
                 }
-                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
-                        .getAttribute(USERCODE).toString())));
                 att.addFlashAttribute(MESSAGE, "Proyecto guardado con éxito.");
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());

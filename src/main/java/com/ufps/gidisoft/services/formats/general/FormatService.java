@@ -1,6 +1,7 @@
 package com.ufps.gidisoft.services.formats.general;
 
 import com.ufps.gidisoft.entities.formats.general.Format;
+import com.ufps.gidisoft.entities.formats.general.ManagerUserFormat;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
@@ -61,39 +62,62 @@ public class FormatService {
         format.setStatus(this.projectStatusService.findById(ProjectStatusEnum.DRAFT.getId()));
         this.formatRepository.save(format);
 
-        if(formatRequest.getManagerUsers() != null){
+        if (formatRequest.getManagerUsers() != null) {
             this.managerUserFormatService.createManagerUserFormat(formatRequest.getManagerUsers(), format);
         }
     }
 
-    private void validateIfExistsFormatByAcademicPeriod(Long academicPeriodId){
-        if(this.formatRepository.existsByAcademicPeriodId(academicPeriodId)){
+    @Transactional
+    public void updateFormat(FormatRequest formatRequest) {
+        Format format = this.formatRepository.findById(formatRequest.getFormatId()).orElseThrow(()
+                -> new IllegalArgumentException(ExceptionCodeEnum.FORMAT01.getMessage()));
+
+        format.setCode(formatRequest.getCode());
+        format.setVersion(formatRequest.getVersion());
+        format.setDate(formatRequest.getDate());
+
+        ManagerUserFormat managerUserFormat = managerUserFormatService.findByFormatId(format.getId());
+        managerUserFormat.setCreatedBy(formatRequest.getManagerUsers().getCreatedBy());
+        managerUserFormat.setReviewBy(formatRequest.getManagerUsers().getReviewBy());
+        managerUserFormat.setApproveBy(formatRequest.getManagerUsers().getApproveBy());
+
+        format.setFaculty(this.facultyService.findById(formatRequest.getFaculty()));
+        format.setGroup(this.investigationGroupService.findById(formatRequest.getGroup()));
+        format.setUnity(formatRequest.getUnity());
+        format.setDepartment(formatRequest.getDepartment());
+        format.setDirector(this.userService.getUserById(formatRequest.getDirectorId()));
+        format.setAcademicPeriod(this.academicPeriodsService.getAcademicPeriodById(formatRequest.getAcademicPeriod()));
+        formatRepository.save(format);
+    }
+
+    private void validateIfExistsFormatByAcademicPeriod(Long academicPeriodId) {
+        if (this.formatRepository.existsByAcademicPeriodId(academicPeriodId)) {
             throw new IllegalArgumentException(ExceptionCodeEnum.FORMAT02.getMessage());
         }
     }
 
-    public boolean existsFormatById(Long formatId){
+    public boolean existsFormatById(Long formatId) {
         return this.formatRepository.existsById(formatId);
     }
 
     @Transactional
-    public void deleteById(Long formatId){
-        if(this.existsFormatById(formatId)){
-            if(this.managerUserFormatService.existsManagerUserFormatByFormatId(formatId)){
+    public void deleteById(Long formatId) {
+        if (this.existsFormatById(formatId)) {
+            if (this.managerUserFormatService.existsManagerUserFormatByFormatId(formatId)) {
                 this.managerUserFormatService.deleteByFormatId(formatId);
             }
             this.formatRepository.deleteById(formatId);
-        }else throw new IllegalArgumentException(ExceptionCodeEnum.FORMAT01.getMessage());
+        } else throw new IllegalArgumentException(ExceptionCodeEnum.FORMAT01.getMessage());
     }
 
-    public void publishFormat(Long formatId){
+    public void publishFormat(Long formatId) {
         Format format = this.formatRepository.findById(formatId).orElseThrow(()
                 -> new NotFoundException(ExceptionCodeEnum.FORMAT01.getMessage()));
         format.setStatus(this.projectStatusService.findById(ProjectStatusEnum.PUBLICATED.getId()));
         this.formatRepository.save(format);
     }
 
-    public List<FormatListDto> findAllFormats(){
+    public List<FormatListDto> findAllFormats() {
         return this.formatRepository.findAll().stream().map(FormatListDto::new).toList();
     }
 }
