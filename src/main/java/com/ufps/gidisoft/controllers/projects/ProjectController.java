@@ -82,6 +82,30 @@ public class ProjectController {
         return REDIRECT_FORMAT + formatId;
     }
 
+    @GetMapping(value = "/{id}/delete-evidence")
+    public String deleteEvidence(Model model, HttpServletRequest request, @PathVariable Long id,
+                                 RedirectAttributes att, @RequestParam String url, @RequestParam Long formatId) {
+        if (request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            User user = userService.getUserByUsercode(request.getSession()
+                    .getAttribute(USERCODE).toString());
+            if (!this.projectService.validateProjectWithUser(id, user)) {
+                return REDIRECT_ERROR;
+            } else {
+                try {
+                    this.projectService.deleteEvidence(id, url);
+                    model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                            .getAttribute(USERCODE).toString())));
+                    att.addFlashAttribute(MESSAGE, "Evidencia eliminada con éxito.");
+                } catch (Exception e) {
+                    att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+                }
+            }
+        }
+        return REDIRECT_FORMAT + formatId;
+    }
+
     @PostMapping(value = "/{id}/permissions")
     public String createRelations(@PathVariable Long id, @RequestParam List<Long> users, RedirectAttributes att,
                                   HttpServletRequest request, @RequestParam Long formatId) {

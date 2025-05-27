@@ -94,13 +94,29 @@ public class ProjectService {
     }
 
     @Transactional
-    public void deleteById(Long projectId) {
+    public void deleteById(Long projectId) throws Exception {
         this.projectUserService.deleteByProjectId(projectId);
         Project project = this.findById(projectId);
-        for (String file : project.getFiles()) {
-
+        if (project.getFiles() != null && !project.getFiles().isEmpty()) {
+            for (String file : project.getFiles()) {
+                this.cloudinaryService.getImage(file);
+            }
         }
         this.projectRepository.deleteById(projectId);
+    }
+
+    @Transactional
+    public void deleteEvidence(Long projectId, String url) throws Exception {
+        Project project = this.findById(projectId);
+
+        this.cloudinaryService.getImage(url);
+
+        List<String> files = project.getFiles();
+        files.removeIf(fileUrl -> fileUrl.trim().equalsIgnoreCase(url.trim()));
+        if (files.isEmpty()) project.setFiles(null);
+        else project.setFiles(files);
+
+        this.projectRepository.save(project);
     }
 
     public boolean validateProjectWithUser(Long projectId, User user) {

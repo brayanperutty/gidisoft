@@ -56,13 +56,14 @@
                                             th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
                                             data-bs-toggle="modal"
                                             data-bs-target="#evidenceModal">
-                                        Ver evidencias <i class="fas fa-images ms-2"></i>
+                                        Ver evidencias (<span th:text="${project.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
                                     </button>
                                 </div>
                             </div>
                             <div th:if="${user.id == project.createdBy or #lists.contains(editableProjectsIds, project.id)}">
                                 <form th:action="@{/projects}"
-                                      method="post" enctype="multipart/form-data">
+                                      method="post" enctype="multipart/form-data" id="formProject">
                                     <input type="hidden" class="form-control projectId" name="id"
                                            th:value="${project.id}">
                                     <input type="hidden" class="form-control formatId" name="formatId"
@@ -124,8 +125,10 @@
                                                 th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#evidenceModal"
-                                                th:if="${project.files != null and !project.files.isEmpty()}">
-                                            Ver evidencias <i class="fas fa-images ms-2"></i>
+                                                th:if="${project.files != null and !project.files.isEmpty()}"
+                                                th:attr="data-project-id=${project.id}, data-format-id=${project.formatId}">
+                                            Ver evidencias (<span th:text="${project.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
                                         </button>
                                         <a type="button" class="btn btn-warning btn-sm ms-2"
                                            data-bs-toggle="modal"
@@ -658,6 +661,9 @@
                     </div>
                 </div>
                 <div class="carousel-caption-custom">
+                    <button id="deleteImageBtn" class="btn btn-sm btn-danger me-2">
+                        Eliminar
+                    </button>
                     Imagen <span id="currentImageIndex">1</span> de <span id="totalImages">1</span>
                 </div>
             </div>
@@ -672,10 +678,15 @@
             const modalTitle = document.getElementById('evidenceModalTitle');
             const carouselElement = document.getElementById('carouselEvidences');
 
+            let currentProjectId = null;
+            let currentFormatId = null;
+
             document.querySelectorAll('.view-evidences').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const files = btn.dataset.files.split(',');
                     const name = btn.dataset.projectName;
+                    currentProjectId = btn.dataset.projectId;
+                    currentFormatId = btn.dataset.formatId;
 
                     // Limpiar carrusel
                     inner.innerHTML = '';
@@ -683,7 +694,7 @@
                         const item = document.createElement('div');
                         item.className = 'carousel-item' + (index === 0 ? ' active' : '');
                         item.innerHTML = `<div class="d-flex justify-content-center align-items-center w-100 h-100">
-                                            <img src="${url}" class="img-fluid" style="max-width: 100%; max-height:100%; object-fit: contain;" alt="Evidencia">
+                                            <img src="${url}" data-url="${url}" class="img-fluid" style="max-width: 90%; max-height:90%; object-fit: contain;" alt="Evidencia">
                                           </div>`;
                         inner.appendChild(item);
                     });
@@ -701,74 +712,24 @@
             carouselElement.addEventListener('slid.bs.carousel', function (e) {
                 currentIndex.textContent = e.to + 1;
             });
-        });
-    </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const fileButtons = document.querySelectorAll("[id^='fileButton-']");
+            const deleteButton = document.getElementById('deleteImageBtn');
 
-            fileButtons.forEach(button => {
-                const projectId = button.id.split("-")[1];
-                const input = document.getElementById(`fileInput-${projectId}`);
-                const fileNamesContainer = document.getElementById(`fileNamesContainer-${projectId}`);
-                const fileCount = document.getElementById(`fileCount-${projectId}`);
+            deleteButton.addEventListener('click', async () => {
+                const activeItem = inner.querySelector('.carousel-item.active');
+                if (!activeItem) return;
 
-                fileNamesContainer.style.display = "flex";
-                fileNamesContainer.style.flexWrap = "wrap";
-                fileNamesContainer.style.gap = "10px";
+                const img = activeItem.querySelector('img');
+                const imageUrl = img?.dataset.url;
 
-                button.addEventListener("click", () =>
-                    input.click());
+                if (!imageUrl) return;
 
-                let files = [];
-                input.addEventListener("change", () => {
-                    files = input.files;
-                    renderFileNames();
-                });
+                const confirmed = confirm('¿Estás seguro de que deseas eliminar esta imagen?');
+                if (!confirmed) return;
 
-                function renderFileNames() {
-                    fileCount.textContent = files.length > 0
-                        ? `${files.length} archivo(s) seleccionado(s)`
-                        : 'Ningún archivo seleccionado';
-                    fileNamesContainer.innerHTML = "";
-                    Array.from(files).forEach((file, index) => {
-                        const fileItem = document.createElement("div");
-                        fileItem.textContent = file.name;
-
-                        Object.assign(fileItem.style, {
-                            backgroundColor: "#f0f0f0",
-                            borderRadius: "15px",
-                            padding: "5px 10px",
-                            color: "#333",
-                            fontSize: "0.875rem",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            width: "max-content"
-                        });
-
-                        const removeButton = document.createElement("span");
-                        removeButton.innerHTML = "&times;";
-                        removeButton.style.cursor = "pointer";
-                        removeButton.style.marginLeft = "10px";
-
-                        removeButton.addEventListener("click", () => {
-                            files.splice(index, 1);
-                            renderFileNames();
-                            // ✅ Reconstruir fileInput.files
-                            const dataTransfer = new DataTransfer();
-                            files.forEach(file => dataTransfer.items.add(file));
-                            input.files = dataTransfer.files;
-                        });
-
-                        fileItem.appendChild(removeButton);
-                        fileNamesContainer.appendChild(fileItem);
-                    });
-                }
+                window.location.href = `/projects/${currentProjectId}/delete-evidence?url=${imageUrl}&formatId=${currentFormatId}`;
             });
         });
     </script>
-
 </div>
 
