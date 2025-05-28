@@ -35,12 +35,12 @@ public class UserService {
     private final UserRepository userRepository;
 
     /*
-    * Services
-    * */
+     * Services
+     * */
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-//    private final JavaMailSender mailSender;
+    //    private final JavaMailSender mailSender;
     private final PasswordResetTokenService passwordResetTokenService;
 
     @Value("${DEFEAT_PASSWORD}")
@@ -69,14 +69,29 @@ public class UserService {
 
     @Transactional
     public void createDraftUser(UserRequest userRequest) {
-        User user = new User();
-        user.setUsercode(userRequest.getUsercode());
-        user.setPassword(passwordEncoder.encode(defeatPassword));
-        user.setEmail(userRequest.getEmail());
+        if (userRequest.getId() != null) {
+            updateUser(userRequest);
+        } else {
+            User user = new User();
+            user.setUsercode(userRequest.getUsercode());
+            user.setPassword(passwordEncoder.encode(defeatPassword));
+            user.setEmail(userRequest.getEmail());
+            user.setName(userRequest.getName());
+            user.setPhoneNumber(userRequest.getPhoneNumber());
+            user.setRole(roleService.getRole(userRequest.getRoleId()));
+            user.setUserStatus(UserStatusEnum.DRAFT.getId());
+            userRepository.save(user);
+        }
+    }
+
+    public void updateUser(UserRequest userRequest) {
+        User user = this.userRepository.findById(userRequest.getId()).orElseThrow(()
+                -> new IllegalArgumentException(ExceptionCodeEnum.USER01.getMessage()));
         user.setName(userRequest.getName());
         user.setPhoneNumber(userRequest.getPhoneNumber());
+        user.setEmail(userRequest.getEmail());
+        user.setUsercode(userRequest.getUsercode());
         user.setRole(roleService.getRole(userRequest.getRoleId()));
-        user.setUserStatus(UserStatusEnum.DRAFT.getId());
         userRepository.save(user);
     }
 
@@ -101,7 +116,7 @@ public class UserService {
     }
 
     public void invalidateSession(HttpServletRequest httpServletRequest) {
-        if(httpServletRequest.getSession().getAttribute("user") != null) {
+        if (httpServletRequest.getSession().getAttribute("user") != null) {
             httpServletRequest.getSession().removeAttribute("user");
         }
     }

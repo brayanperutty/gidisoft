@@ -23,7 +23,17 @@
             <td th:text="${teacher.roleName}"></td>
             <td th:text="${teacher.status}"></td>
             <td>
-                <a class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                <a class="btn btn-primary btn-sm edit-teacher"
+                   th:data-id="${teacher.id}"
+                   th:data-usercode="${teacher.usercode}"
+                   th:data-name="${teacher.name}"
+                   th:data-email="${teacher.email}"
+                   th:data-phone="${teacher.phoneNumber}"
+                   th:data-roleid="${teacher.roleId}"
+                   th:data-bs-toggle="modal"
+                   data-bs-target="#addTeacherModal">
+                    <i class="fas fa-edit"></i>
+                </a>
                 <a class="btn btn-danger btn-sm delete"
                    data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                     <i class="fas fa-trash-alt"></i>

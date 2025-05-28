@@ -67,48 +67,67 @@
             </div>
             <div class="modal-body">
                 <form th:action="@{/users/save}" id="addTeacherForm" method="post">
-                    <div class="mb-1">
-                        <label for="usercode"></label>
-                        <input type="number"
-                               placeholder="Código"
-                               class="form-control"
-                               id="usercode"
-                               name="usercode"
-                               required>
-                    </div>
-                    <div class="mb-1">
-                        <label for="name"></label>
-                        <input type="text"
-                               placeholder="Nombre"
-                               class="form-control"
-                               id="name"
-                               name="name"
-                               required>
-                    </div>
-                    <div class="mb-1">
-                        <label for="email"></label>
-                        <input type="email"
-                               placeholder="Correo electrónico"
-                               class="form-control"
-                               id="email"
-                               name="email">
-                    </div>
-                    <div class="mb-4">
-                        <label for="phoneNumber"></label>
-                        <input type="number"
-                               placeholder="Número de teléfono"
-                               class="form-control"
-                               id="phoneNumber"
-                               name="phoneNumber">
-                    </div>
+                    <input type="hidden" id="teacherId" name="id" />
+
                     <div class="mb-3">
-                        <label for="role">
-                            <select class="form-select" id="role" name="roleId" required>
-                                <option value="" disabled selected hidden>Seleccione un rol</option>
-                                <option th:each="rol: ${roles}" th:value="${rol.id}" th:text="${rol.name}"></option>
-                            </select>
-                        </label>
+                        <label for="usercode" class="form-label fw-bold">Código del docente:</label>
+                        <input
+                                type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                minlength="4"
+                                maxlength="4"
+                                class="form-control"
+                                id="usercode"
+                                name="usercode"
+                                required
+                        />
                     </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label fw-bold">Nombre completo:</label>
+                        <input
+                                type="text"
+                                class="form-control"
+                                id="name"
+                                name="name"
+                                required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-bold">Correo electrónico:</label>
+                        <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label fw-bold">Número de teléfono:</label>
+                        <input
+                                type="text"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                minlength="10"
+                                maxlength="10"
+                                class="form-control"
+                                id="phoneNumber"
+                                name="phoneNumber"
+                                required
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="role" class="form-label fw-bold">Rol:</label>
+                        <select class="form-select" id="role" name="roleId" required>
+                            <option value="" disabled selected hidden>Seleccione un rol</option>
+                            <option th:each="rol : ${roles}" th:value="${rol.id}" th:text="${rol.name}"></option>
+                        </select>
+                    </div>
+
                     <div class="modal-footer d-flex justify-content-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-success">Guardar</button>
@@ -196,6 +215,7 @@
 <script th:src="@{/js/components/utils/togglebtn.js}"></script>
 <script th:src="@{/js/components/utils/alert.js}"></script>
 <script th:src="@{/js/components/users/delete_teacher.js}"></script>
+<script th:src="@{/js/components/users/update_users.js}"></script>
 <script th:src="@{/js/components/formats/delete_format.js}"></script>
 <script th:src="@{/js/components/users/activate.js}"></script>
 <script th:src="@{/js/components/formats/activate_format.js}"></script>

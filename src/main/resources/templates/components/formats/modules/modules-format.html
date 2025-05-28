@@ -93,9 +93,16 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label fw-bold">% de Cumplimiento:</label>
-                                            <input type="number" class="form-control"
-                                                   th:value="${project.compliancePercentage}"
-                                                   name="compliancePercentage" min="0" max="100" step="1">
+                                            <input
+                                                    type="text"
+                                                    inputmode="numeric"
+                                                    pattern="[0-9]*"
+                                                    maxlength="3"
+                                                    class="form-control no-spinner"
+                                                    th:value="${project.compliancePercentage}"
+                                                    name="compliancePercentage"
+                                                    required
+                                            />
                                         </div>
                                     </div>
                                     <div class="mb-3">

@@ -140,7 +140,7 @@ public class UserController {
                              @Valid @ModelAttribute UserRequest userRequest) {
         try{
             userService.createDraftUser(userRequest);
-            att.addFlashAttribute(MESSAGE, "¡Docente registrado con éxito!");
+            att.addFlashAttribute(MESSAGE, "¡Docente guardado con éxito!");
         }catch (BadRequestException e){
             att.addFlashAttribute(CREATE_ERROR, "Ocurrió un error al crear el nuevo docente.");
         }

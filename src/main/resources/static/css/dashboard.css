@@ -323,3 +323,14 @@ body {
     padding: 0.5rem 1rem;
     width: 100%;
 }
+
+input.no-spinner::-webkit-outer-spin-button,
+input.no-spinner::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Quitar flechas en Firefox */
+input.no-spinner[type=number] {
+    -moz-appearance: textfield;
+}
