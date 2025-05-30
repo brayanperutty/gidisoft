@@ -54,14 +54,18 @@
                                             class="btn btn-sm btn-secondary view-evidences"
                                             th:data-project-name="${project.name}"
                                             th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
+                                            data-entity="projects"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#evidenceModal">
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-project-id=${project.id}, data-format-id=${project.formatId}">
                                         Ver evidencias (<span th:text="${project.files.size()}"></span>)
                                         <i class="fas fa-images ms-2"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div th:if="${user.id == project.createdBy or #lists.contains(editableProjectsIds, project.id)}">
+                            <div th:if="${user.id == project.createdBy
+                            or #lists.contains(editableProjectsIds, project.id)
+                            or user.roleType == 'admin'}">
                                 <form th:action="@{/projects}"
                                       method="post" enctype="multipart/form-data" id="formProject">
                                     <input type="hidden" class="form-control projectId" name="id"
@@ -71,10 +75,10 @@
                                     <div th:if="${project.editorsNames != null}">
                                         <label class="form-label fw-bold mb-3">Docentes Editores:</label>
                                         <span name="editors">
-                                        <span th:each="editor, iterStat : ${project.editorsNames}">
-                                            <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            <span th:each="editor, iterStat : ${project.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
                                         </span>
-                                    </span>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Proyecto:</label>
@@ -105,30 +109,24 @@
                                             />
                                         </div>
                                     </div>
-                                    <div class="mb-3">
+
+                                    <div class="project-block mb-3" th:data-id="${project.id}">
                                         <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
-
-                                        <!-- Input oculto -->
-                                        <input type="file" name="files" multiple th:id="'fileInput-' + ${project.id}"
-                                               style="display: none;">
-
-                                        <!-- Botón para seleccionar archivos -->
-                                        <button type="button" class="btn btn-sm btn-outline-secondary"
-                                                th:id="'fileButton-' + ${project.id}">
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
                                             Seleccionar archivos
                                         </button>
-
-                                        <!-- Contador personalizado -->
-                                        <small th:id="'fileCount-' +${project.id}" class="form-text text-muted ms-2">Ningún
-                                            archivo seleccionado</small>
-
-                                        <!-- Contenedor para los nombres de los archivos -->
-                                        <div th:id="'fileNamesContainer-' + ${project.id}" class="mt-2"></div>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
                                     </div>
+
                                     <div class="d-flex justify-content-end align-items-center">
                                         <button type="button"
                                                 class="btn btn-sm btn-secondary view-evidences"
                                                 th:data-project-name="${project.name}"
+                                                data-entity="projects"
                                                 th:data-files="${#strings.arrayJoin(project.files.toArray(), ',')}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#evidenceModal"
@@ -180,6 +178,7 @@
                 </div>
             </div>
 
+            <!--        permisos proyecto          -->
             <div th:each="project : ${projects}">
                 <div class="modal fade" th:id="'permisosModal__' + ${project.id}" tabindex="-1"
                      aria-labelledby="permisosModalLabel" aria-hidden="true">
@@ -197,8 +196,9 @@
                                     <div class="form-group">
                                         <input type="hidden" class="form-control formatId" name="formatId"
                                                th:value="${project.formatId}">
-                                        <label for="usuarios" class="mb-3">Selecciona los usuarios con acceso:</label>
-                                        <select id="usuarios" class="form-select mb-3" multiple name="users">
+                                        <label for="usuariosProject" class="mb-3">Selecciona los usuarios con
+                                            acceso:</label>
+                                        <select id="usuariosProject" class="form-select mb-3" multiple name="users">
                                             <option th:each="usuario : ${users}"
                                                     th:value="${usuario.id}"
                                                     th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
@@ -229,7 +229,7 @@
                 <button class="accordion-button collapsed text-white fw-bold" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOneDirections"
                         aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
-                    Participación en Dirección de Trabajo de Grado y/o Tesis
+                    Participación en Dirección de Trabajo de Grado, maestrías y/o doctorados
                 </button>
             </h2>
 
@@ -242,26 +242,37 @@
                         </script>
                         <div class="card mb-3 border border-secondary p-3" th:if="${!directions.isEmpty()}"
                              th:each="direction: ${directions}">
-                            <div th:if="${user.id != direction.createdBy}">
-                                <input type="hidden" class="form-control projectId" name="id"
+                            <div th:if="${!#lists.contains(direction.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control directionId" name="id"
                                        th:value="${direction.id}">
                                 <input type="hidden" class="form-control formatId" name="formatId"
                                        th:value="${direction.formatId}">
-                                <div th:if="${direction.createdByName != null}">
-                                    <label class="form-label fw-bold mb-3">Docente:</label>
-                                    <span name="name"
-                                          th:text="${direction.createdByName}"></span>
+                                <div th:if="${direction.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${direction.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="form-label fw-bold">Proyecto:</label>
+                                <div class="mb-3">
+                                    <div>
+                                        <label class="form-label fw-bold">Participación en:</label>
                                         <span name="name"
                                               th:text="${direction.name}"></span>
                                     </div>
-                                    <div class="col-md-4">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5">
                                         <label class="form-label fw-bold">Director:</label>
                                         <span name="projectType"
-                                              th:text="${direction.director}"></span>
+                                              th:text="${direction.directorName}"></span>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-bold">Codirector:</label>
+                                        <span name="projectType"
+                                              th:text="${direction.codirectorName}"></span>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label fw-bold">% de Cumplimiento:</label>
@@ -270,20 +281,39 @@
                                             </span>
                                     </div>
                                 </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(direction.files != null and !direction.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(direction.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-project-name="${direction.name}"
+                                            th:data-files="${#strings.arrayJoin(direction.files.toArray(), ',')}"
+                                            data-entity="projects"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-direction-id=${direction.id}, data-format-id=${direction.formatId}">
+                                        Ver evidencias (<span th:text="${direction.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
                             </div>
 
-                            <div th:if="${user.id == direction.createdBy}">
+                            <div th:if="${#lists.contains(direction.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
                                 <form th:action="@{/directions}"
-                                      method="post">
+                                      method="post" enctype="multipart/form-data">
                                     <input type="hidden" class="form-control directionId" name="id"
                                            th:value="${direction.id}">
                                     <input type="hidden" class="form-control formatId" name="formatId"
                                            th:value="${direction.formatId}">
 
-                                    <div th:if="${direction.createdByName != null}">
-                                        <label class="form-label fw-bold mb-3">Docente:</label>
-                                        <span name="name"
-                                              th:text="${direction.createdByName}"></span>
+                                    <div th:if="${direction.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${direction.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Título del proyecto:</label>
@@ -307,7 +337,8 @@
                                         </div>
                                         <div class="col-md-5">
                                             <label class="form-label fw-bold">Codirector:</label>
-                                            <select class="form-select text-center" id="codirector" name="codirector">
+                                            <select class="form-select text-center" id="codirector"
+                                                    name="codirector">
                                                 <option value="" disabled selected hidden>¿Cuenta con codirector?
                                                 </option>
                                                 <option th:each="user: ${users}"
@@ -319,13 +350,48 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label fw-bold">% de Cumplimiento:</label>
-                                            <input type="number" class="form-control"
-                                                   th:value="${direction.compliancePercentage}"
-                                                   name="compliancePercentage" min="0" max="100" step="1">
+                                            <input
+                                                    type="text"
+                                                    inputmode="numeric"
+                                                    pattern="[0-9]*"
+                                                    maxlength="3"
+                                                    class="form-control no-spinner"
+                                                    th:value="${direction.compliancePercentage}"
+                                                    name="compliancePercentage"
+                                                    required
+                                            />
                                         </div>
                                     </div>
+                                    <div class="project-block mb-3" th:data-id="${direction.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
                                     <div class="d-flex justify-content-end align-items-center">
-                                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                th:data-project-name="${direction.name}"
+                                                data-entity="projects"
+                                                th:data-files="${#strings.arrayJoin(direction.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${direction.files != null and !direction.files.isEmpty()}"
+                                                th:attr="data-direction-id=${direction.id}, data-format-id=${direction.formatId}">
+                                            Ver evidencias (<span th:text="${direction.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalDirection__' + ${direction.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
                                         <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteDirection"
                                            data-bs-toggle="modal" data-bs-target="#deleteDirectionModal">Eliminar
                                         </a>
@@ -361,6 +427,48 @@
                     </div>
                 </div>
             </div>
+
+            <!--        permisos participación          -->
+            <div th:each="direction : ${directions}">
+                <div class="modal fade" th:id="'permisosModalDirection__' + ${direction.id}" tabindex="-1"
+                     aria-labelledby="permisosModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title">Gestionar Permisos - Proyecto:
+                                    <span th:text="${direction.name}"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
+                            </div>
+                            <form th:action="@{/directions/{id}/permissions(id=${direction.id})}" method="post">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control formatId" name="formatId"
+                                               th:value="${direction.formatId}">
+                                        <label for="usuariosParticipación" class="mb-3">Selecciona los usuarios con
+                                            acceso:</label>
+                                        <select id="usuariosParticipación" class="form-select mb-3" multiple
+                                                name="users">
+                                            <option th:each="usuario : ${users}"
+                                                    th:value="${usuario.id}"
+                                                    th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                            </option>
+                                        </select>
+                                        <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                            seleccionar múltiples usuarios.</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -380,11 +488,164 @@
                  data-bs-parent="#accordionEvents">
                 <div class="accordion-body">
                     <div class="card-body" id="events-container">
-                        <!-- Las secciones de proyecto se insertan aquí -->
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${!events.isEmpty()}"
+                             th:each="event: ${events}">
+                            <div th:if="${!#lists.contains(event.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control eventId" name="id"
+                                       th:value="${event.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${event.formatId}">
+                                <div th:if="${event.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${event.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <div>
+                                        <label class="form-label fw-bold">Evento:</label>
+                                        <span name="name"
+                                              th:text="${event.name}"></span>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-bold">Fecha de Terminación:</label>
+                                        <span th:text="${event.createdAtFormatted != null ? event.createdAtFormatted.toString() : ''}"
+                                              name="createdAt">
+                                    </span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">% de Cumplimiento:</label>
+                                        <span th:text="${event.compliancePercentage}"
+                                              name="compliancePercentage">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(event.files != null and !event.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(event.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-project-name="${event.name}"
+                                            th:data-files="${#strings.arrayJoin(event.files.toArray(), ',')}"
+                                            data-entity="projects"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-event-id=${event.id}, data-format-id=${event.formatId}">
+                                        Ver evidencias (<span th:text="${event.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(event.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/events}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control eventId" name="id"
+                                           th:value="${event.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${event.formatId}">
+
+                                    <div th:if="${event.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${event.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Evento:</label>
+                                        <textarea class="form-control"
+                                                  name="name"
+                                                  th:text="${event.name}"
+                                                  rows="1"></textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-bold">Fecha de realización:</label>
+                                            <input type="date" class="form-control" name="createdAt"
+                                                   th:value="${event.createdAt}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label fw-bold">% de Cumplimiento:</label>
+                                            <input
+                                                    type="text"
+                                                    inputmode="numeric"
+                                                    pattern="[0-9]*"
+                                                    maxlength="3"
+                                                    class="form-control no-spinner"
+                                                    th:value="${event.compliancePercentage}"
+                                                    name="compliancePercentage"
+                                                    required/>
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${event.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                th:data-project-name="${event.name}"
+                                                data-entity="projects"
+                                                th:data-files="${#strings.arrayJoin(event.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${event.files != null and !event.files.isEmpty()}"
+                                                th:attr="data-event-id=${event.id}, data-format-id=${event.formatId}">
+                                            Ver evidencias (<span th:text="${event.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalEvent__' + ${event.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteEvent"
+                                           data-bs-toggle="modal" data-bs-target="#deleteEventModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer text-end">
                         <button type="button" class="btn btn-success" onclick="addEvent()">+ Agregar Evento
                         </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Eliminar evento -->
+            <div class="modal fade" id="deleteEventModal" tabindex="-1" aria-labelledby="deleteEventModal"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteEventLabel">Confirmar eliminación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            ¿Estás seguro que deseas eliminar este evento?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <a type="button" class="btn btn-danger" id="deleteEventConfirm">Confirmar</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -676,67 +937,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const inner = document.getElementById('carouselInner');
-            const currentIndex = document.getElementById('currentImageIndex');
-            const totalImages = document.getElementById('totalImages');
-            const modalTitle = document.getElementById('evidenceModalTitle');
-            const carouselElement = document.getElementById('carouselEvidences');
-
-            let currentProjectId = null;
-            let currentFormatId = null;
-
-            document.querySelectorAll('.view-evidences').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const files = btn.dataset.files.split(',');
-                    const name = btn.dataset.projectName;
-                    currentProjectId = btn.dataset.projectId;
-                    currentFormatId = btn.dataset.formatId;
-
-                    // Limpiar carrusel
-                    inner.innerHTML = '';
-                    files.forEach((url, index) => {
-                        const item = document.createElement('div');
-                        item.className = 'carousel-item' + (index === 0 ? ' active' : '');
-                        item.innerHTML = `<div class="d-flex justify-content-center align-items-center w-100 h-100">
-                                            <img src="${url}" data-url="${url}" class="img-fluid" style="max-width: 90%; max-height:90%; object-fit: contain;" alt="Evidencia">
-                                          </div>`;
-                        inner.appendChild(item);
-                    });
-
-                    // Actualizar título e índice
-                    modalTitle.textContent = `Evidencias de ${name}`;
-                    currentIndex.textContent = 1;
-                    totalImages.textContent = files.length;
-
-                    // Reiniciar carrusel
-                    bootstrap.Carousel.getOrCreateInstance(carouselElement).to(0);
-                });
-            });
-
-            carouselElement.addEventListener('slid.bs.carousel', function (e) {
-                currentIndex.textContent = e.to + 1;
-            });
-
-            const deleteButton = document.getElementById('deleteImageBtn');
-
-            deleteButton.addEventListener('click', async () => {
-                const activeItem = inner.querySelector('.carousel-item.active');
-                if (!activeItem) return;
-
-                const img = activeItem.querySelector('img');
-                const imageUrl = img?.dataset.url;
-
-                if (!imageUrl) return;
-
-                const confirmed = confirm('¿Estás seguro de que deseas eliminar esta imagen?');
-                if (!confirmed) return;
-
-                window.location.href = `/projects/${currentProjectId}/delete-evidence?url=${imageUrl}&formatId=${currentFormatId}`;
-            });
-        });
-    </script>
 </div>
 

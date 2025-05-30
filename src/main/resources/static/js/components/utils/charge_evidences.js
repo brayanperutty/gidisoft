@@ -1,32 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const fileButtons = document.querySelectorAll("[id^='fileButton-']");
-    const form = document.getElementById('formProject');
+    // Selecciona todos los contenedores que tengan carga de archivos (proyectos, participaciones, etc)
+    const blocks = document.querySelectorAll('.project-block, .participation-block'); // ajusta según clases
 
-    fileButtons.forEach(button => {
-        const projectId = button.id.split("-")[1];
-        const input = document.getElementById(`fileInput-${projectId}`);
-        const fileNamesContainer = document.getElementById(`fileNamesContainer-${projectId}`);
-        const fileCount = document.getElementById(`fileCount-${projectId}`);
+    blocks.forEach(block => {
+        const input = block.querySelector('.fileInput');
+        const button = block.querySelector('.fileButton');
+        const count = block.querySelector('.fileCount');
+        const namesContainer = block.querySelector('.fileNamesContainer');
 
-        fileNamesContainer.style.display = "flex";
-        fileNamesContainer.style.flexWrap = "wrap";
-        fileNamesContainer.style.gap = "10px";
+        if (!input || !button || !count || !namesContainer) return;
 
-        button.addEventListener("click", () =>
-            input.click());
+        namesContainer.style.display = "flex";
+        namesContainer.style.flexWrap = "wrap";
+        namesContainer.style.gap = "10px";
+
+        button.addEventListener('click', () => input.click());
 
         let files = [];
-        input.addEventListener("change", () => {
-            files = input.files;
+
+        input.addEventListener('change', () => {
+            files = Array.from(input.files);
             renderFileNames();
         });
 
         function renderFileNames() {
-            fileCount.textContent = files.length > 0
+            count.textContent = files.length > 0
                 ? `${files.length} archivo(s) seleccionado(s)`
                 : 'Ningún archivo seleccionado';
-            fileNamesContainer.innerHTML = "";
-            Array.from(files).forEach((file, index) => {
+
+            namesContainer.innerHTML = "";
+
+            files.forEach((file, index) => {
                 const fileItem = document.createElement("div");
                 fileItem.textContent = file.name;
 
@@ -50,21 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeButton.addEventListener("click", () => {
                     files.splice(index, 1);
                     renderFileNames();
-                    // ✅ Reconstruir fileInput.files
+
                     const dataTransfer = new DataTransfer();
-                    files.forEach(file => dataTransfer.items.add(file));
+                    files.forEach(f => dataTransfer.items.add(f));
                     input.files = dataTransfer.files;
                 });
 
                 fileItem.appendChild(removeButton);
-                fileNamesContainer.appendChild(fileItem);
+                namesContainer.appendChild(fileItem);
             });
         }
 
-        form.addEventListener("submit", function (e) {
-            if (input && input.files.length === 0) {
-                input.remove(); // Elimina el input para que no se envíe
-            }
-        });
+        // Opcional: evitar enviar input vacío en form si fuera necesario
+        const form = block.closest('form');
+        if (form) {
+            form.addEventListener('submit', () => {
+                if (input.files.length === 0) {
+                    input.remove();
+                }
+            });
+        }
     });
 });

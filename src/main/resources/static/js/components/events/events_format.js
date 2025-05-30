@@ -1,34 +1,67 @@
+import { setupFileUpload } from '../utils/file_uploaderHandler.js';
+
 function addEvent() {
     const container = document.getElementById('events-container');
+    const idFormat = document.getElementById('id-format');
+    const timestamp = Date.now();
 
-    const newEvent = document.createElement('div');
-    newEvent.classList.add('card', 'mb-3', 'border', 'border-secondary', 'p-3');
+    const form = document.createElement('form');
+    form.action = '/events'; // tu ruta
+    form.method = 'post';
+    form.enctype = 'multipart/form-data';
+    form.classList.add('card', 'mt-3', 'border', 'border-secondary', 'p-3');
 
-    newEvent.innerHTML = `
+    form.innerHTML = `
             
-            <div class="mb-3">
-                <label class="form-label fw-bold">Nombre del evento:</label>
-                <textarea class="form-control" name="eventTitle[]" rows="1" required></textarea>
-            </div>
-
+            <input type="hidden" class="form-control" name="formatId" value="${idFormat.value}">
+            
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Carácter de evento (local, regional, nacional, internacional):</label>
-                    <textarea class="form-control" name="eventType[]" rows="1" required></textarea>
+                    <label class="form-label fw-bold">Nombre del evento:</label>
+                    <textarea class="form-control" name="name" rows="1" required></textarea>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Fecha de realización:</label>
-                    <input type="date" class="form-control" name="realizeDate[]" required>
+                    <input type="date" class="form-control" name="createdAt" required>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label fw-bold">% de Cumplimiento:</label>
-                    <input type="number" class="form-control" name="compliance[]" min="0" max="100" step="1" required>
+                    <input
+                            type="text"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="3"
+                            class="form-control no-spinner"
+                            name="compliancePercentage"
+                            required
+                    />
                 </div>
+            </div>
+            
+            <div class="mb-3">
+                    <label class="form-label fw-bold d-block mb-3">Evidencias de la participación:</label>
+                    
+                    <!-- Input oculto -->
+                    <input type="file" name="files" multiple id="fileInput-${timestamp}" style="display: none;">
+                    
+                    <!-- Botón para seleccionar archivos -->
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="fileButton-${timestamp}">
+                        Seleccionar archivos
+                    </button>
+                    
+                    <!-- Contador personalizado -->
+                    <small id="fileCount-${timestamp}" class="form-text text-muted ms-2">Ningún archivo seleccionado</small>
+                
+                    <!-- Contenedor para los nombres de los archivos -->
+                    <div id="fileNamesContainer-${timestamp}" class="mt-2"></div>
             </div>
 
             <div class="d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.card').remove()">🗑 Eliminar</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="this.closest('.card').remove()">🗑 Eliminar</button>
             </div>
         `;
-    container.appendChild(newEvent);
+    container.appendChild(form);
+    setupFileUpload(form, timestamp);
 }
+window.addEvent = addEvent;

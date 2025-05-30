@@ -1,9 +1,9 @@
-package com.ufps.gidisoft.controllers.directions;
+package com.ufps.gidisoft.controllers.events;
 
 import com.ufps.gidisoft.entities.users.User;
-import com.ufps.gidisoft.requests.formats.DirectionRequest;
+import com.ufps.gidisoft.requests.formats.EventRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
-import com.ufps.gidisoft.services.formats.directions.DirectionService;
+import com.ufps.gidisoft.services.formats.events.EventService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +12,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/directions")
-public class DirectionController {
+@RequestMapping(value = "/events")
+public class EventController {
 
-    private final DirectionService directionService;
+    /*
+     * Services
+     */
+    private final EventService eventService;
     private final UserService userService;
 
     private static final String USERCODE = "usercode";
@@ -30,28 +31,27 @@ public class DirectionController {
     private static final String REDIRECT_ERROR = "error/403";
 
     @PostMapping(value = "")
-    public String addDirection(Model model, HttpServletRequest request, @ModelAttribute DirectionRequest directionRequest,
-                             RedirectAttributes att) {
+    public String addEvent(Model model, HttpServletRequest request, @ModelAttribute EventRequest eventRequest,
+                               RedirectAttributes att) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
-        } else {
+        }else{
             try {
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
-                if(directionRequest.getId() != null) {
-                    this.directionService.updateDirection(directionRequest, userService.getUserByUsercode(request.getSession()
+                if(eventRequest.getId() != null) {
+                    this.eventService.updateEvent(eventRequest, userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString()));
-                } else {
-                    this.directionService.
-                            createDirection(directionRequest, userService.getUserByUsercode(request.getSession()
-                                    .getAttribute(USERCODE).toString()));
+                }else {
+                    this.eventService.createEvent(eventRequest, userService.getUserByUsercode(request.getSession()
+                            .getAttribute(USERCODE).toString()));
                 }
-                att.addFlashAttribute(MESSAGE, "Participación guardada con éxito.");
+                att.addFlashAttribute(MESSAGE, "Evento guardado con éxito.");
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
-        return REDIRECT_FORMAT + directionRequest.getFormatId();
+        return REDIRECT_FORMAT + eventRequest.getFormatId();
     }
 
     @GetMapping(value = "/{id}/delete")
@@ -62,31 +62,15 @@ public class DirectionController {
         } else {
             User user = userService.getUserByUsercode(request.getSession()
                     .getAttribute(USERCODE).toString());
-            if (!this.directionService.validateDirectionWithUser(id, user)) {
+            if (!this.eventService.validateEventWithUser(id, user)) {
                 return REDIRECT_ERROR;
             } else {
                 try {
-                    this.directionService.deleteById(id);
-                    att.addFlashAttribute(MESSAGE, "Participación eliminada con éxito.");
+                    this.eventService.deleteById(id);
+                    att.addFlashAttribute(MESSAGE, "Evento eliminado con éxito.");
                 } catch (Exception e) {
                     att.addFlashAttribute(CREATE_ERROR, e.getMessage());
                 }
-            }
-        }
-        return REDIRECT_FORMAT + formatId;
-    }
-
-    @PostMapping(value = "/{id}/permissions")
-    public String createRelations(@PathVariable Long id, @RequestParam List<Long> users, RedirectAttributes att,
-                                  HttpServletRequest request, @RequestParam Long formatId) {
-        if (request.getSession().getAttribute(USERCODE) == null) {
-            return REDIRECT_LOGIN;
-        } else {
-            try {
-                this.directionService.createRelationsWithUsers(users, id);
-                att.addFlashAttribute(MESSAGE, "Participación compartida con éxito.");
-            } catch (Exception e) {
-                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
         return REDIRECT_FORMAT + formatId;

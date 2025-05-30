@@ -6,6 +6,8 @@ import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
 import com.ufps.gidisoft.services.faculties.FacultyService;
 import com.ufps.gidisoft.services.formats.directions.DirectionService;
+import com.ufps.gidisoft.services.formats.directions.DirectionUserService;
+import com.ufps.gidisoft.services.formats.events.EventService;
 import com.ufps.gidisoft.services.formats.general.FormatService;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
 import com.ufps.gidisoft.services.formats.projects.ProjectUserService;
@@ -36,6 +38,7 @@ public class FormatsController {
     private final DirectionService directionService;
     private final FacultyService facultyService;
     private final InvestigationGroupService investigationGroupService;
+    private final EventService eventService;
 
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
@@ -65,13 +68,13 @@ public class FormatsController {
                 model.addAttribute(FORMAT_REQUEST, this.formatService.findFormatById(id));
                 model.addAttribute("user", new UsersDto(user));
                 model.addAttribute("projects", this.projectService.findByFormatId(id));
-                model.addAttribute("directions", this.directionService.findByFormatId(id, user));
+                model.addAttribute("directions", this.directionService.findByFormatId(id));
+                model.addAttribute("events", this.eventService.findByFormatId(id));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
                 model.addAttribute("faculties", this.facultyService.findAllFaculties());
                 model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());
                 model.addAttribute("users", this.userService.findAllUsers());
-                List<Long> editableProjectsIds = this.projectUserService.getProjectIdsUserCanEdit(user);
-                model.addAttribute("editableProjectsIds", editableProjectsIds);
+                model.addAttribute("editableProjectsIds", this.projectUserService.getProjectIdsUserCanEdit(user));
                 model.addAttribute(DIRECTOR, this.userService.findAdminUser());
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);

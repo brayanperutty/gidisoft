@@ -1,37 +1,28 @@
-package com.ufps.gidisoft.entities.formats.directions;
+package com.ufps.gidisoft.entities.formats.events;
 
 import com.ufps.gidisoft.entities.formats.general.Format;
-import com.ufps.gidisoft.entities.formats.projects.ProjectStatus;
 import com.ufps.gidisoft.entities.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Data
-@Table(name = "directions")
+@Table(name = "events")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Direction {
+public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "name")
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "director_id")
-    private User director;
-
-    @ManyToOne
-    @JoinColumn(name = "codirector_id")
-    private User codirector;
-
+    @Column(name = "created_at")
+    private LocalDate createdAt;
     @Column(name = "compliance_percentage")
     private Integer compliancePercentage;
 
@@ -46,3 +37,4 @@ public class Direction {
     @Column(name = "files", length = 30000)
     private List<String> files;
 }
+

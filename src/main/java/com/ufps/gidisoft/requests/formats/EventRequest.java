@@ -1,24 +1,23 @@
 package com.ufps.gidisoft.requests.formats;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NotNull
-public class DirectionRequest {
+@NoArgsConstructor
+public class EventRequest {
 
     private Long id;
     private String name;
-    private String projectType;
-    private Long director;
-    private Long codirector;
-    private String academicProgram;
+    private LocalDate createdAt;
     private Integer compliancePercentage;
     private Long formatId;
-    private List<MultipartFile> files;
+    private List<MultipartFile> files = new ArrayList<>();
 }

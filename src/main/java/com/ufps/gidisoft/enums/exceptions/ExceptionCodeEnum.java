@@ -13,12 +13,18 @@ public enum ExceptionCodeEnum {
 
     FORMAT01("Formato no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     FORMAT02("Ya existe un formato para ese período académico.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    PROJSTS01("The project status is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    PROJ01("The project is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+
+    PROJSTS01("Estado del proyecto no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    PROJ01("Proyecto no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     PROJ02("No tienes permiso para editar este formato", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    DIR01("The direction is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+
+    DIR01("Participación de dirección no encontrada", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+
     GROUP01("The investigation group is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     FAC01("The faculty is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+
+    EVENT01("The event is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    EVENT02("No tienes permisos para editar este evento", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
     TOKEN01("The token has expiry", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     TOKEN02("The token is invalid", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),

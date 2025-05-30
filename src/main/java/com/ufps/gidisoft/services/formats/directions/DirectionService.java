@@ -1,20 +1,25 @@
 package com.ufps.gidisoft.services.formats.directions;
 
 import com.ufps.gidisoft.entities.formats.directions.Direction;
+import com.ufps.gidisoft.entities.formats.projects.Project;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.repositories.formats.directions.DirectionRepository;
 import com.ufps.gidisoft.requests.formats.DirectionRequest;
 import com.ufps.gidisoft.responses.format.DirectionDto;
+import com.ufps.gidisoft.services.cloudinary.CloudinaryService;
 import com.ufps.gidisoft.services.formats.general.FormatServiceSec;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +36,14 @@ public class DirectionService {
     private final UserService userService;
     private final FormatServiceSec formatServiceSec;
     private final DirectionUserService directionUserService;
+    private final CloudinaryService cloudinaryService;
+
+    public Direction findById(Long id) {
+        return directionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(ExceptionCodeEnum.DIR01.getMessage()));
+    }
 
     @Transactional
-    public void createDirection(DirectionRequest directionRequest, User user) {
+    public void createDirection(DirectionRequest directionRequest, User user) throws IOException {
         Direction direction = new Direction();
         direction.setName(directionRequest.getName());
         direction.setDirector(this.userService.getUserById(directionRequest.getDirector()));
@@ -41,31 +51,87 @@ public class DirectionService {
         direction.setCompliancePercentage(directionRequest.getCompliancePercentage());
         direction.setFormat(this.formatServiceSec.findByIdToRelations(directionRequest.getFormatId()));
         direction.setCreatedBy(this.userService.getUserById(user.getId()));
+        getFilesNameList(directionRequest, direction);
         this.directionRepository.save(direction);
-        this.directionUserService.createDirectionUser(direction, user);
+        if (!Objects.equals(directionRequest.getDirector(), user.getId())) {
+            this.directionUserService.createDirectionUser(direction, user);
+        }
+        this.directionUserService.createDirectionUser(direction, this.userService.getUserById(directionRequest.getDirector()));
         this.directionUserService.createDirectionUser(direction, this.userService.getUserById(directionRequest.getCodirector()));
     }
 
-    public List<DirectionDto> findByFormatId(Long formatId, User user) {
+    @Transactional
+    public void updateDirection(DirectionRequest directionRequest, User user) throws IOException {
+        Direction direction = this.findById(directionRequest.getId());
+        if(this.directionUserService.validateDirectionUser(direction, user)){
+            direction.setName(directionRequest.getName());
+            direction.setCompliancePercentage(directionRequest.getCompliancePercentage());
+            getFilesNameList(directionRequest, direction);
+            this.validateSameDirectorAndCodirector(directionRequest, direction);
+            direction.setDirector(this.userService.getUserById(directionRequest.getDirector()));
+            direction.setCodirector(this.userService.getUserById(directionRequest.getCodirector()));
+            this.directionRepository.save(direction);
+        }
+    }
+
+     @Transactional
+    public void validateSameDirectorAndCodirector(DirectionRequest directionRequest, Direction direction) {
+        if(!direction.getDirector().getId().equals(directionRequest.getDirector())){
+            this.directionUserService.deleteByDirectionIdAndUserId(direction.getId(), direction.getDirector().getId());
+            this.directionUserService.createDirectionUser(direction, this.userService.getUserById(directionRequest.getDirector()));
+        }
+
+        if(!direction.getCodirector().getId().equals(directionRequest.getCodirector())){
+            this.directionUserService.deleteByDirectionIdAndUserId(direction.getId(), direction.getCodirector().getId());
+            this.directionUserService.createDirectionUser(direction, this.userService.getUserById(directionRequest.getCodirector()));
+        }
+    }
+
+    public void getFilesNameList(DirectionRequest directionRequest, Direction direction) throws IOException {
+        if(directionRequest.getFiles() != null && !directionRequest.getFiles().isEmpty()) {
+            List<String> fileNames = new ArrayList<>();
+            if (direction.getFiles() != null && !direction.getFiles().isEmpty()) {
+                fileNames = direction.getFiles();
+            }
+
+            for (MultipartFile file : directionRequest.getFiles()) {
+                fileNames.add(cloudinaryService.upload(file, "directions"));
+            }
+            direction.setFiles(fileNames);
+        }
+    }
+
+    public List<DirectionDto> findByFormatId(Long formatId) {
         List<DirectionDto> directionDtos = new ArrayList<>();
-        List<Direction> directions = this.directionRepository.findByFormatIdAndCreatedBy(formatId, user);
-        List<Direction> otherDirections = this.directionRepository.findByFormatId(formatId).stream()
-                .filter(direction -> !direction.getCreatedBy().equals(user))
-                .toList();
-        directionDtos.addAll(directions.stream().map(DirectionDto::new).toList());
-        directionDtos.addAll(otherDirections.stream().map(DirectionDto::new).toList());
+        for (Direction direction : this.directionRepository.findByFormatId(formatId)) {
+            directionDtos.add(new DirectionDto(direction, this.directionUserService.findUsersByDirection(direction.getId())));
+        }
         directionDtos.sort(Comparator.comparing(DirectionDto::getId));
         return directionDtos;
     }
 
-    public boolean validateDirectionWithUser(Long projectId, User user) {
-        return this.directionUserService.validateDirectionUser(this.directionRepository.findById(projectId)
+    public boolean validateDirectionWithUser(Long directionId, User user) {
+        return this.directionUserService.validateDirectionUser(this.directionRepository.findById(directionId)
                 .orElseThrow(() -> new IllegalArgumentException(ExceptionCodeEnum.DIR01.getMessage())), user);
     }
 
     @Transactional
-    public void deleteById(Long directionId) {
+    public void deleteById(Long directionId) throws Exception {
+        Direction direction = this.findById(directionId);
+        if (direction.getFiles() != null && !direction.getFiles().isEmpty()) {
+            for (String file : direction.getFiles()) {
+                this.cloudinaryService.getImage(file);
+            }
+        }
         this.directionUserService.deleteByDirectionId(directionId);
         this.directionRepository.deleteById(directionId);
+    }
+
+    public void createRelationsWithUsers(List<Long> users, Long directionId) {
+        users.forEach(user -> {
+            Direction direction = this.directionRepository.findById(directionId).orElseThrow(()
+                    -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage()));
+            this.directionUserService.createDirectionUser(direction, this.userService.getUserById(user));
+        });
     }
 }
