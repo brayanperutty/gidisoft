@@ -116,10 +116,13 @@ public class EventService {
         return this.eventUserService.validateExistEventAndUser(this.findById(eventId), user);
     }
 
+    @Transactional
     public void createRelationWithUsers(List<Long> users, Long eventId){
         users.forEach(user -> {
             Event event = this.findById(eventId);
-            this.eventUserService.createEventUser(event, this.userService.getUserById(user));
+            if(!this.validateEventWithUser(eventId, this.userService.getUserById(user))){
+                this.eventUserService.createEventUser(event, this.userService.getUserById(user));
+            }
         });
     }
 }

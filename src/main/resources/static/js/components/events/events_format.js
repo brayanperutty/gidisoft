@@ -1,4 +1,5 @@
 import { setupFileUpload } from '../utils/file_uploaderHandler.js';
+import { bindComplianceInput } from '../utils/complianceHandler.js';
 
 function addEvent() {
     const container = document.getElementById('events-container');
@@ -63,5 +64,7 @@ function addEvent() {
         `;
     container.appendChild(form);
     setupFileUpload(form, timestamp);
+    const newInput = form.querySelector('input[name="compliancePercentage"]');
+    if (newInput) bindComplianceInput(newInput);
 }
 window.addEvent = addEvent;

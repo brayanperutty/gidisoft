@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const entityKeyMap = {
         projects: 'projectId',
         directions: 'directionId',
+        events: 'eventId',
+        others: 'otherId',
         // puedes agregar más si usas otras entidades
     };
 

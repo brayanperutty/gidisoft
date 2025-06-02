@@ -4,6 +4,7 @@ import com.ufps.gidisoft.entities.formats.events.Event;
 import com.ufps.gidisoft.entities.formats.events.EventUser;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.repositories.formats.events.EventUserReopository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +20,12 @@ public class EventUserService {
      */
     private final EventUserReopository eventUserRepository;
 
+    @Transactional
     public void createEventUser(Event event, User user) {
         this.eventUserRepository.save(new EventUser(event, user));
     }
 
+    @Transactional
     public void deleteByEvent(Long eventId) {
         this.eventUserRepository.deleteByEventId(eventId);
     }

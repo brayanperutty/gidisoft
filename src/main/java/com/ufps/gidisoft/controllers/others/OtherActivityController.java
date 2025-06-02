@@ -1,10 +1,10 @@
-package com.ufps.gidisoft.controllers.events;
+package com.ufps.gidisoft.controllers.others;
 
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.roles.RolesEnum;
-import com.ufps.gidisoft.requests.formats.EventRequest;
+import com.ufps.gidisoft.requests.formats.OtherActivityRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
-import com.ufps.gidisoft.services.formats.events.EventService;
+import com.ufps.gidisoft.services.formats.others.OtherActivityService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping(value = "/events")
-public class EventController {
+@RequestMapping(value = "/others")
+public class OtherActivityController {
 
     /*
      * Services
      */
-    private final EventService eventService;
+    private final OtherActivityService otherActivityService;
     private final UserService userService;
 
     private static final String USERCODE = "usercode";
@@ -43,13 +43,13 @@ public class EventController {
         } else {
             User user = userService.getUserByUsercode(request.getSession()
                     .getAttribute(USERCODE).toString());
-            if (!this.eventService.validateEventWithUser(id, user) &&
+            if (!this.otherActivityService.validateOtherActivityWithUser(id, user) &&
                     !user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
                 return REDIRECT_ERROR;
             } else {
                 try {
-                    this.eventService.deleteById(id);
-                    att.addFlashAttribute(MESSAGE, "Evento eliminado con éxito.");
+                    this.otherActivityService.deleteById(id);
+                    att.addFlashAttribute(MESSAGE, "Actividad eliminada con éxito.");
                 } catch (Exception e) {
                     att.addFlashAttribute(CREATE_ERROR, e.getMessage());
                 }
@@ -66,11 +66,11 @@ public class EventController {
         } else {
             User user = userService.getUserByUsercode(request.getSession()
                     .getAttribute(USERCODE).toString());
-            if (!this.eventService.validateEventWithUser(id, user)) {
+            if (!this.otherActivityService.validateOtherActivityWithUser(id, user)) {
                 return REDIRECT_ERROR;
             } else {
                 try {
-                    this.eventService.deleteEvidence(id, url);
+                    this.otherActivityService.deleteEvidence(id, url);
                     model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString())));
                     att.addFlashAttribute(MESSAGE, "Evidencia eliminada con éxito.");
@@ -85,27 +85,27 @@ public class EventController {
     //<---------- POST METHODS ------------->
 
     @PostMapping(value = "")
-    public String addEvent(Model model, HttpServletRequest request, @ModelAttribute EventRequest eventRequest,
-                               RedirectAttributes att) {
+    public String addEvent(Model model, HttpServletRequest request, @ModelAttribute OtherActivityRequest otherActivityRequest,
+                           RedirectAttributes att) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else{
             try {
                 model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString())));
-                if(eventRequest.getId() != null) {
-                    this.eventService.updateEvent(eventRequest, userService.getUserByUsercode(request.getSession()
+                if(otherActivityRequest.getId() != null) {
+                    this.otherActivityService.updateOtherActivity(otherActivityRequest, userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString()));
                 }else {
-                    this.eventService.createEvent(eventRequest, userService.getUserByUsercode(request.getSession()
+                    this.otherActivityService.createOtherActivity(otherActivityRequest, userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString()));
                 }
-                att.addFlashAttribute(MESSAGE, "Evento guardado con éxito.");
+                att.addFlashAttribute(MESSAGE, "Actividad guardada con éxito.");
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
-        return REDIRECT_FORMAT + eventRequest.getFormatId();
+        return REDIRECT_FORMAT + otherActivityRequest.getFormatId();
     }
 
     @PostMapping(value = "/{id}/permissions")
@@ -115,13 +115,12 @@ public class EventController {
             return REDIRECT_LOGIN;
         } else {
             try {
-                this.eventService.createRelationWithUsers(users, id);
-                att.addFlashAttribute(MESSAGE, "Evento compartido con éxito.");
+                this.otherActivityService.createRelationWithUsers(users, id);
+                att.addFlashAttribute(MESSAGE, "Actividad compartida con éxito.");
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
         return REDIRECT_FORMAT + formatId;
     }
-
 }

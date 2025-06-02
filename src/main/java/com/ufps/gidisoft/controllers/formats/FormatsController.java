@@ -9,6 +9,7 @@ import com.ufps.gidisoft.services.formats.directions.DirectionService;
 import com.ufps.gidisoft.services.formats.directions.DirectionUserService;
 import com.ufps.gidisoft.services.formats.events.EventService;
 import com.ufps.gidisoft.services.formats.general.FormatService;
+import com.ufps.gidisoft.services.formats.others.OtherActivityService;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
 import com.ufps.gidisoft.services.formats.projects.ProjectUserService;
 import com.ufps.gidisoft.services.groups.InvestigationGroupService;
@@ -39,6 +40,7 @@ public class FormatsController {
     private final FacultyService facultyService;
     private final InvestigationGroupService investigationGroupService;
     private final EventService eventService;
+    private final OtherActivityService otherActivityService;
 
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
@@ -70,6 +72,7 @@ public class FormatsController {
                 model.addAttribute("projects", this.projectService.findByFormatId(id));
                 model.addAttribute("directions", this.directionService.findByFormatId(id));
                 model.addAttribute("events", this.eventService.findByFormatId(id));
+                model.addAttribute("othersActivities", this.otherActivityService.findByFormatId(id));
                 model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
                 model.addAttribute("faculties", this.facultyService.findAllFaculties());
                 model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());

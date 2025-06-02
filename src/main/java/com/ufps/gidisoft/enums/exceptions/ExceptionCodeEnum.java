@@ -12,11 +12,11 @@ public enum ExceptionCodeEnum {
     ACAPER01("The academic period is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
     FORMAT01("Formato no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    FORMAT02("Ya existe un formato para ese período académico.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    FORMAT02("Ya existe un formato para ese período académico.", ExceptionEnum.REQUEST_EXCEPTION.getValue()),
 
     PROJSTS01("Estado del proyecto no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     PROJ01("Proyecto no encontrado", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    PROJ02("No tienes permiso para editar este formato", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    PROJ02("No tienes permiso para editar este formato", ExceptionEnum.VALIDATION_EXCEPTION.getValue()),
 
     DIR01("Participación de dirección no encontrada", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
@@ -24,10 +24,15 @@ public enum ExceptionCodeEnum {
     FAC01("The faculty is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
     EVENT01("The event is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    EVENT02("No tienes permisos para editar este evento", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    EVENT02("No tienes permisos para editar este evento", ExceptionEnum.VALIDATION_EXCEPTION.getValue()),
+
+    OTHER01("The other activity is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    OTHER02("No tienes permisos para editar esta actividad.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
 
     TOKEN01("The token has expiry", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    TOKEN02("The token is invalid", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    TOKEN02("The token is invalid", ExceptionEnum.REQUEST_EXCEPTION.getValue()),
+
+    PERM01("Usuario/os ya cuentan con permisos.", ExceptionEnum.REQUEST_EXCEPTION.getValue()),
     ;
 
     private final String code;

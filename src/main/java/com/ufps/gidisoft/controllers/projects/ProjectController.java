@@ -43,7 +43,8 @@ public class ProjectController {
         } else {
             User user = userService.getUserByUsercode(request.getSession()
                     .getAttribute(USERCODE).toString());
-            if (!this.projectService.validateProjectWithUser(id, user) && !user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
+            if (!this.projectService.validateProjectWithUser(id, user) &&
+                    !user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
                 return REDIRECT_ERROR;
             } else {
                 try {

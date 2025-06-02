@@ -492,7 +492,7 @@
             <div id="collapseOneEvents" class="accordion-collapse collapse" aria-labelledby="headingOneEvents"
                  data-bs-parent="#accordionEvents">
                 <div class="accordion-body">
-                    <div class="card-body" id="events-container">
+                    <div class="card-body mb-3" id="events-container">
 
                         <div class="card mb-3 border border-secondary p-3" th:if="${!events.isEmpty()}"
                              th:each="event: ${events}">
@@ -510,15 +510,13 @@
                                             </span>
                                         </span>
                                 </div>
-                                <div class="mb-3">
-                                    <div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
                                         <label class="form-label fw-bold">Evento:</label>
                                         <span name="name"
                                               th:text="${event.name}"></span>
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-5">
+                                    <div class="col-md-4">
                                         <label class="form-label fw-bold">Fecha de Terminación:</label>
                                         <span th:text="${event.createdAtFormatted != null ? event.createdAtFormatted.toString() : ''}"
                                               name="createdAt">
@@ -565,15 +563,15 @@
                                             </span>
                                         </span>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Evento:</label>
-                                        <textarea class="form-control"
-                                                  name="name"
-                                                  th:text="${event.name}"
-                                                  rows="1"></textarea>
-                                    </div>
                                     <div class="row mb-3">
-                                        <div class="col-md-5">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Evento:</label>
+                                            <textarea class="form-control"
+                                                      name="name"
+                                                      th:text="${event.name}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
                                             <label class="form-label fw-bold">Fecha de realización:</label>
                                             <input type="date" class="form-control" name="createdAt"
                                                    th:value="${event.createdAt}">
@@ -636,6 +634,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Eliminar evento -->
             <div class="modal fade" id="deleteEventModal" tabindex="-1" aria-labelledby="deleteEventModal"
                  aria-hidden="true">
@@ -652,6 +651,48 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <a type="button" class="btn btn-danger" id="deleteEventConfirm">Confirmar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--        permisos eventos          -->
+            <div th:each="event : ${events}">
+                <div class="modal fade" th:id="'permisosModalEvent__' + ${event.id}" tabindex="-1"
+                     aria-labelledby="permisosModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title">Gestionar Permisos - Evento:
+                                    <span th:text="${event.name}"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
+                            </div>
+                            <form th:action="@{/events/{id}/permissions(id=${event.id})}" method="post">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <input type="hidden" class="form-control formatId" name="formatId"
+                                               th:value="${event.formatId}">
+                                        <label for="usuariosEvents" class="mb-3">Selecciona los usuarios con
+                                            acceso:</label>
+                                        <select id="usuariosEvents" class="form-select mb-3" multiple
+                                                name="users">
+                                            <option th:each="usuario : ${users}"
+                                                    th:value="${usuario.id}"
+                                                    th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                            </option>
+                                        </select>
+                                        <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                            seleccionar múltiples usuarios.</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -675,8 +716,206 @@
                  aria-labelledby="headingOneOtherActivities"
                  data-bs-parent="#accordionOtherActivities">
                 <div class="accordion-body">
-                    <div class="card-body" id="others-activities-container">
-                        <!-- Las secciones de proyecto se insertan aquí -->
+                    <div class="card-body mb-3" id="others-activities-container">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${!othersActivities.isEmpty()}"
+                             th:each="other: ${othersActivities}">
+
+                            <div th:if="${!#lists.contains(other.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control otherId" name="id"
+                                       th:value="${other.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${other.formatId}">
+                                <div th:if="${other.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${other.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Actividad:</label>
+                                        <span name="name"
+                                              th:text="${other.name}"></span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Tipo de actividad:</label>
+                                        <span name="type"
+                                              th:text="${other.type}"></span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold">% de Cumplimiento:</label>
+                                        <span th:text="${other.compliancePercentage}"
+                                              name="compliancePercentage">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(other.files != null and !other.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(other.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-project-name="${other.name}"
+                                            th:data-files="${#strings.arrayJoin(other.files.toArray(), ',')}"
+                                            data-entity="others"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='others',
+                                            data-other-id=${other.id}, data-format-id=${other.formatId}">
+                                        Ver evidencias (<span th:text="${other.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(other.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/others}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control otherId" name="id"
+                                           th:value="${other.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${other.formatId}">
+
+                                    <div th:if="${other.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${other.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Actividad:</label>
+                                            <textarea class="form-control"
+                                                      name="name"
+                                                      th:text="${other.name}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Actividad:</label>
+                                            <textarea class="form-control"
+                                                      name="type"
+                                                      th:text="${other.type}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label fw-bold">% de Cumplimiento:</label>
+                                            <input
+                                                    type="text"
+                                                    inputmode="numeric"
+                                                    pattern="[0-9]*"
+                                                    maxlength="3"
+                                                    class="form-control no-spinner"
+                                                    th:value="${other.compliancePercentage}"
+                                                    name="compliancePercentage"
+                                                    required/>
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${other.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                th:data-project-name="${other.name}"
+                                                data-entity="others"
+                                                th:data-files="${#strings.arrayJoin(other.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${other.files != null and !other.files.isEmpty()}"
+                                                th:attr="data-entity='others',
+                                                data-other-id=${other.id}, data-format-id=${other.formatId}">
+                                            Ver evidencias (<span th:text="${other.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalOther__' + ${other.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteOther"
+                                           data-bs-toggle="modal" data-bs-target="#deleteOtherModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Eliminar otra actividad -->
+                        <div class="modal fade" id="deleteOtherModal" tabindex="-1" aria-labelledby="deleteOtherModal"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteOtherLabel">Confirmar eliminación</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Cerrar"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ¿Estás seguro que deseas eliminar esta actividad?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        <a type="button" class="btn btn-danger" id="deleteOtherConfirm">Confirmar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--        permisos eventos          -->
+                        <div th:each="other : ${othersActivities}">
+                            <div class="modal fade" th:id="'permisosModalOther__' + ${other.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos - Actividad:
+                                                <span th:text="${other.name}"></span>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/others/{id}/permissions(id=${other.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${other.formatId}">
+                                                    <label for="usuariosOthers" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select id="usuariosOthers" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer text-end">
                         <button type="button" class="btn btn-success" onclick="addOtherActivities()">+ Agregar Actividad
