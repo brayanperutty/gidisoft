@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ProjectStatusEnum {
 
     DRAFT(1L, "Borrador"),
-    PUBLICATED(2L, "Publicado"),
+    PUBLICATED(2L, "Enviado"),
     ;
 
     private final Long id;

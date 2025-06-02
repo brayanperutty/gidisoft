@@ -3,6 +3,7 @@ package com.ufps.gidisoft.services.formats.projects;
 import com.ufps.gidisoft.entities.formats.projects.Project;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.repositories.formats.projects.ProjectRepository;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.format.ProjectDto;
@@ -50,7 +51,8 @@ public class ProjectService {
     @Transactional
     public void updateProject(ProjectRequest projectRequest, User user) throws IOException {
         Project project = this.findById(projectRequest.getId());
-        if (this.projectUserService.validateExistProjecAndUser(project, user)) {
+        if (this.projectUserService.validateExistProjecAndUser(project, user) ||
+                user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
             project.setName(projectRequest.getName());
             project.setActivities(projectRequest.getActivities());
             project.setCompliancePercentage(projectRequest.getCompliancePercentage());

@@ -4,6 +4,7 @@ import com.ufps.gidisoft.entities.formats.directions.Direction;
 import com.ufps.gidisoft.entities.formats.projects.Project;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.repositories.formats.directions.DirectionRepository;
 import com.ufps.gidisoft.requests.formats.DirectionRequest;
 import com.ufps.gidisoft.responses.format.DirectionDto;
@@ -63,7 +64,8 @@ public class DirectionService {
     @Transactional
     public void updateDirection(DirectionRequest directionRequest, User user) throws IOException {
         Direction direction = this.findById(directionRequest.getId());
-        if(this.directionUserService.validateDirectionUser(direction, user)){
+        if(this.directionUserService.validateDirectionUser(direction, user) ||
+                user.getRole().getId().equals(RolesEnum.ADMIN.getId())){
             direction.setName(directionRequest.getName());
             direction.setCompliancePercentage(directionRequest.getCompliancePercentage());
             getFilesNameList(directionRequest, direction);
@@ -133,5 +135,19 @@ public class DirectionService {
                     -> new IllegalArgumentException(ExceptionCodeEnum.PROJ01.getMessage()));
             this.directionUserService.createDirectionUser(direction, this.userService.getUserById(user));
         });
+    }
+
+    @Transactional
+    public void deleteEvidence(Long projectId, String url) throws Exception {
+        Direction project = this.findById(projectId);
+
+        this.cloudinaryService.getImage(url);
+
+        List<String> files = project.getFiles();
+        files.removeIf(fileUrl -> fileUrl.trim().equalsIgnoreCase(url.trim()));
+        if (files.isEmpty()) project.setFiles(null);
+        else project.setFiles(files);
+
+        this.directionRepository.save(project);
     }
 }

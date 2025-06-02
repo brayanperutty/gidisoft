@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    const entityKeyMap = {
+        projects: 'projectId',
+        directions: 'directionId',
+        // puedes agregar más si usas otras entidades
+    };
+
+
     const inner = document.getElementById('carouselInner');
     const currentIndex = document.getElementById('currentImageIndex');
     const totalImages = document.getElementById('totalImages');
@@ -15,16 +23,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = btn.closest('div');
 
             // Capturar la entidad (projects, directions, etc.)
-            currentEntity = btn.dataset.entity || 'projects';
+            currentEntity = btn.dataset.entity;
 
             // Buscar ID y formatId (input o span)
-            const idElement = container.querySelector('input[name="id"], .projectId, .directionId');
-            const formatIdElement = container.querySelector('input[name="formatId"]');
-            const nameElement = container.querySelector('textarea[name="name"], input[name="name"], span[name="name"]');
+            const idKey = entityKeyMap[currentEntity]; // "projectId" o "directionId"
+            currentId = btn.dataset[idKey];
+            currentFormatId = btn.dataset.formatId;
 
-            currentId = idElement?.value || idElement?.textContent?.trim();
-            currentFormatId = formatIdElement?.value || formatIdElement?.textContent?.trim();
+            const nameElement = container.querySelector('textarea[name="name"], input[name="name"], span[name="name"]');
             const name = nameElement?.value || nameElement?.textContent?.trim() || 'Sin nombre';
+
 
             // Renderizar imágenes
             inner.innerHTML = '';
@@ -54,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteButton = document.getElementById('deleteImageBtn');
 
     deleteButton.addEventListener('click', async () => {
+        console.log(currentId)
         const activeItem = inner.querySelector('.carousel-item.active');
         if (!activeItem) return;
 

@@ -1,6 +1,7 @@
 package com.ufps.gidisoft.controllers.projects;
 
 import com.ufps.gidisoft.entities.users.User;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.requests.formats.ProjectRequest;
 import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
@@ -32,31 +33,7 @@ public class ProjectController {
     private static final String REDIRECT_ERROR = "error/403";
     private static final String REDIRECT_FORMAT = "redirect:/formats/";
 
-
-    @PostMapping(value = "")
-    public String addProject(Model model, HttpServletRequest request, @ModelAttribute ProjectRequest projectRequest,
-                             RedirectAttributes att) {
-        if (request.getSession().getAttribute(USERCODE) == null) {
-            return REDIRECT_LOGIN;
-        } else {
-            try {
-                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
-                        .getAttribute(USERCODE).toString())));
-                if (projectRequest.getId() != null) {
-                    this.projectService.updateProject(projectRequest, userService.getUserByUsercode(request.getSession()
-                            .getAttribute(USERCODE).toString()));
-                } else {
-                    this.projectService.
-                            createProject(projectRequest, userService.getUserByUsercode(request.getSession()
-                                    .getAttribute(USERCODE).toString()));
-                }
-                att.addFlashAttribute(MESSAGE, "Proyecto guardado con éxito.");
-            } catch (Exception e) {
-                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
-            }
-        }
-        return REDIRECT_FORMAT + projectRequest.getFormatId();
-    }
+    //<---------- GET METHODS ------------->
 
     @GetMapping(value = "/{id}/delete")
     public String deleteProject(Model model, HttpServletRequest request, @PathVariable Long id,
@@ -66,7 +43,7 @@ public class ProjectController {
         } else {
             User user = userService.getUserByUsercode(request.getSession()
                     .getAttribute(USERCODE).toString());
-            if (!this.projectService.validateProjectWithUser(id, user)) {
+            if (!this.projectService.validateProjectWithUser(id, user) && !user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
                 return REDIRECT_ERROR;
             } else {
                 try {
@@ -104,6 +81,33 @@ public class ProjectController {
             }
         }
         return REDIRECT_FORMAT + formatId;
+    }
+
+    //<---------- POST METHODS ------------->
+
+    @PostMapping(value = "")
+    public String addProject(Model model, HttpServletRequest request, @ModelAttribute ProjectRequest projectRequest,
+                             RedirectAttributes att) {
+        if (request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            try {
+                model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                        .getAttribute(USERCODE).toString())));
+                if (projectRequest.getId() != null) {
+                    this.projectService.updateProject(projectRequest, userService.getUserByUsercode(request.getSession()
+                            .getAttribute(USERCODE).toString()));
+                } else {
+                    this.projectService.
+                            createProject(projectRequest, userService.getUserByUsercode(request.getSession()
+                                    .getAttribute(USERCODE).toString()));
+                }
+                att.addFlashAttribute(MESSAGE, "Proyecto guardado con éxito.");
+            } catch (Exception e) {
+                att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+            }
+        }
+        return REDIRECT_FORMAT + projectRequest.getFormatId();
     }
 
     @PostMapping(value = "/{id}/permissions")

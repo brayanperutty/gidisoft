@@ -27,7 +27,7 @@ function addDirection() {
             <input type="hidden" class="form-control" name="formatId" value="${idFormat.value}">
             
             <div class="mb-3">
-                <label class="form-label fw-bold">Título del proyecto:</label>
+                <label class="form-label fw-bold">Participación en:</label>
                 <textarea class="form-control" name="name" rows="1"></textarea>
             </div>
             <div class="row mb-3">

@@ -16,7 +16,8 @@
                     <div class="card-body mb-3" id="projects-container">
                         <div class="card mb-3 border border-secondary p-3" th:if="${!projects.isEmpty()}"
                              th:each="project: ${projects}">
-                            <div th:if="${user.id != project.createdBy and !#lists.contains(editableProjectsIds, project.id)}">
+                            <div th:if="${user.id != project.createdBy and !#lists.contains(editableProjectsIds, project.id)
+                                    and user.roleType != 'admin'}">
                                 <input type="hidden" class="form-control projectId" name="id"
                                        th:value="${project.id}">
                                 <input type="hidden" class="form-control formatId" name="formatId"
@@ -57,7 +58,8 @@
                                             data-entity="projects"
                                             data-bs-toggle="modal"
                                             data-bs-target="#evidenceModal"
-                                            th:attr="data-project-id=${project.id}, data-format-id=${project.formatId}">
+                                            th:attr="data-project-id=${project.id}, data-format-id=${project.formatId},
+                                                     data-entity='projects'">
                                         Ver evidencias (<span th:text="${project.files.size()}"></span>)
                                         <i class="fas fa-images ms-2"></i>
                                     </button>
@@ -131,7 +133,8 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#evidenceModal"
                                                 th:if="${project.files != null and !project.files.isEmpty()}"
-                                                th:attr="data-project-id=${project.id}, data-format-id=${project.formatId}">
+                                                th:attr="data-entity='projects',
+                                                data-project-id=${project.id}, data-format-id=${project.formatId}">
                                             Ver evidencias (<span th:text="${project.files.size()}"></span>)
                                             <i class="fas fa-images ms-2"></i>
                                         </button>
@@ -286,12 +289,13 @@
                                    and (user.roleType == 'admin' or #lists.contains(direction.editorsNames, user.name))}">
                                     <button type="button"
                                             class="btn btn-sm btn-secondary view-evidences"
-                                            th:data-project-name="${direction.name}"
+                                            th:data-direction-name="${direction.name}"
                                             th:data-files="${#strings.arrayJoin(direction.files.toArray(), ',')}"
-                                            data-entity="projects"
+                                            data-entity="directions"
                                             data-bs-toggle="modal"
                                             data-bs-target="#evidenceModal"
-                                            th:attr="data-direction-id=${direction.id}, data-format-id=${direction.formatId}">
+                                            th:attr="data-entity='directions',
+                                            data-direction-id=${direction.id}, data-format-id=${direction.formatId}">
                                         Ver evidencias (<span th:text="${direction.files.size()}"></span>)
                                         <i class="fas fa-images ms-2"></i>
                                     </button>
@@ -376,13 +380,14 @@
                                     <div class="d-flex justify-content-end align-items-center">
                                         <button type="button"
                                                 class="btn btn-sm btn-secondary view-evidences"
-                                                th:data-project-name="${direction.name}"
-                                                data-entity="projects"
+                                                th:data-direction-name="${direction.name}"
+                                                data-entity="directions"
                                                 th:data-files="${#strings.arrayJoin(direction.files.toArray(), ',')}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#evidenceModal"
                                                 th:if="${direction.files != null and !direction.files.isEmpty()}"
-                                                th:attr="data-direction-id=${direction.id}, data-format-id=${direction.formatId}">
+                                                th:attr="data-entity='directions',
+                                                data-direction-id=${direction.id}, data-format-id=${direction.formatId}">
                                             Ver evidencias (<span th:text="${direction.files.size()}"></span>)
                                             <i class="fas fa-images ms-2"></i>
                                         </button>
@@ -533,10 +538,11 @@
                                             class="btn btn-sm btn-secondary view-evidences"
                                             th:data-project-name="${event.name}"
                                             th:data-files="${#strings.arrayJoin(event.files.toArray(), ',')}"
-                                            data-entity="projects"
+                                            data-entity="events"
                                             data-bs-toggle="modal"
                                             data-bs-target="#evidenceModal"
-                                            th:attr="data-event-id=${event.id}, data-format-id=${event.formatId}">
+                                            th:attr="data-entity='events',
+                                            data-event-id=${event.id}, data-format-id=${event.formatId}">
                                         Ver evidencias (<span th:text="${event.files.size()}"></span>)
                                         <i class="fas fa-images ms-2"></i>
                                     </button>
@@ -600,12 +606,13 @@
                                         <button type="button"
                                                 class="btn btn-sm btn-secondary view-evidences"
                                                 th:data-project-name="${event.name}"
-                                                data-entity="projects"
+                                                data-entity="events"
                                                 th:data-files="${#strings.arrayJoin(event.files.toArray(), ',')}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#evidenceModal"
                                                 th:if="${event.files != null and !event.files.isEmpty()}"
-                                                th:attr="data-event-id=${event.id}, data-format-id=${event.formatId}">
+                                                th:attr="data-entity='events',
+                                                data-event-id=${event.id}, data-format-id=${event.formatId}">
                                             Ver evidencias (<span th:text="${event.files.size()}"></span>)
                                             <i class="fas fa-images ms-2"></i>
                                         </button>

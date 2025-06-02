@@ -1,11 +1,12 @@
 import { setupFileUpload } from '../utils/file_uploaderHandler.js';
+import { bindComplianceInput } from '../utils/complianceHandler.js';
 
 function addProject() {
     const container = document.getElementById('projects-container');
     const idFormat = document.getElementById('id-format');
     const timestamp = Date.now();
-
     const form = document.createElement('form');
+
     form.action = '/projects'; // tu ruta
     form.method = 'post';
     form.enctype = 'multipart/form-data';
@@ -63,5 +64,7 @@ function addProject() {
 
     container.appendChild(form);
     setupFileUpload(form, timestamp);
+    const newInput = form.querySelector('input[name="compliancePercentage"]');
+    if (newInput) bindComplianceInput(newInput);
 }
 window.addProject = addProject;

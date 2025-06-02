@@ -29,6 +29,56 @@ public class DirectionController {
     private static final String REDIRECT_FORMAT = "redirect:/formats/";
     private static final String REDIRECT_ERROR = "error/403";
 
+    //<---------- GET METHODS ------------->
+
+    @GetMapping(value = "/{id}/delete")
+    public String deleteProject(Model model, HttpServletRequest request, @PathVariable Long id,
+                                RedirectAttributes att, @RequestParam Long formatId) {
+        if (request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            User user = userService.getUserByUsercode(request.getSession()
+                    .getAttribute(USERCODE).toString());
+            if (!this.directionService.validateDirectionWithUser(id, user)) {
+                return REDIRECT_ERROR;
+            } else {
+                try {
+                    this.directionService.deleteById(id);
+                    att.addFlashAttribute(MESSAGE, "Participación eliminada con éxito.");
+                } catch (Exception e) {
+                    att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+                }
+            }
+        }
+        return REDIRECT_FORMAT + formatId;
+    }
+
+    @GetMapping(value = "/{id}/delete-evidence")
+    public String deleteEvidence(Model model, HttpServletRequest request, @PathVariable Long id,
+                                 RedirectAttributes att, @RequestParam String url, @RequestParam Long formatId) {
+        if (request.getSession().getAttribute(USERCODE) == null) {
+            return REDIRECT_LOGIN;
+        } else {
+            User user = userService.getUserByUsercode(request.getSession()
+                    .getAttribute(USERCODE).toString());
+            if (!this.directionService.validateDirectionWithUser(id, user)) {
+                return REDIRECT_ERROR;
+            } else {
+                try {
+                    this.directionService.deleteEvidence(id, url);
+                    model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
+                            .getAttribute(USERCODE).toString())));
+                    att.addFlashAttribute(MESSAGE, "Evidencia eliminada con éxito.");
+                } catch (Exception e) {
+                    att.addFlashAttribute(CREATE_ERROR, e.getMessage());
+                }
+            }
+        }
+        return REDIRECT_FORMAT + formatId;
+    }
+
+    //<---------- POST METHODS ------------->
+
     @PostMapping(value = "")
     public String addDirection(Model model, HttpServletRequest request, @ModelAttribute DirectionRequest directionRequest,
                              RedirectAttributes att) {
@@ -54,27 +104,7 @@ public class DirectionController {
         return REDIRECT_FORMAT + directionRequest.getFormatId();
     }
 
-    @GetMapping(value = "/{id}/delete")
-    public String deleteProject(Model model, HttpServletRequest request, @PathVariable Long id,
-                                RedirectAttributes att, @RequestParam Long formatId) {
-        if (request.getSession().getAttribute(USERCODE) == null) {
-            return REDIRECT_LOGIN;
-        } else {
-            User user = userService.getUserByUsercode(request.getSession()
-                    .getAttribute(USERCODE).toString());
-            if (!this.directionService.validateDirectionWithUser(id, user)) {
-                return REDIRECT_ERROR;
-            } else {
-                try {
-                    this.directionService.deleteById(id);
-                    att.addFlashAttribute(MESSAGE, "Participación eliminada con éxito.");
-                } catch (Exception e) {
-                    att.addFlashAttribute(CREATE_ERROR, e.getMessage());
-                }
-            }
-        }
-        return REDIRECT_FORMAT + formatId;
-    }
+
 
     @PostMapping(value = "/{id}/permissions")
     public String createRelations(@PathVariable Long id, @RequestParam List<Long> users, RedirectAttributes att,

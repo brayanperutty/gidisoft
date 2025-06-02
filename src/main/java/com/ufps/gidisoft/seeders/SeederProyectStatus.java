@@ -16,9 +16,9 @@ public class SeederProyectStatus {
 
     private static void getProyectStatus(ProjectStatusService projectStatusService) {
         if (!projectStatusService.existsProyectStatus("Borrador") &&
-                !projectStatusService.existsProyectStatus("Publicado")) {
+                !projectStatusService.existsProyectStatus("Enviado")) {
             projectStatusService.createProyectStatus("Borrador");
-            projectStatusService.createProyectStatus("Publicado");
+            projectStatusService.createProyectStatus("Enviado");
         }
     }
 }
