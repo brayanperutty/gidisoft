@@ -120,7 +120,8 @@ body {
 /* Cuando el menú está colapsado */
 .sidebar.collapsed .menu-text {
     opacity: 0;
-    margin-left: -20px; /* Oculta el texto sin mover los íconos */
+    visibility: hidden;
+    width:0;
 }
 
 /* Asegurar alineación de íconos en el menú colapsado */
@@ -145,7 +146,7 @@ body {
     position: absolute;
     left: 50%;
     top: -35px;
-    transform: translateX(-50%);
+    transform: translateX(-20%);
     background: white;
     color: red;
     padding: 5px 10px;
@@ -334,3 +335,9 @@ input.no-spinner::-webkit-inner-spin-button {
 input.no-spinner[type=number] {
     -moz-appearance: textfield;
 }
+
+.accordion-button.collapsed::after,
+.accordion-button::after {
+    filter: brightness(0) invert(1); /* esto invierte el color, útil para fondos oscuros */
+}
+
