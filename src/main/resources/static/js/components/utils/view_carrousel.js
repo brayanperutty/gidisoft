@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
         directions: 'directionId',
         events: 'eventId',
         others: 'otherId',
+        products: 'productId'
         // puedes agregar más si usas otras entidades
     };
 
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             currentFormatId = btn.dataset.formatId;
 
             const nameElement = container.querySelector('textarea[name="name"], input[name="name"], span[name="name"]');
-            const name = nameElement?.value || nameElement?.textContent?.trim() || 'Sin nombre';
+            const name = nameElement?.value || nameElement?.textContent?.trim() || '';
 
 
             // Renderizar imágenes

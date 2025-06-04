@@ -38,7 +38,7 @@ public class ProductUserService {
     public List<String> findUsersByProduct(Long productId) {
         List<String> users = new ArrayList<>();
         this.productUserRepository.findByProductId(productId).forEach(productUser ->
-                users.add(productUser.getUser().getUsername()));
+                users.add(productUser.getUser().getName()));
         return users;
     }
 }

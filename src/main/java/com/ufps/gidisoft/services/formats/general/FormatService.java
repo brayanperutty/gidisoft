@@ -7,6 +7,7 @@ import com.ufps.gidisoft.enums.projects.ProjectStatusEnum;
 import com.ufps.gidisoft.exceptions.NotFoundException;
 import com.ufps.gidisoft.repositories.formats.general.FormatRepository;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
+import com.ufps.gidisoft.requests.formats.FormatsFilter;
 import com.ufps.gidisoft.responses.format.FormatDto;
 import com.ufps.gidisoft.responses.format.FormatListDto;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
@@ -117,7 +118,9 @@ public class FormatService {
         this.formatRepository.save(format);
     }
 
-    public List<FormatListDto> findAllFormats() {
-        return this.formatRepository.findAll().stream().map(FormatListDto::new).toList();
+    public List<FormatListDto> findAllFormats(FormatsFilter filters) {
+        return this.formatRepository.findByFilters(filters.getDirectorId(), filters.getAcademicPeriodId(),
+                        filters.getGroupId(), filters.getStatus())
+                .stream().map(FormatListDto::new).toList();
     }
 }

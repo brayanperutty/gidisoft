@@ -45,20 +45,50 @@
         <!--  Esto es lo nuevo con taps-->
         <ul class="nav custom-tabs mb-4" id="formatTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab-general-tab" data-bs-toggle="tab" data-bs-target="#tab-general" type="button" role="tab">Información general</button>
+                <button class="nav-link"
+                        id="tab-general-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-general"
+                        type="button"
+                        role="tab"
+                        th:classappend="${tab} == 'general' ? ' active' : ''"
+                        th:aria-selected="${tab} == 'general' ? 'true' : 'false'">
+                    Información general
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-modules-tab" data-bs-toggle="tab" data-bs-target="#tab-modules" type="button" role="tab">Módulos</button>
+                <button class="nav-link"
+                        id="tab-modules-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-modules"
+                        type="button"
+                        role="tab"
+                        th:classappend="${tab} == 'modules' ? ' active' : ''"
+                        th:aria-selected="${tab} == 'modules' ? 'true' : 'false'">
+                    Módulos
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-products-tab" data-bs-toggle="tab" data-bs-target="#tab-products" type="button" role="tab">Productos</button>
+                <button class="nav-link"
+                        id="tab-products-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#tab-products"
+                        type="button"
+                        role="tab"
+                        th:classappend="${tab} == 'products' ? ' active' : ''"
+                        th:aria-selected="${tab} == 'products' ? 'true' : 'false'">
+                    Productos
+                </button>
             </li>
         </ul>
         <!-- Aquí termina lo de taps-->
 
-        <div class="tab-content" id="formatTabsContent">
+        <div class="tab-content" id="formatTabsContent" >
             <!-- TAB 1: Información general -->
-            <div class="tab-pane fade show active" id="tab-general" role="tabpanel">
+            <div class="tab-pane fade"
+                 id="tab-general"
+                 role="tabpanel"
+                 th:classappend="${tab} == 'general' ? ' show active' : ''">
                 <form th:action="@{/formats}" method="post" th:object="${formatRequest}">
                     <div th:replace="~{components/formats/general_info/form-format :: formularioBasico(${formatRequest})}"></div>
                     <div class="mt-4 text-end mb-3">
@@ -68,15 +98,21 @@
             </div>
 
             <!-- TAB 2: Módulos -->
-            <div class="tab-pane fade" id="tab-modules" role="tabpanel">
+            <div class="tab-pane fade"
+                 id="tab-modules"
+                 role="tabpanel"
+                 th:classappend="${tab} == 'modules' ? ' show active' : ''">
                 <div th:if="${formatRequest.formatId != null}">
                     <div th:replace="~{components/formats/modules/modules-format :: modulosExtra(${projects})}"></div>
                 </div>
             </div>
 
             <!-- TAB 3: Productos -->
-            <div class="tab-pane fade" id="tab-products" role="tabpanel">
-                <div th:replace="~{components/formats/modules/products-format :: products(${productos})}"></div>
+            <div class="tab-pane fade"
+                 id="tab-products"
+                 role="tabpanel"
+                 th:classappend="${tab} == 'products' ? ' show active' : ''">
+                <div th:replace="~{components/formats/modules/products-format :: products(${groupedProducts})}"></div>
             </div>
         </div>
 
@@ -102,7 +138,7 @@
 <script th:src="@{/js/components/events/delete_event.js}"></script>
 <script th:type="module" th:src="@{/js/components/activities/other_activities_format.js}"></script>
 <script th:src="@{/js/components/activities/other_activities_delete.js}"></script>
-<script th:src="@{/js/components/products/products_format.js}"></script>
+<script th:type="module" th:src="@{/js/components/products/products_format.js}"></script>
 <script th:type="module" th:src="@{/js/components/directions/directions_format.js}"></script>
 <script th:src="@{/js/components/directions/delete_direction.js}"></script>
 <script th:src="@{/js/components/directions/filter_selects.js}"></script>

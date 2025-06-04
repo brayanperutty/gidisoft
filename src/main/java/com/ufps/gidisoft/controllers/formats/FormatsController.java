@@ -2,14 +2,15 @@ package com.ufps.gidisoft.controllers.formats;
 
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.requests.formats.FormatRequest;
+import com.ufps.gidisoft.requests.formats.FormatsFilter;
 import com.ufps.gidisoft.responses.users.UsersDto;
 import com.ufps.gidisoft.services.academic_periods.AcademicPeriodsService;
 import com.ufps.gidisoft.services.faculties.FacultyService;
 import com.ufps.gidisoft.services.formats.directions.DirectionService;
-import com.ufps.gidisoft.services.formats.directions.DirectionUserService;
 import com.ufps.gidisoft.services.formats.events.EventService;
 import com.ufps.gidisoft.services.formats.general.FormatService;
 import com.ufps.gidisoft.services.formats.others.OtherActivityService;
+import com.ufps.gidisoft.services.formats.products.ProductService;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
 import com.ufps.gidisoft.services.formats.projects.ProjectUserService;
 import com.ufps.gidisoft.services.groups.InvestigationGroupService;
@@ -20,8 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,6 +40,7 @@ public class FormatsController {
     private final InvestigationGroupService investigationGroupService;
     private final EventService eventService;
     private final OtherActivityService otherActivityService;
+    private final ProductService productService;
 
     private static final String USERCODE = "usercode";
     private static final String CREATE_ERROR = "createError";
@@ -55,12 +55,16 @@ public class FormatsController {
     private static final String DIRECTOR = "director";
     private static final String ADMIN = "admin";
     private static final String REDIRECT_ERROR = "error/403";
+    private static final String TEACHERS = "teachersSelect";
+    private static final String YEARS = "years";
+    private static final String GROUPS = "groups";
 
 
     // <-------- GET METHODS -------->
 
     @GetMapping(value = "/{id}")
-    public String getFormats(Model model, HttpServletRequest request, RedirectAttributes att, @PathVariable Long id) {
+    public String getFormats(Model model, HttpServletRequest request, RedirectAttributes att, @PathVariable Long id,
+                             @RequestParam(defaultValue = "general") String tab) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else {
@@ -73,12 +77,14 @@ public class FormatsController {
                 model.addAttribute("directions", this.directionService.findByFormatId(id));
                 model.addAttribute("events", this.eventService.findByFormatId(id));
                 model.addAttribute("othersActivities", this.otherActivityService.findByFormatId(id));
-                model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
+                model.addAttribute("groupedProducts", this.productService.findByFormatIdGrouped(id));
+                model.addAttribute(YEARS, this.academicPeriodsService.findAllAcademicPeriods());
                 model.addAttribute("faculties", this.facultyService.findAllFaculties());
-                model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());
+                model.addAttribute(GROUPS, this.investigationGroupService.findAllInvestigationGroups());
                 model.addAttribute("users", this.userService.findAllUsers());
                 model.addAttribute("editableProjectsIds", this.projectUserService.getProjectIdsUserCanEdit(user));
                 model.addAttribute(DIRECTOR, this.userService.findAdminUser());
+                model.addAttribute("tab", tab);
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
@@ -87,7 +93,11 @@ public class FormatsController {
     }
 
     @GetMapping(value = "/list")
-    public String formats(Model model, HttpServletRequest request, RedirectAttributes att) {
+    public String formats(Model model, HttpServletRequest request, RedirectAttributes att,
+                          @RequestParam(required = false) Long teacher,
+                          @RequestParam(required = false) Long group,
+                          @RequestParam(required = false) Long academicPeriod,
+                          @RequestParam(required = false) Long status) {
         if(request.getSession().getAttribute(USERCODE) == null) {
             return REDIRECT_LOGIN;
         }else {
@@ -95,7 +105,11 @@ public class FormatsController {
                 User user = userService.getUserByUsercode(request.getSession()
                         .getAttribute(USERCODE).toString());
                 model.addAttribute("user", new UsersDto(user));
-                model.addAttribute(FORMATS, this.formatService.findAllFormats());
+                model.addAttribute(FORMATS, this.formatService.findAllFormats(new FormatsFilter(teacher, group,
+                        academicPeriod, status)));
+                model.addAttribute(TEACHERS, this.userService.findAllUsers());
+                model.addAttribute(GROUPS, this.investigationGroupService.findAllInvestigationGroups());
+                model.addAttribute(YEARS, this.academicPeriodsService.findAllAcademicPeriods());
             } catch (Exception e) {
                 att.addFlashAttribute(CREATE_ERROR, FORMAT_NOT_FOUND);
             }
@@ -116,10 +130,10 @@ public class FormatsController {
                 try {
                     model.addAttribute("user", new UsersDto(userService.getUserByUsercode(request.getSession()
                             .getAttribute(USERCODE).toString())));
-                    model.addAttribute("years", this.academicPeriodsService.findAllAcademicPeriods());
+                    model.addAttribute(YEARS, this.academicPeriodsService.findAllAcademicPeriods());
                     model.addAttribute(DIRECTOR, this.userService.findAdminUser());
                     model.addAttribute("faculties", this.facultyService.findAllFaculties());
-                    model.addAttribute("groups", this.investigationGroupService.findAllInvestigationGroups());
+                    model.addAttribute(GROUPS, this.investigationGroupService.findAllInvestigationGroups());
                     if (!model.containsAttribute(FORMAT_REQUEST)) {
                         model.addAttribute(FORMAT_REQUEST, new FormatRequest());
                     }
@@ -196,7 +210,7 @@ public class FormatsController {
             } else {
                 try {
                     this.formatService.publishFormat(id);
-                    att.addFlashAttribute(MESSAGE, "Proyecto publicado con éxito.");
+                    att.addFlashAttribute(MESSAGE, "Formato publicado con éxito.");
                 } catch (Exception e) {
                     att.addFlashAttribute(CREATE_ERROR, e.getMessage());
                 }

@@ -1,35 +1,61 @@
-function addProducts() {
-    const container = document.getElementById('products-container');
+import {setupFileUpload} from '../utils/file_uploaderHandler.js';
 
-    const newProduct = document.createElement('div');
-    newProduct.classList.add('card', 'mb-3', 'border', 'border-secondary', 'p-3');
+function addProducts(productType) {
+    const container = document.getElementById('product' + productType);
+    const idFormat = document.getElementById('id-format');
+    const timestamp = Date.now();
 
-    newProduct.innerHTML = `
+    const form = document.createElement('form');
+    form.action = '/products'; // tu ruta
+    form.method = 'post';
+    form.enctype = 'multipart/form-data';
+    form.classList.add('card', 'mt-3', 'border', 'border-secondary', 'p-3');
+
+    form.innerHTML = `
             
-            <div class="mb-3">
-                <label class="form-label fw-bold">Producto:</label>
-                <textarea class="form-control" name="productName[]" rows="1" required></textarea>
-            </div>
+            <input type="hidden" class="form-control" name="formatId" value="${idFormat.value}">
+            <input type="hidden" class="form-control" name="productTypeId" value="${productType}">
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Descripción:</label>
-                <textarea class="form-control" name="productDescription[]" rows="2" required></textarea>
+                <textarea class="form-control" name="description" rows="1" required></textarea>
             </div>
             
             <div class="row mb-3">
                 <div class="col-md-8">
                     <label class="form-label fw-bold">Responsable:</label>
-                    <textarea class="form-control" name="productManager[]" rows="1" required></textarea>
+                    <textarea class="form-control" name="responsibles" rows="1" required></textarea>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fw-bold">Fecha de realización:</label>
-                    <input type="date" class="form-control" name="realizeDate[]" required>
+                    <label class="form-label fw-bold">Fecha:</label>
+                    <input type="date" class="form-control" name="date" required>
                 </div>
             </div>
 
+            <div class="mb-3">
+                    <label class="form-label fw-bold d-block mb-3">Evidencias de la participación:</label>
+                    
+                    <!-- Input oculto -->
+                    <input type="file" name="files" multiple id="fileInput-${timestamp}" style="display: none;">
+                    
+                    <!-- Botón para seleccionar archivos -->
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="fileButton-${timestamp}">
+                        Seleccionar archivos
+                    </button>
+                    
+                    <!-- Contador personalizado -->
+                    <small id="fileCount-${timestamp}" class="form-text text-muted ms-2">Ningún archivo seleccionado</small>
+                
+                    <!-- Contenedor para los nombres de los archivos -->
+                    <div id="fileNamesContainer-${timestamp}" class="mt-2"></div>
+            </div>
+
             <div class="d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('.card').remove()">🗑 Eliminar</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="this.closest('.card').remove()">🗑 Eliminar</button>
             </div>
         `;
-    container.appendChild(newProduct);
+    container.appendChild(form);
+    setupFileUpload(form, timestamp);
 }
+window.addProducts = addProducts;

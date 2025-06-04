@@ -49,10 +49,18 @@
         </div>
         <div th:if="${formats != null}">
             <div class="container-fluid">
-                <span>Gestión de formatos</span>
-                <a th:if="${user.roleType == 'admin'}" type="button" class="btn btn-success" th:href="@{/formats/create}">
-                    Agregar formato
-                </a>
+                <div>
+                    <span>Gestión de informes de investigación</span>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltros" aria-controls="offcanvasFiltros">
+                        <i class="fas fa-filter me-1"></i> Filtros
+                    </button>
+                    <a th:if="${user.roleType == 'admin'}" type="button" class="btn btn-success" th:href="@{/formats/create}">
+                        Agregar informe
+                    </a>
+                </div>
             </div>
             <div th:replace="~{components/formats/table/table_format :: table(${formats})}" style="display: none;"></div>
         </div>
@@ -210,6 +218,50 @@
     </div>
 </div>
 
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasFiltros" aria-labelledby="offcanvasFiltrosLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold" id="offcanvasFiltrosLabel">Filtros</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="filtroForm">
+            <div class="mb-4">
+                <label for="teacher" class="form-label fw-medium">Director</label>
+                <select class="form-select shadow-sm" id="teacher" name="teacher">
+                    <option value="" disabled selected hidden class="text-center">Seleccione el director</option>
+                    <option th:each="teacher : ${teachersSelect}" th:value="${teacher.id}" th:text="${teacher.name}"></option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="group" class="form-label fw-medium">Grupo de investigación</label>
+                <select class="form-select shadow-sm" id="group" name="group">
+                    <option value="" disabled selected hidden class="text-center">Seleccione el grupo</option>
+                    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}"></option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="academicPeriod" class="form-label fw-medium">Semestre académico</label>
+                <select class="form-select shadow-sm" id="academicPeriod" name="academicPeriod">
+                    <option value="" disabled selected hidden class="text-center">Seleccione el grupo</option>
+                    <option th:each="year : ${years}" th:value="${year.id}" th:text="${year.value}"></option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="status" class="form-label fw-medium">Estado</label>
+                <select class="form-select shadow-sm" id="status" name="status">
+                    <option value="" disabled selected hidden class="text-center">Seleccione el estado</option>
+                    <option value="1">Borrador</option>
+                    <option value="2">Enviado</option>
+                </select>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-outline-secondary px-4" id="limpiarFiltros">Limpiar</button>
+                <button type="submit" class="btn px-4 text-white ms-2" style="background-color: #8B0000;">Aplicar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Bootstrap y JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/components/utils/togglebtn.js}"></script>
@@ -219,6 +271,6 @@
 <script th:src="@{/js/components/formats/delete_format.js}"></script>
 <script th:src="@{/js/components/users/activate.js}"></script>
 <script th:src="@{/js/components/formats/activate_format.js}"></script>
-
+<script th:src="@{/js/components/utils/filter_applicated.js}"></script>
 </body>
 </html>

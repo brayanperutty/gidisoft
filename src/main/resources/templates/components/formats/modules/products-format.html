@@ -1,5 +1,4 @@
-<div th:fragment="products(productos)">
-    <h5 class="mt-2 mb-3 fw-bold">Productos</h5>
+<div th:fragment="products(groupedProducts)">
 
     <!-- Producto uno -->
     <div class="accordion mb-3" id="accordionProductGruplac">
@@ -17,10 +16,183 @@
                  aria-labelledby="headingOneProductGruplac"
                  data-bs-parent="#accordionProductGruplac">
                 <div class="accordion-body">
-                    <div class="card-body" id="productGruplac">
+                    <div class="card-body mb-3" id="product1">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('1')}"
+                             th:each="product : ${groupedProducts.get('1')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('1')}"
+                             th:each="product : ${groupedProducts.get('1')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(1)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -44,10 +216,183 @@
                  aria-labelledby="headingOneProductParticipation"
                  data-bs-parent="#accordionProductParticipation">
                 <div class="accordion-body">
-                    <div class="card-body" id="productParticipation">
+                    <div class="card-body mb-3" id="product2">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('2')}"
+                             th:each="product : ${groupedProducts.get('2')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('2')}"
+                             th:each="product : ${groupedProducts.get('2')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(2)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -71,10 +416,183 @@
                  aria-labelledby="headingOneProductProjects"
                  data-bs-parent="#accordionProductProjects">
                 <div class="accordion-body">
-                    <div class="card-body" id="productProjects">
+                    <div class="card-body mb-3" id="product3">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('3')}"
+                             th:each="product : ${groupedProducts.get('3')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('3')}"
+                             th:each="product : ${groupedProducts.get('3')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(3)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -98,10 +616,183 @@
                  aria-labelledby="headingOneProductArticle"
                  data-bs-parent="#accordionProductArticle">
                 <div class="accordion-body">
-                    <div class="card-body" id="productArticle">
+                    <div class="card-body mb-3" id="product4">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('4')}"
+                             th:each="product : ${groupedProducts.get('4')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('4')}"
+                             th:each="product : ${groupedProducts.get('4')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(4)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -125,10 +816,183 @@
                  aria-labelledby="headingOneProductProposal"
                  data-bs-parent="#accordionProductProposal">
                 <div class="accordion-body">
-                    <div class="card-body" id="productProposal">
+                    <div class="card-body mb-3" id="product5">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('5')}"
+                             th:each="product : ${groupedProducts.get('5')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('5')}"
+                             th:each="product : ${groupedProducts.get('5')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(5)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -152,10 +1016,183 @@
                  aria-labelledby="headingOneProductPapel"
                  data-bs-parent="#accordionProductPapel">
                 <div class="accordion-body">
-                    <div class="card-body" id="productPapel">
+                    <div class="card-body mb-3" id="product6">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('6')}"
+                             th:each="product : ${groupedProducts.get('6')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('6')}"
+                             th:each="product : ${groupedProducts.get('6')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(6)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -179,10 +1216,183 @@
                  aria-labelledby="headingOneProductDirection"
                  data-bs-parent="#accordionProductDirection">
                 <div class="accordion-body">
-                    <div class="card-body" id="productDirection">
+                    <div class="card-body mb-3" id="product7">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('7')}"
+                             th:each="product : ${groupedProducts.get('7')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('7')}"
+                             th:each="product : ${groupedProducts.get('7')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(7)">+ Agregar Producto
                         </button>
                     </div>
                 </div>
@@ -206,10 +1416,183 @@
                  aria-labelledby="headingOneOthersProducts"
                  data-bs-parent="#accordionOthersProducts">
                 <div class="accordion-body">
-                    <div class="card-body" id="othersProducts">
+                    <div class="card-body mb-3" id="product8">
+
+                        <div class="card mb-3 border border-secondary p-3" th:if="${groupedProducts.containsKey('8')}"
+                             th:each="product : ${groupedProducts.get('8')}">
+
+                            <div th:object="${product}" th:if="${!#lists.contains(product.editorsNames, user.name)
+                                    and user.roleType != 'admin'}">
+                                <input type="hidden" class="form-control productId" name="id"
+                                       th:value="${product.id}">
+                                <input type="hidden" class="form-control formatId" name="formatId"
+                                       th:value="${product.formatId}">
+                                <div th:if="${product.editorsNames != null}">
+                                    <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                    <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción:</label>
+                                    <span name="description"
+                                          th:text="${product.description}"></span>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Responsable:</label>
+                                        <span name="responsibles"
+                                              th:text="${product.responsibles}">
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Fecha:</label>
+                                        <span th:text="${product.dateFormatter}"
+                                              name="date">
+                                    </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center"
+                                     th:if="${(product.files != null and !product.files.isEmpty())
+                                   and (user.roleType == 'admin' or #lists.contains(product.editorsNames, user.name))}">
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary view-evidences"
+                                            th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                            data-entity="products"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#evidenceModal"
+                                            th:attr="data-entity='products',
+                                            data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                        Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                        <i class="fas fa-images ms-2"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.contains(product.editorsNames, user.name)
+                                    or user.roleType == 'admin'}">
+                                <form th:action="@{/products}"
+                                      method="post" enctype="multipart/form-data">
+                                    <input type="hidden" class="form-control productId" name="id"
+                                           th:value="${product.id}">
+                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                           th:value="${product.formatId}">
+
+                                    <div th:if="${product.editorsNames != null}">
+                                        <label class="form-label fw-bold mb-3">Docentes Editores:</label>
+                                        <span name="editors">
+                                            <span th:each="editor, iterStat : ${product.editorsNames}">
+                                                <span th:text="${iterStat.last} ? ${editor} : ${editor + ','}"></span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Descripción:</label>
+                                        <textarea class="form-control"
+                                                  name="description"
+                                                  th:text="${product.description}"
+                                                  rows="1">
+
+                                        </textarea>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-8">
+                                            <label class="form-label fw-bold">Responsable:</label>
+                                            <textarea class="form-control"
+                                                      name="responsibles"
+                                                      th:text="${product.responsibles}"
+                                                      rows="1"></textarea>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Fecha:</label>
+                                            <input type="date" class="form-control" name="date"
+                                                   th:value="${product.date}">
+                                        </div>
+                                    </div>
+                                    <div class="project-block mb-3" th:data-id="${product.id}">
+                                        <label class="form-label fw-bold d-block mb-3">Cargar evidencias:</label>
+                                        <input type="file" name="files" multiple class="fileInput"
+                                               style="display:none"/>
+                                        <button type="button" class="fileButton btn btn-sm btn-outline-secondary">
+                                            Seleccionar archivos
+                                        </button>
+                                        <small class="fileCount form-text text-muted ms-2">Ningún archivo
+                                            seleccionado</small>
+                                        <div class="fileNamesContainer mt-2"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center">
+                                        <button type="button"
+                                                class="btn btn-sm btn-secondary view-evidences"
+                                                data-entity="products"
+                                                th:data-files="${#strings.arrayJoin(product.files.toArray(), ',')}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#evidenceModal"
+                                                th:if="${product.files != null and !product.files.isEmpty()}"
+                                                th:attr="data-entity='products',
+                                                data-product-id=${product.id}, data-format-id=${product.formatId}">
+                                            Ver evidencias (<span th:text="${product.files.size()}"></span>)
+                                            <i class="fas fa-images ms-2"></i>
+                                        </button>
+                                        <a type="button" class="btn btn-warning btn-sm ms-2"
+                                           data-bs-toggle="modal"
+                                           th:attr="data-bs-target='#permisosModalProduct__' + ${product.id}"
+                                           title="Permisos">Permisos
+                                            <i class="fas fa-user-shield ms-2"></i></a>
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Guardar</button>
+                                        <a type="button" class="btn btn-sm btn-outline-danger ms-2 deleteProduct"
+                                           data-bs-toggle="modal" data-bs-target="#deleteProductModal">Eliminar
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!--        permisos productos          -->
+                        <div th:if="${groupedProducts.containsKey('8')}"
+                             th:each="product : ${groupedProducts.get('8')}">
+                            <div class="modal fade" th:id="'permisosModalProduct__' + ${product.id}" tabindex="-1"
+                                 aria-labelledby="permisosModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-info text-white">
+                                            <h5 class="modal-title">Gestionar Permisos
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
+                                        </div>
+                                        <form th:action="@{/products/{id}/permissions(id=${product.id})}" method="post">
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <input type="hidden" class="form-control formatId" name="formatId"
+                                                           th:value="${product.formatId}">
+                                                    <label th:for="'usuariosOthers' + ${product.id}" class="mb-3">Selecciona los usuarios con
+                                                        acceso:</label>
+                                                    <select th:id="'usuariosOthers' + ${product.id}" class="form-select mb-3" multiple
+                                                            name="users">
+                                                        <option th:each="usuario : ${users}"
+                                                                th:value="${usuario.id}"
+                                                                th:text="${usuario.usercode} + ' - ' + ${usuario.name}">
+                                                        </option>
+                                                    </select>
+                                                    <small class="form-text text-muted">Mantén presionada Ctrl (o Cmd en Mac) para
+                                                        seleccionar múltiples usuarios.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Guardar Permisos</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-footer text-end">
-                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        <button type="button" class="btn btn-success" onclick="addProducts(8)">+ Agregar Producto
                         </button>
                     </div>
                 </div>

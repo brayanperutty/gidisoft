@@ -32,6 +32,7 @@ public class EventController {
     private static final String REDIRECT_LOGIN = "redirect:/login";
     private static final String REDIRECT_FORMAT = "redirect:/formats/";
     private static final String REDIRECT_ERROR = "error/403";
+    private static final String TAB_REDIRECT = "?tab=modules";
 
     //<---------- GET METHODS ------------->
 
@@ -55,7 +56,7 @@ public class EventController {
                 }
             }
         }
-        return REDIRECT_FORMAT + formatId;
+        return REDIRECT_FORMAT + formatId + TAB_REDIRECT;
     }
 
     @GetMapping(value = "/{id}/delete-evidence")
@@ -79,7 +80,7 @@ public class EventController {
                 }
             }
         }
-        return REDIRECT_FORMAT + formatId;
+        return REDIRECT_FORMAT + formatId + TAB_REDIRECT;
     }
 
     //<---------- POST METHODS ------------->
@@ -105,7 +106,7 @@ public class EventController {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
-        return REDIRECT_FORMAT + eventRequest.getFormatId();
+        return REDIRECT_FORMAT + eventRequest.getFormatId() + TAB_REDIRECT;
     }
 
     @PostMapping(value = "/{id}/permissions")
@@ -121,7 +122,7 @@ public class EventController {
                 att.addFlashAttribute(CREATE_ERROR, e.getMessage());
             }
         }
-        return REDIRECT_FORMAT + formatId;
+        return REDIRECT_FORMAT + formatId + TAB_REDIRECT;
     }
 
 }

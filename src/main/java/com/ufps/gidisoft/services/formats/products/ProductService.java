@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -83,13 +81,22 @@ public class ProductService {
         }
     }
 
-    public List<ProductDto> findByFormatId(Long formatId){
-        List<ProductDto> productsDto = new ArrayList<>();
+    public Map<String, List<ProductDto>> findByFormatIdGrouped(Long formatId) {
+        Map<String, List<ProductDto>> groupedProducts = new HashMap<>();
+
         for (Product product : this.productRepository.findByFormatId(formatId)) {
-            productsDto.add(new ProductDto(product, this.productUserService.findUsersByProduct(product.getId())));
+            String type = product.getProductType().getId().toString(); // o product.getType(), según tu modelo
+            ProductDto dto = new ProductDto(product, this.productUserService.findUsersByProduct(product.getId()));
+
+            groupedProducts.computeIfAbsent(type, k -> new ArrayList<>()).add(dto);
         }
-        productsDto.sort(Comparator.comparing(ProductDto::getId));
-        return productsDto;
+
+        // (Opcional) ordena los productos por ID
+        for (List<ProductDto> dtos : groupedProducts.values()) {
+            dtos.sort(Comparator.comparing(ProductDto::getId));
+        }
+
+        return groupedProducts;
     }
 
     @Transactional
