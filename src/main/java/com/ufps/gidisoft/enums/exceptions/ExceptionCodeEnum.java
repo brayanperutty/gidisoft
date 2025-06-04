@@ -27,7 +27,11 @@ public enum ExceptionCodeEnum {
     EVENT02("No tienes permisos para editar este evento", ExceptionEnum.VALIDATION_EXCEPTION.getValue()),
 
     OTHER01("The other activity is not found", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
-    OTHER02("No tienes permisos para editar esta actividad.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    OTHER02("No tienes permisos para editar esta actividad.", ExceptionEnum.VALIDATION_EXCEPTION.getValue()),
+
+    PRODT01("The product type was not found.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    PROD01("The product was not found.", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
+    PROD02("No tienes permisos para editar este producto.", ExceptionEnum.VALIDATION_EXCEPTION.getValue()),
 
     TOKEN01("The token has expiry", ExceptionEnum.NOT_FOUND_EXCEPTION.getValue()),
     TOKEN02("The token is invalid", ExceptionEnum.REQUEST_EXCEPTION.getValue()),

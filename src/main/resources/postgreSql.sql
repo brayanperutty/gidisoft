@@ -214,3 +214,22 @@ VALUES (71, 'Grupo De Investigación Para El Cuidado De La Salud - UFPS GINCUS',
 INSERT INTO public.investigation_group(id, "name", faculty_id)
 VALUES (72, 'Grupo De Investigación En Regencia De Farmacia - GIRFAR UFPS', 6);
 ALTER SEQUENCE public.investigation_group_id_seq RESTART 73;
+
+-- ProducType
+INSERT INTO public.products_type(id, "name")
+VALUES (1, 'Actualización GrupLAC - Actualización CGIS');
+INSERT INTO public.faculties(id, "name")
+VALUES (2, 'Participación convocatoria de reconocimiento Minciencias');
+INSERT INTO public.faculties(id, "name")
+VALUES (3, 'Proyectos terminados y/o ejecución, avalados con financiación interna (FINU) o externa.');
+INSERT INTO public.faculties(id, "name")
+VALUES (4, 'Artículo publicado o remitido revista científica');
+INSERT INTO public.faculties(id, "name")
+VALUES (5, 'Participación propuesta investigación en convocatoria interna o externa');
+INSERT INTO public.faculties(id, "name")
+VALUES (6, 'Ponencia evento académico regional, nacional o internacional');
+INSERT INTO public.faculties(id, "name")
+VALUES (7, 'Dirección trabajo de grado (post-grado, maestría)');
+INSERT INTO public.faculties(id, "name")
+VALUES (8, 'Otros productos');
+ALTER SEQUENCE public.faculties_id_seq RESTART 9;

@@ -4,6 +4,7 @@ import com.ufps.gidisoft.entities.formats.events.Event;
 import com.ufps.gidisoft.entities.formats.others.OtherActivity;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.repositories.formats.others.OtherActivityRepository;
 import com.ufps.gidisoft.requests.formats.EventRequest;
 import com.ufps.gidisoft.requests.formats.OtherActivityRequest;
@@ -38,7 +39,7 @@ public class OtherActivityService {
     private final OtherActivityUserService otherActivityUserService;
     private final UserService userService;
 
-    public OtherActivity findById(Long id){
+    public OtherActivity findById(Long id) {
         return this.otherActivityRepository.findById(id).orElseThrow(()
                 -> new IllegalArgumentException(ExceptionCodeEnum.OTHER01.getMessage()));
     }
@@ -59,13 +60,14 @@ public class OtherActivityService {
     @Transactional
     public void updateOtherActivity(OtherActivityRequest otherActivityRequest, User user) throws IOException {
         OtherActivity otherActivity = this.findById(otherActivityRequest.getId());
-        if (this.otherActivityUserService.validateExistOtherActivityAndUser(otherActivity, user)) {
+        if (this.otherActivityUserService.validateExistOtherActivityAndUser(otherActivity, user) ||
+                user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
             otherActivity.setName(otherActivityRequest.getName());
             otherActivity.setType(otherActivityRequest.getType());
             otherActivity.setCompliancePercentage(otherActivityRequest.getCompliancePercentage());
             getFilesNameList(otherActivityRequest, otherActivity);
             this.otherActivityRepository.save(otherActivity);
-        }else throw new IllegalArgumentException(ExceptionCodeEnum.OTHER02.getMessage());
+        } else throw new IllegalArgumentException(ExceptionCodeEnum.OTHER02.getMessage());
     }
 
     private void getFilesNameList(OtherActivityRequest otherActivityRequest, OtherActivity otherActivity) throws IOException {
@@ -81,7 +83,7 @@ public class OtherActivityService {
         }
     }
 
-    public List<OtherActivityDto> findByFormatId(Long formatId){
+    public List<OtherActivityDto> findByFormatId(Long formatId) {
         List<OtherActivityDto> otherActivities = new ArrayList<>();
         for (OtherActivity otherActivity : this.otherActivityRepository.findByFormatId(formatId)) {
             otherActivities.add(new OtherActivityDto(otherActivity, this.otherActivityUserService.findUserByOtherActivity(otherActivity.getId())));
@@ -120,10 +122,10 @@ public class OtherActivityService {
     }
 
     @Transactional
-    public void createRelationWithUsers(List<Long> users, Long otherActivityId){
+    public void createRelationWithUsers(List<Long> users, Long otherActivityId) {
         users.forEach(user -> {
             OtherActivity otherActivity = this.findById(otherActivityId);
-            if(!this.validateOtherActivityWithUser(otherActivityId, this.userService.getUserById(user))){
+            if (!this.validateOtherActivityWithUser(otherActivityId, this.userService.getUserById(user))) {
                 this.otherActivityUserService.createOtherActivityUser(otherActivity, this.userService.getUserById(user));
             }
         });

@@ -1,0 +1,259 @@
+<div th:fragment="products(productos)">
+    <h5 class="mt-2 mb-3 fw-bold">Productos</h5>
+
+    <!-- Producto uno -->
+    <div class="accordion mb-3" id="accordionProductGruplac">
+        <div class="accordion-item border border-dark">
+            <h2 class="accordion-header" id="headingOneProductGruplac">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductGruplac"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Actualización GrupLAC / CGIS
+                </button>
+            </h2>
+
+            <div id="collapseOneProductGruplac" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductGruplac"
+                 data-bs-parent="#accordionProductGruplac">
+                <div class="accordion-body">
+                    <div class="card-body" id="productGruplac">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto dos -->
+    <div class="accordion mb-3" id="accordionProductParticipation">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductParticipation">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductParticipation"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Participación convocatoria de reconocimiento MinCiencias
+                </button>
+            </h2>
+
+            <div id="collapseOneProductParticipation" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductParticipation"
+                 data-bs-parent="#accordionProductParticipation">
+                <div class="accordion-body">
+                    <div class="card-body" id="productParticipation">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto tres -->
+    <div class="accordion mb-3" id="accordionProductProjects">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductProjects">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductProjects"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Proyectos terminados y/o ejecución, avalados con financiación interna (FINU) o externa
+                </button>
+            </h2>
+
+            <div id="collapseOneProductProjects" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductProjects"
+                 data-bs-parent="#accordionProductProjects">
+                <div class="accordion-body">
+                    <div class="card-body" id="productProjects">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto cuatro -->
+    <div class="accordion mb-3" id="accordionProductArticle">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductArticle">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductArticle"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Artículo publicado o remitido revista científica
+                </button>
+            </h2>
+
+            <div id="collapseOneProductArticle" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductArticle"
+                 data-bs-parent="#accordionProductArticle">
+                <div class="accordion-body">
+                    <div class="card-body" id="productArticle">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto cinco -->
+    <div class="accordion mb-3" id="accordionProductProposal">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductProposal">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductProposal"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Participación propuesta investigación en convocatoria interna o externa
+                </button>
+            </h2>
+
+            <div id="collapseOneProductProposal" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductProposal"
+                 data-bs-parent="#accordionProductProposal">
+                <div class="accordion-body">
+                    <div class="card-body" id="productProposal">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto seis -->
+    <div class="accordion mb-3" id="accordionProductPapel">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductPapel">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductPapel"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Ponencia evento académico regional, nacional o internacional
+                </button>
+            </h2>
+
+            <div id="collapseOneProductPapel" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductPapel"
+                 data-bs-parent="#accordionProductPapel">
+                <div class="accordion-body">
+                    <div class="card-body" id="productPapel">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto siete -->
+    <div class="accordion mb-3" id="accordionProductDirection">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneProductDirection">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneProductDirection"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Dirección trabajo de grado (post-grado, maestría)
+                </button>
+            </h2>
+
+            <div id="collapseOneProductDirection" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneProductDirection"
+                 data-bs-parent="#accordionProductDirection">
+                <div class="accordion-body">
+                    <div class="card-body" id="productDirection">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Producto ocho -->
+    <div class="accordion mb-3" id="accordionOthersProducts">
+        <div class="accordion-item border border-dark mb-3">
+            <h2 class="accordion-header" id="headingOneOthersProducts">
+                <button class="accordion-button collapsed text-white fw-bold" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOneOthersProducts"
+                        aria-expanded="false" aria-controls="collapseOne" style="background-color: #8B0000">
+                    Otros productos
+                </button>
+            </h2>
+
+            <div id="collapseOneOthersProducts" class="accordion-collapse collapse"
+                 aria-labelledby="headingOneOthersProducts"
+                 data-bs-parent="#accordionOthersProducts">
+                <div class="accordion-body">
+                    <div class="card-body" id="othersProducts">
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="button" class="btn btn-success" onclick="addProducts()">+ Agregar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal con Carrusel -->
+    <div class="modal fade" id="evidenceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-3 shadow-lg">
+                <div class="modal-header bg-light border-bottom">
+                    <h5 class="modal-title fw-semibold" id="evidenceModalTitle">Evidencias del Proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body p-0 bg-dark">
+                    <div id="carouselEvidences" class="carousel slide d-flex w-100 h-100" data-bs-ride="carousel">
+                        <div class="carousel-inner w-100 h-100" id="carouselInner">
+                            <!-- Se llena por JS -->
+                        </div>
+
+                        <!-- Controles de navegación -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvidences"
+                                data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-secondary rounded-circle p-2"
+                                  aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselEvidences"
+                                data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-secondary rounded-circle p-2"
+                                  aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="carousel-caption-custom">
+                    <button id="deleteImageBtn" class="btn btn-sm btn-danger me-2">
+                        Eliminar
+                    </button>
+                    Imagen <span id="currentImageIndex">1</span> de <span id="totalImages">1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

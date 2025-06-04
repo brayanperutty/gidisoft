@@ -3,6 +3,7 @@ package com.ufps.gidisoft.services.formats.events;
 import com.ufps.gidisoft.entities.formats.events.Event;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
+import com.ufps.gidisoft.enums.roles.RolesEnum;
 import com.ufps.gidisoft.repositories.formats.events.EventRepository;
 import com.ufps.gidisoft.requests.formats.EventRequest;
 import com.ufps.gidisoft.responses.format.EventDto;
@@ -57,7 +58,8 @@ public class EventService {
     @Transactional
     public void updateEvent(EventRequest eventRequest, User user) throws IOException {
         Event event = findById(eventRequest.getId());
-        if (this.eventUserService.validateExistEventAndUser(event, user)) {
+        if (this.eventUserService.validateExistEventAndUser(event, user) ||
+                user.getRole().getId().equals(RolesEnum.ADMIN.getId())) {
             event.setName(eventRequest.getName());
             event.setCreatedAt(eventRequest.getCreatedAt());
             event.setCompliancePercentage(eventRequest.getCompliancePercentage());
@@ -92,7 +94,7 @@ public class EventService {
     public void deleteById(Long id) throws Exception {
         this.eventUserService.deleteByEvent(id);
         Event event = this.findById(id);
-        if(event.getFiles() != null && !event.getFiles().isEmpty()) {
+        if (event.getFiles() != null && !event.getFiles().isEmpty()) {
             for (String file : event.getFiles()) {
                 this.cloudinaryService.getImage(file);
             }
@@ -117,10 +119,10 @@ public class EventService {
     }
 
     @Transactional
-    public void createRelationWithUsers(List<Long> users, Long eventId){
+    public void createRelationWithUsers(List<Long> users, Long eventId) {
         users.forEach(user -> {
             Event event = this.findById(eventId);
-            if(!this.validateEventWithUser(eventId, this.userService.getUserById(user))){
+            if (!this.validateEventWithUser(eventId, this.userService.getUserById(user))) {
                 this.eventUserService.createEventUser(event, this.userService.getUserById(user));
             }
         });

@@ -39,16 +39,57 @@
 
 <div class="content" id="content">
     <div th:replace="~{components/utils/header-user :: header(${user})}"></div>
+
     <div class="container mt-5">
-        <form th:action="@{/formats}" method="post" th:object="${formatRequest}">
-            <div th:replace="~{components/formats/general_info/form-format :: formularioBasico(${formatRequest})}"></div>
-            <div class="mt-4 text-end mb-3">
-                <button type="submit" class="btn btn-primary">Guardar información general</button>
+
+        <!--  Esto es lo nuevo con taps-->
+        <ul class="nav custom-tabs mb-4" id="formatTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-general-tab" data-bs-toggle="tab" data-bs-target="#tab-general" type="button" role="tab">Información general</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-modules-tab" data-bs-toggle="tab" data-bs-target="#tab-modules" type="button" role="tab">Módulos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-products-tab" data-bs-toggle="tab" data-bs-target="#tab-products" type="button" role="tab">Productos</button>
+            </li>
+        </ul>
+        <!-- Aquí termina lo de taps-->
+
+        <div class="tab-content" id="formatTabsContent">
+            <!-- TAB 1: Información general -->
+            <div class="tab-pane fade show active" id="tab-general" role="tabpanel">
+                <form th:action="@{/formats}" method="post" th:object="${formatRequest}">
+                    <div th:replace="~{components/formats/general_info/form-format :: formularioBasico(${formatRequest})}"></div>
+                    <div class="mt-4 text-end mb-3">
+                        <button type="submit" class="btn btn-primary">Guardar información general</button>
+                    </div>
+                </form>
             </div>
-        </form>
-        <div th:if="${formatRequest.formatId != null}">
-            <div th:replace="~{components/formats/modules/modules-format :: modulosExtra(${projects})}"></div>
+
+            <!-- TAB 2: Módulos -->
+            <div class="tab-pane fade" id="tab-modules" role="tabpanel">
+                <div th:if="${formatRequest.formatId != null}">
+                    <div th:replace="~{components/formats/modules/modules-format :: modulosExtra(${projects})}"></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: Productos -->
+            <div class="tab-pane fade" id="tab-products" role="tabpanel">
+                <div th:replace="~{components/formats/modules/products-format :: products(${productos})}"></div>
+            </div>
         </div>
+
+<!--        <form th:action="@{/formats}" method="post" th:object="${formatRequest}">-->
+<!--            <div th:replace="~{components/formats/general_info/form-format :: formularioBasico(${formatRequest})}"></div>-->
+<!--            <div class="mt-4 text-end mb-3">-->
+<!--                <button type="submit" class="btn btn-primary">Guardar información general</button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--        <div th:if="${formatRequest.formatId != null}">-->
+<!--            <div th:replace="~{components/formats/modules/modules-format :: modulosExtra(${projects})}"></div>-->
+<!--        </div>-->
+
     </div>
 </div>
 <!-- Bootstrap y JS -->
