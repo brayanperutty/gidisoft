@@ -1,11 +1,9 @@
 package com.ufps.gidisoft.services.formats.products;
 
-import com.ufps.gidisoft.entities.formats.events.Event;
 import com.ufps.gidisoft.entities.formats.products.Product;
 import com.ufps.gidisoft.entities.users.User;
 import com.ufps.gidisoft.enums.exceptions.ExceptionCodeEnum;
 import com.ufps.gidisoft.repositories.formats.products.ProductRepository;
-import com.ufps.gidisoft.requests.formats.EventRequest;
 import com.ufps.gidisoft.requests.formats.ProductRequest;
 import com.ufps.gidisoft.responses.format.ProductDto;
 import com.ufps.gidisoft.services.cloudinary.CloudinaryService;
@@ -117,7 +115,7 @@ public class ProductService {
         this.cloudinaryService.getImage(url);
 
         List<String> files = product.getFiles();
-        files.removeIf(file -> !file.trim().equalsIgnoreCase(url.trim()));
+        files.removeIf(file -> file.trim().equalsIgnoreCase(url.trim()));
         if (files.isEmpty()) product.setFiles(null);
         else product.setFiles(files);
 

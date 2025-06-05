@@ -15,6 +15,7 @@ import com.ufps.gidisoft.services.faculties.FacultyService;
 import com.ufps.gidisoft.services.formats.projects.ProjectStatusService;
 import com.ufps.gidisoft.services.groups.InvestigationGroupService;
 import com.ufps.gidisoft.services.users.UserService;
+import com.ufps.gidisoft.utils.GenerateWordFormat;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class FormatService {
     private final ManagerUserFormatService managerUserFormatService;
     private final InvestigationGroupService investigationGroupService;
     private final FacultyService facultyService;
+    private final GenerateWordFormat generateWordFormat;
 
     public FormatDto findFormatById(Long formatId) {
         return new FormatDto(formatRepository.findById(formatId).orElseThrow(()
@@ -122,5 +124,9 @@ public class FormatService {
         return this.formatRepository.findByFilters(filters.getDirectorId(), filters.getAcademicPeriodId(),
                         filters.getGroupId(), filters.getStatus())
                 .stream().map(FormatListDto::new).toList();
+    }
+
+    public byte[] generateWordFormat(){
+        return this.generateWordFormat.generateInformeAsBytes();
     }
 }

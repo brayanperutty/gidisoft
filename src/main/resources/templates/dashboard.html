@@ -218,6 +218,29 @@
     </div>
 </div>
 
+<div class="modal fade" id="openModalGenerate" tabindex="-1" aria-labelledby="openModalGenerate" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="openModalGenerateLabel">Exportar informe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h2>Selecciona el formato del archivo</h2>
+                <select id="fileFormat">
+                    <option value="docx">Word (.docx)</option>
+                    <option value="pdf">PDF (.pdf)</option>
+                    <option value="xlsx">Excel (.xlsx)</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a type="button" class="btn btn-danger" id="generateConfirm">Confirmar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasFiltros" aria-labelledby="offcanvasFiltrosLabel">
     <div class="offcanvas-header border-bottom">
         <h5 class="offcanvas-title fw-semibold" id="offcanvasFiltrosLabel">Filtros</h5>
@@ -272,5 +295,6 @@
 <script th:src="@{/js/components/users/activate.js}"></script>
 <script th:src="@{/js/components/formats/activate_format.js}"></script>
 <script th:src="@{/js/components/utils/filter_applicated.js}"></script>
+<script th:src="@{/js/components/formats/generate_format.js}"></script>
 </body>
 </html>

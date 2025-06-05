@@ -1600,6 +1600,27 @@
         </div>
     </div>
 
+    <!-- Eliminar otra actividad -->
+    <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModal"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteProductLabel">Confirmar eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro que deseas eliminar esta actividad?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <a type="button" class="btn btn-danger" id="deleteProductConfirm">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal con Carrusel -->
     <div class="modal fade" id="evidenceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">

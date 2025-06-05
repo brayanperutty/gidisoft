@@ -17,6 +17,9 @@ import com.ufps.gidisoft.services.groups.InvestigationGroupService;
 import com.ufps.gidisoft.services.users.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +64,26 @@ public class FormatsController {
 
 
     // <-------- GET METHODS -------->
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> descargarInforme(@PathVariable Long id, @RequestParam String format) {
+        byte[] archivo = switch (format) {
+            case "docx" -> this.formatService.generateWordFormat();
+            default -> null;
+        };
+
+        String filename = "InformeGestion." + format;
+        String mimeType = switch (format) {
+            case "pdf" -> "application/pdf";
+            case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        };
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType(mimeType))
+                .body(archivo);
+    }
 
     @GetMapping(value = "/{id}")
     public String getFormats(Model model, HttpServletRequest request, RedirectAttributes att, @PathVariable Long id,
