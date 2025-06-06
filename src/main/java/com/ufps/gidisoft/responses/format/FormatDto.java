@@ -2,41 +2,36 @@ package com.ufps.gidisoft.responses.format;
 
 import com.ufps.gidisoft.entities.formats.general.Format;
 import com.ufps.gidisoft.entities.formats.general.ManagerUserFormat;
+import com.ufps.gidisoft.enums.utils.DateFormatEnum;
 import com.ufps.gidisoft.requests.formats.ManagerUserFormatRequest;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class FormatDto {
 
     private Long formatId;
-
     private String code;
-
     private String version;
-
     private LocalDate date;
-
+    private String dateFormatter;
     private ManagerUserFormatRequest managerUsers;
-
     private Long group;
-
     private String unity;
-
     private Long directorId;
-
     private String department;
-
     private Long faculty;
-
     private Long academicPeriod;
 
     public FormatDto(Format format, ManagerUserFormat managerUserFormat) {
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern(DateFormatEnum.DD_MM_YYYY.getValue());
         this.formatId = format.getId();
         this.code = format.getCode();
         this.version = format.getVersion();
         this.date = format.getDate();
+        this.dateFormatter = format.getDate().format(formatters);
         this.managerUsers = new ManagerUserFormatRequest(managerUserFormat.getCreatedBy(),
                 managerUserFormat.getReviewBy(), managerUserFormat.getApproveBy());
         this.group = format.getGroup().getId();

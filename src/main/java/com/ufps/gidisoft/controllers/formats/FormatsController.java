@@ -68,7 +68,7 @@ public class FormatsController {
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> descargarInforme(@PathVariable Long id, @RequestParam String format) {
         byte[] archivo = switch (format) {
-            case "docx" -> this.formatService.generateWordFormat();
+            case "docx" -> this.formatService.generateWordFormat(id);
             default -> null;
         };
 

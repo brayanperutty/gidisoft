@@ -126,7 +126,7 @@ public class FormatService {
                 .stream().map(FormatListDto::new).toList();
     }
 
-    public byte[] generateWordFormat(){
-        return this.generateWordFormat.generateInformeAsBytes();
+    public byte[] generateWordFormat(Long formatId) {
+        return this.generateWordFormat.generateInformeAsBytes(this.findFormatById(formatId));
     }
 }
