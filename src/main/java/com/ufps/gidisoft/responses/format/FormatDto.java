@@ -24,6 +24,7 @@ public class FormatDto {
     private String department;
     private Long faculty;
     private Long academicPeriod;
+    private Format format;
 
     public FormatDto(Format format, ManagerUserFormat managerUserFormat) {
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern(DateFormatEnum.DD_MM_YYYY.getValue());
@@ -40,6 +41,7 @@ public class FormatDto {
         this.department = format.getDepartment();
         this.faculty = format.getFaculty().getId();
         this.academicPeriod = format.getAcademicPeriod().getId();
+        this.format = format;
     }
 
 }

@@ -1,6 +1,11 @@
 package com.ufps.gidisoft.utils;
 
-import com.ufps.gidisoft.responses.format.FormatDto;
+import com.ufps.gidisoft.responses.format.*;
+import com.ufps.gidisoft.services.formats.directions.DirectionService;
+import com.ufps.gidisoft.services.formats.events.EventService;
+import com.ufps.gidisoft.services.formats.others.OtherActivityService;
+import com.ufps.gidisoft.services.formats.projects.ProjectService;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.usermodel.*;
@@ -14,13 +19,26 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GenerateWordFormat {
 
-    private static final int BORDER_THICKNESS = 12;
+    /*
+     * Services
+     */
+    private final ProjectService  projectService;
+    private final DirectionService  directionService;
+    private final EventService eventService;
+    private final OtherActivityService otherActivityService;
+
+    private static final int BORDER_THICKNESS = 9;
     private static final int MARGIN_2CM_TWIPS = 1134;
     private static final int MARGIN_2_5CM_TWIPS = 1417;
+    private static final String GREY_COLOR_CODE = "D9D9D9";
+    private static final String RED_COLOR_CODE = "C10000";
+    private static final String COMPLIANCE_PERCENTAGE_TEXT = "% de Cumplimiento";
 
     public byte[] generateInformeAsBytes(FormatDto format) {
         try (XWPFDocument document = new XWPFDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -28,8 +46,12 @@ public class GenerateWordFormat {
             setDocumentMargins(document);
             XWPFHeader header = document.createHeader(HeaderFooterType.DEFAULT);
             XWPFTable table = header.createTable(6, 9);
+            int[] columnWidthsTableHeader = {
+                    760,760,1846,
+                    1122,1122,1122,
+                    1102,1112,1152};
 
-            setTableColumnWidths(table);
+            setTableColumnWidths(table, columnWidthsTableHeader);
             setTableBorders(table);
             centerTable(table);
             setRowsHeight06CmPrecise(table);
@@ -40,10 +62,28 @@ public class GenerateWordFormat {
             this.createRow4Blocks(table, format);
             this.createRow5Blocks(table, format);
 
-            XWPFTable tableGeneralInfo = document.createTable(3,3);
+            XWPFTable tableGeneralInfo = document.createTable(4,12);
+            int[] columnWidthsTableGeneralInfo = {
+                    842,842,842,842,
+                    842,842,842,842,
+                    842,842,842,842};
+            setTableColumnWidths(tableGeneralInfo, columnWidthsTableGeneralInfo);
             setTableBorders(tableGeneralInfo);
             centerTable(tableGeneralInfo);
             setRowsHeight06CmPrecise(tableGeneralInfo);
+            this.createTableGeneralInfo(tableGeneralInfo, format);
+            this.createSpacer(document, 200);
+
+            this.createTableProjects(this.projectService.findByFormatId(format.getFormatId()), document);
+            this.createSpacer(document, 1);
+
+            this.createTableDirections(this.directionService.findByFormatId(format.getFormatId()), document);
+            this.createSpacer(document, 1);
+
+            this.createTableEvents(this.eventService.findByFormatId(format.getFormatId()), document);
+            this.createSpacer(document, 1);
+
+            this.createTableOtherActivities(this.otherActivityService.findByFormatId(format.getFormatId()), document);
 
             // Aplicar bordes negros a cada celda individualmente
             for (XWPFTableRow row : table.getRows()) {
@@ -58,6 +98,11 @@ public class GenerateWordFormat {
         } catch (IOException e) {
             throw new RuntimeException("Error generando el documento", e);
         }
+    }
+
+    private void createSpacer(XWPFDocument document, int spacer){
+        XWPFParagraph spacer3 = document.createParagraph();
+        spacer3.setSpacingAfter(spacer);
     }
 
     private void createGeneralInfoTitleFixed(XWPFTable table, FormatDto format) {
@@ -240,6 +285,434 @@ public class GenerateWordFormat {
         }
     }
 
+    private void createTableGeneralInfo(XWPFTable table, FormatDto format) {
+
+        //Primera fila
+        XWPFTableRow rowGroup = table.getRow(0);
+        XWPFTableCell cell1 = rowGroup.getCell(0);
+        CTTcPr tcPr1 = getCellCTTcPr(cell1);
+        tcPr1.addNewGridSpan().setVal(BigInteger.valueOf(5));
+        CTShd shd1 = tcPr1.isSetShd() ? tcPr1.getShd() : tcPr1.addNewShd();
+        shd1.setVal(STShd.CLEAR);
+        shd1.setColor("auto");
+        shd1.setFill(GREY_COLOR_CODE);
+        rowGroup.setHeight(850);
+
+        XWPFTableCell cell2 = rowGroup.getCell(5);
+        CTTcPr tcPr2 = getCellCTTcPr(cell2);
+        tcPr2.addNewGridSpan().setVal(BigInteger.valueOf(7));
+
+        //Segunda fila
+        XWPFTableRow rowDirector = table.getRow(1);
+        XWPFTableCell cell3 = rowDirector.getCell(0);
+        CTTcPr tcPr3 = getCellCTTcPr(cell3);
+        tcPr3.addNewGridSpan().setVal(BigInteger.valueOf(2));
+        CTShd shd2 = tcPr3.isSetShd() ? tcPr3.getShd() : tcPr3.addNewShd();
+        shd2.setVal(STShd.CLEAR);
+        shd2.setColor("auto");
+        shd2.setFill(GREY_COLOR_CODE);
+        rowDirector.setHeight(315);
+
+        XWPFTableCell cell4 = rowDirector.getCell(2);
+        CTTcPr tcPr4 = getCellCTTcPr(cell4);
+        tcPr4.addNewGridSpan().setVal(BigInteger.valueOf(10));
+
+        //Tercera fila
+        XWPFTableRow rowDepartment = table.getRow(2);
+        XWPFTableCell cell5 = rowDepartment.getCell(0);
+        CTTcPr tcPr5 = getCellCTTcPr(cell5);
+        tcPr5.addNewGridSpan().setVal(BigInteger.valueOf(3));
+        CTShd shd3 = tcPr5.isSetShd() ? tcPr5.getShd() : tcPr5.addNewShd();
+        shd3.setVal(STShd.CLEAR);
+        shd3.setColor("auto");
+        shd3.setFill(GREY_COLOR_CODE);
+        rowDepartment.setHeight(315);
+
+        XWPFTableCell cell6 = rowDepartment.getCell(3);
+        CTTcPr tcPr6 = getCellCTTcPr(cell6);
+        tcPr6.addNewGridSpan().setVal(BigInteger.valueOf(4));
+
+        XWPFTableCell cell7 = rowDepartment.getCell(7);
+        CTTcPr tcPr7 = getCellCTTcPr(cell7);
+        tcPr7.addNewGridSpan().setVal(BigInteger.valueOf(2));
+        CTShd shd4 = tcPr7.isSetShd() ? tcPr7.getShd() : tcPr7.addNewShd();
+        shd4.setVal(STShd.CLEAR);
+        shd4.setColor("auto");
+        shd4.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell8 = rowDepartment.getCell(9);
+        CTTcPr tcPr8 = getCellCTTcPr(cell8);
+        tcPr8.addNewGridSpan().setVal(BigInteger.valueOf(3));
+
+        //Cuarta fila
+        XWPFTableRow rowAcademicPeriod = table.getRow(3);
+        XWPFTableCell cell9 = rowAcademicPeriod.getCell(0);
+        CTTcPr tcPr9 = getCellCTTcPr(cell9);
+        tcPr9.addNewGridSpan().setVal(BigInteger.valueOf(4));
+        CTShd shd5 = tcPr9.isSetShd() ? tcPr9.getShd() : tcPr9.addNewShd();
+        shd5.setVal(STShd.CLEAR);
+        shd5.setColor("auto");
+        shd5.setFill(GREY_COLOR_CODE);
+        rowAcademicPeriod.setHeight(315);
+
+        XWPFTableCell cell10 = rowAcademicPeriod.getCell(4);
+        CTTcPr tcPr10 = getCellCTTcPr(cell10);
+        tcPr10.addNewGridSpan().setVal(BigInteger.valueOf(4));
+
+        XWPFTableCell cell11 = rowAcademicPeriod.getCell(8);
+        CTTcPr tcPr11 = getCellCTTcPr(cell11);
+        tcPr11.addNewGridSpan().setVal(BigInteger.valueOf(2));
+        CTShd shd6 = tcPr11.isSetShd() ? tcPr11.getShd() : tcPr11.addNewShd();
+        shd6.setVal(STShd.CLEAR);
+        shd6.setColor("auto");
+        shd6.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell12 = rowAcademicPeriod.getCell(10);
+        CTTcPr tcPr12 = getCellCTTcPr(cell12);
+        tcPr12.addNewGridSpan().setVal(BigInteger.valueOf(2));
+
+        //ELiminar celdas extra fila 1
+        this.deleteCells(rowGroup, 6, 11);
+        this.deleteCells(rowGroup, 1, 4);
+
+        //ELiminar celdas extra fila 2
+        this.deleteCells(rowDirector, 3, 11);
+        this.deleteCells(rowDirector, 1, 1);
+
+        //ELiminar celdas extra fila 3
+        this.deleteCells(rowDepartment, 10, 11);
+        this.deleteCells(rowDepartment, 8, 8);
+        this.deleteCells(rowDepartment, 4, 6);
+        this.deleteCells(rowDepartment, 1, 2);
+
+        //ELiminar celdas extra fila 4
+        this.deleteCells(rowAcademicPeriod, 11, 11);
+        this.deleteCells(rowAcademicPeriod, 9, 9);
+        this.deleteCells(rowAcademicPeriod, 5, 7);
+        this.deleteCells(rowAcademicPeriod, 1, 3);
+
+        addTextToCell(cell1, "GRUPO DE INVESTIGACIÓN", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell2, format.getFormat().getGroup().getName(), ParagraphAlignment.CENTER, false);
+
+        addTextToCell(cell3, "DIRECTOR", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell4, format.getFormat().getDirector().getName(), ParagraphAlignment.CENTER, false);
+
+        addTextToCell(cell5, "DEPARTAMENTO", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell6, format.getFormat().getDepartment(), ParagraphAlignment.CENTER, false);
+
+        addTextToCell(cell7, "FACULTAD", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell8, format.getFormat().getFaculty().getName(), ParagraphAlignment.CENTER, false);
+
+        addTextToCell(cell9, "SEMESTRE ACADÉMICO", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell10, format.getFormat().getAcademicPeriod().getPeriod(), ParagraphAlignment.CENTER, false);
+
+        addTextToCell(cell11, "AÑO", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell12, String.valueOf(format.getFormat().getAcademicPeriod().getYear()), ParagraphAlignment.CENTER, false);
+
+    }
+
+    private void deleteCells(XWPFTableRow row, int colIndexStart, int colIndexEnd) {
+        // Eliminar celdas 1, 2 (del bloque CreatedBy)
+        for (int colIndex = colIndexEnd; colIndex >= colIndexStart; colIndex--) {
+            if (colIndex < row.getTableCells().size()) {
+                XWPFTableCell extraCell = row.getCell(colIndex);
+                if (extraCell != null) {
+                    try (XmlCursor cursor = extraCell.getCTTc().newCursor()) {
+                        cursor.removeXml();
+                    }
+                }
+            }
+        }
+    }
+
+    private void createTableProjects(List<ProjectDto> projects, XWPFDocument document){
+
+        XWPFTable table;
+        if(projects.isEmpty()){
+            table = document.createTable(5, 3);
+        } else {
+            table = document.createTable(projects.size() + 2, 3);
+        }
+
+        int[] columnWidthsTable= {5000,3600,1500};
+        setTableColumnWidths(table, columnWidthsTable);
+        setTableBorders(table);
+        centerTable(table);
+        setRowsHeight06CmPrecise(table);
+
+        //Section name
+        XWPFTableRow rowSectionName = table.getRow(0);
+        XWPFTableCell cell1 = rowSectionName.getCell(0);
+        CTTcPr tcPr1 = getCellCTTcPr(cell1);
+        CTShd shd1 = tcPr1.isSetShd() ? tcPr1.getShd() : tcPr1.addNewShd();
+        shd1.setVal(STShd.CLEAR);
+        shd1.setColor("auto");
+        shd1.setFill(RED_COLOR_CODE);
+        rowSectionName.setHeight(330);
+
+        this.deleteCells(rowSectionName, 1, 2);
+
+        //Titles column
+        XWPFTableRow rowTitles = table.getRow(1);
+        XWPFTableCell cell2 = rowTitles.getCell(0);
+        CTTcPr tcPr2 = getCellCTTcPr(cell2);
+        CTShd shd2 = tcPr2.isSetShd() ? tcPr2.getShd() : tcPr2.addNewShd();
+        shd2.setVal(STShd.CLEAR);
+        shd2.setColor("auto");
+        shd2.setFill(GREY_COLOR_CODE);
+        rowTitles.setHeight(380);
+
+        XWPFTableCell cell3 = rowTitles.getCell(1);
+        CTTcPr tcPr3 = getCellCTTcPr(cell3);
+        CTShd shd3 = tcPr3.isSetShd() ? tcPr3.getShd() : tcPr3.addNewShd();
+        shd3.setVal(STShd.CLEAR);
+        shd3.setColor("auto");
+        shd3.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell4 = rowTitles.getCell(2);
+        CTTcPr tcPr4 = getCellCTTcPr(cell4);
+        CTShd shd4 = tcPr4.isSetShd() ? tcPr4.getShd() : tcPr4.addNewShd();
+        shd4.setVal(STShd.CLEAR);
+        shd4.setColor("auto");
+        shd4.setFill(GREY_COLOR_CODE);
+
+        addTextToCell(cell1, "1. Proyectos de Investigación", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell2, "Proyecto", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell3, "Actividades", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell4, COMPLIANCE_PERCENTAGE_TEXT, ParagraphAlignment.CENTER, true);
+
+        for (int i = 0; i < projects.size(); i++) {
+            XWPFTableRow rowProject = table.getRow(2 + i);
+            rowSectionName.setHeight(330);
+
+            XWPFTableCell cellProjectName = rowProject.getCell(0);
+            addTextToCell(cellProjectName, projects.get(i).getName(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellActivities = rowProject.getCell(1);
+            addTextToCell(cellActivities, projects.get(i).getActivities(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellCompliancePercentage = rowProject.getCell(2);
+            addTextToCell(cellCompliancePercentage, String.valueOf(projects.get(i).getCompliancePercentage()),
+                    ParagraphAlignment.CENTER, false);
+        }
+    }
+
+    private void createTableDirections(List<DirectionDto> directions, XWPFDocument document){
+
+        XWPFTable table;
+        if(directions.isEmpty()){
+            table = document.createTable(5, 3);
+        } else {
+            table = document.createTable(directions.size() + 2, 3);
+        }
+
+        int[] columnWidthsTable= {5400,3200,1500};
+        setTableColumnWidths(table, columnWidthsTable);
+        setTableBorders(table);
+        centerTable(table);
+        setRowsHeight06CmPrecise(table);
+
+        //Section name
+        XWPFTableRow rowSectionName = table.getRow(0);
+        XWPFTableCell cell1 = rowSectionName.getCell(0);
+        CTTcPr tcPr1 = getCellCTTcPr(cell1);
+        CTShd shd1 = tcPr1.isSetShd() ? tcPr1.getShd() : tcPr1.addNewShd();
+        shd1.setVal(STShd.CLEAR);
+        shd1.setColor("auto");
+        shd1.setFill(RED_COLOR_CODE);
+        rowSectionName.setHeight(330);
+
+        this.deleteCells(rowSectionName, 1, 2);
+
+        //Titles column
+        XWPFTableRow rowTitles = table.getRow(1);
+        XWPFTableCell cell2 = rowTitles.getCell(0);
+        CTTcPr tcPr2 = getCellCTTcPr(cell2);
+        CTShd shd2 = tcPr2.isSetShd() ? tcPr2.getShd() : tcPr2.addNewShd();
+        shd2.setVal(STShd.CLEAR);
+        shd2.setColor("auto");
+        shd2.setFill(GREY_COLOR_CODE);
+        rowTitles.setHeight(380);
+
+        XWPFTableCell cell3 = rowTitles.getCell(1);
+        CTTcPr tcPr3 = getCellCTTcPr(cell3);
+        CTShd shd3 = tcPr3.isSetShd() ? tcPr3.getShd() : tcPr3.addNewShd();
+        shd3.setVal(STShd.CLEAR);
+        shd3.setColor("auto");
+        shd3.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell4 = rowTitles.getCell(2);
+        CTTcPr tcPr4 = getCellCTTcPr(cell4);
+        CTShd shd4 = tcPr4.isSetShd() ? tcPr4.getShd() : tcPr4.addNewShd();
+        shd4.setVal(STShd.CLEAR);
+        shd4.setColor("auto");
+        shd4.setFill(GREY_COLOR_CODE);
+
+        addTextToCell(cell1, "2. Participación en Dirección de Trabajo de Grado y/o Tesis", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell2, "Título del proyecto", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell3, "Director", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell4, COMPLIANCE_PERCENTAGE_TEXT, ParagraphAlignment.CENTER, true);
+
+        for (int i = 0; i < directions.size(); i++) {
+            XWPFTableRow rowProject = table.getRow(2 + i);
+            rowProject.setHeight(330);
+
+            XWPFTableCell cellProjectName = rowProject.getCell(0);
+            addTextToCell(cellProjectName, directions.get(i).getName(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellActivities = rowProject.getCell(1);
+            addTextToCell(cellActivities, directions.get(i).getDirectorName(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellCompliancePercentage = rowProject.getCell(2);
+            addTextToCell(cellCompliancePercentage, String.valueOf(directions.get(i).getCompliancePercentage()),
+                    ParagraphAlignment.CENTER, false);
+        }
+    }
+
+    private void createTableEvents(List<EventDto> events, XWPFDocument document){
+
+        XWPFTable table;
+        if(events.isEmpty()){
+            table = document.createTable(5, 3);
+        } else {
+            table = document.createTable(events.size() + 2, 3);
+        }
+
+        int[] columnWidthsTable= {5700,2900,1500};
+        setTableColumnWidths(table, columnWidthsTable);
+        setTableBorders(table);
+        centerTable(table);
+        setRowsHeight06CmPrecise(table);
+
+        //Section name
+        XWPFTableRow rowSectionName = table.getRow(0);
+        XWPFTableCell cell1 = rowSectionName.getCell(0);
+        CTTcPr tcPr1 = getCellCTTcPr(cell1);
+        CTShd shd1 = tcPr1.isSetShd() ? tcPr1.getShd() : tcPr1.addNewShd();
+        shd1.setVal(STShd.CLEAR);
+        shd1.setColor("auto");
+        shd1.setFill(RED_COLOR_CODE);
+        rowSectionName.setHeight(330);
+
+        this.deleteCells(rowSectionName, 1, 2);
+
+        //Titles column
+        XWPFTableRow rowTitles = table.getRow(1);
+        XWPFTableCell cell2 = rowTitles.getCell(0);
+        CTTcPr tcPr2 = getCellCTTcPr(cell2);
+        CTShd shd2 = tcPr2.isSetShd() ? tcPr2.getShd() : tcPr2.addNewShd();
+        shd2.setVal(STShd.CLEAR);
+        shd2.setColor("auto");
+        shd2.setFill(GREY_COLOR_CODE);
+        rowTitles.setHeight(380);
+
+        XWPFTableCell cell3 = rowTitles.getCell(1);
+        CTTcPr tcPr3 = getCellCTTcPr(cell3);
+        CTShd shd3 = tcPr3.isSetShd() ? tcPr3.getShd() : tcPr3.addNewShd();
+        shd3.setVal(STShd.CLEAR);
+        shd3.setColor("auto");
+        shd3.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell4 = rowTitles.getCell(2);
+        CTTcPr tcPr4 = getCellCTTcPr(cell4);
+        CTShd shd4 = tcPr4.isSetShd() ? tcPr4.getShd() : tcPr4.addNewShd();
+        shd4.setVal(STShd.CLEAR);
+        shd4.setColor("auto");
+        shd4.setFill(GREY_COLOR_CODE);
+
+        addTextToCell(cell1, "3. Organización de Eventos de Investigación / Científicos", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell2, "Nombre del evento", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell3, "Fecha de realización", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell4, COMPLIANCE_PERCENTAGE_TEXT, ParagraphAlignment.CENTER, true);
+
+        for (int i = 0; i < events.size(); i++) {
+            XWPFTableRow rowProject = table.getRow(2 + i);
+            rowProject.setHeight(330);
+
+            XWPFTableCell cellProjectName = rowProject.getCell(0);
+            addTextToCell(cellProjectName, events.get(i).getName(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellActivities = rowProject.getCell(1);
+            addTextToCell(cellActivities, events.get(i).getCreatedAtFormatted(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellCompliancePercentage = rowProject.getCell(2);
+            addTextToCell(cellCompliancePercentage, String.valueOf(events.get(i).getCompliancePercentage()),
+                    ParagraphAlignment.CENTER, false);
+        }
+    }
+
+    private void createTableOtherActivities(List<OtherActivityDto> otherActivities, XWPFDocument document){
+
+        XWPFTable table;
+        if(otherActivities.isEmpty()){
+            table = document.createTable(5, 3);
+        } else {
+            table = document.createTable(otherActivities.size() + 2, 3);
+        }
+
+        int[] columnWidthsTable= {6000,2600,1500};
+        setTableColumnWidths(table, columnWidthsTable);
+        setTableBorders(table);
+        centerTable(table);
+        setRowsHeight06CmPrecise(table);
+
+        //Section name
+        XWPFTableRow rowSectionName = table.getRow(0);
+        XWPFTableCell cell1 = rowSectionName.getCell(0);
+        CTTcPr tcPr1 = getCellCTTcPr(cell1);
+        CTShd shd1 = tcPr1.isSetShd() ? tcPr1.getShd() : tcPr1.addNewShd();
+        shd1.setVal(STShd.CLEAR);
+        shd1.setColor("auto");
+        shd1.setFill(RED_COLOR_CODE);
+        rowSectionName.setHeight(330);
+
+        this.deleteCells(rowSectionName, 1, 2);
+
+        //Titles column
+        XWPFTableRow rowTitles = table.getRow(1);
+        XWPFTableCell cell2 = rowTitles.getCell(0);
+        CTTcPr tcPr2 = getCellCTTcPr(cell2);
+        CTShd shd2 = tcPr2.isSetShd() ? tcPr2.getShd() : tcPr2.addNewShd();
+        shd2.setVal(STShd.CLEAR);
+        shd2.setColor("auto");
+        shd2.setFill(GREY_COLOR_CODE);
+        rowTitles.setHeight(380);
+
+        XWPFTableCell cell3 = rowTitles.getCell(1);
+        CTTcPr tcPr3 = getCellCTTcPr(cell3);
+        CTShd shd3 = tcPr3.isSetShd() ? tcPr3.getShd() : tcPr3.addNewShd();
+        shd3.setVal(STShd.CLEAR);
+        shd3.setColor("auto");
+        shd3.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell4 = rowTitles.getCell(2);
+        CTTcPr tcPr4 = getCellCTTcPr(cell4);
+        CTShd shd4 = tcPr4.isSetShd() ? tcPr4.getShd() : tcPr4.addNewShd();
+        shd4.setVal(STShd.CLEAR);
+        shd4.setColor("auto");
+        shd4.setFill(GREY_COLOR_CODE);
+
+        addTextToCell(cell1, "4. Otras actividades de investigación (*)", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell2, "Nombre", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell3, "Tipo de actividad", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell4, COMPLIANCE_PERCENTAGE_TEXT, ParagraphAlignment.CENTER, true);
+
+        for (int i = 0; i < otherActivities.size(); i++) {
+            XWPFTableRow rowProject = table.getRow(2 + i);
+            rowProject.setHeight(330);
+
+            XWPFTableCell cellProjectName = rowProject.getCell(0);
+            addTextToCell(cellProjectName, otherActivities.get(i).getName(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellActivities = rowProject.getCell(1);
+            addTextToCell(cellActivities, otherActivities.get(i).getType(), ParagraphAlignment.CENTER, false);
+
+            XWPFTableCell cellCompliancePercentage = rowProject.getCell(2);
+            addTextToCell(cellCompliancePercentage, String.valueOf(otherActivities.get(i).getCompliancePercentage()),
+                    ParagraphAlignment.CENTER, false);
+        }
+    }
+
     private void createNamesFormatBlock(XWPFTable table) {
         XWPFTableCell firstCell = null;
         for (int rowIndex = 2; rowIndex <= 3; rowIndex++) {
@@ -268,7 +741,7 @@ public class GenerateWordFormat {
             CTShd shd = tcPr.isSetShd() ? tcPr.getShd() : tcPr.addNewShd();
             shd.setVal(STShd.CLEAR);
             shd.setColor("auto");
-            shd.setFill("C10000");
+            shd.setFill(RED_COLOR_CODE);
             addTextToCell(firstCell, "INFORME DE GESTIÓN DE GRUPOS DE INVESTIGACIÓN",
                     ParagraphAlignment.CENTER, true);
         }
@@ -337,18 +810,13 @@ public class GenerateWordFormat {
         borders.setInsideV(border);
     }
 
-    private void setTableColumnWidths(XWPFTable table) {
+    private void setTableColumnWidths(XWPFTable table, int[] columnWidths) {
         CTTblGrid tblGrid = table.getCTTbl().getTblGrid();
         if (tblGrid == null) {
             tblGrid = table.getCTTbl().addNewTblGrid();
         }
 
         tblGrid.getGridColList().clear();
-
-        int[] columnWidths = {
-                760,760,1846,
-                1122,1122,1122,
-                1102,1112,1152};
 
         for (int width : columnWidths) {
             CTTblGridCol gridCol = tblGrid.addNewGridCol();
