@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .         # <- raíz del proyecto, donde está el Dockerfile y pom.xml
+      dockerfile: Dockerfile
+    container_name: mi_app_java
+    ports:
+      - "1030:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gidisoft
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1379
+    volumes:
+      - ./temp:/app/temp
+
+  postgres:
+    image: postgres:17
+    container_name: postgres_17
+    restart: always
+    environment:
+      POSTGRES_DB: gidisoft
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1379
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

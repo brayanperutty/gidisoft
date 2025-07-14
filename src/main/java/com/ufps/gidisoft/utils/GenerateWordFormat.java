@@ -1,11 +1,15 @@
 package com.ufps.gidisoft.utils;
 
+import com.ufps.gidisoft.exceptions.BadRequestException;
+import com.ufps.gidisoft.responses.exceptions.ErrorResponse;
 import com.ufps.gidisoft.responses.format.*;
 import com.ufps.gidisoft.services.formats.directions.DirectionService;
 import com.ufps.gidisoft.services.formats.events.EventService;
 import com.ufps.gidisoft.services.formats.others.OtherActivityService;
+import com.ufps.gidisoft.services.formats.products.ProductService;
 import com.ufps.gidisoft.services.formats.projects.ProjectService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.usermodel.*;
@@ -20,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GenerateWordFormat {
@@ -32,12 +38,14 @@ public class GenerateWordFormat {
     private final DirectionService  directionService;
     private final EventService eventService;
     private final OtherActivityService otherActivityService;
+    private final ProductService productService;
 
     private static final int BORDER_THICKNESS = 9;
     private static final int MARGIN_2CM_TWIPS = 1134;
     private static final int MARGIN_2_5CM_TWIPS = 1417;
     private static final String GREY_COLOR_CODE = "D9D9D9";
     private static final String RED_COLOR_CODE = "C10000";
+    private static final String CURUBA_COLOR_CODE = "FFEAD9";
     private static final String COMPLIANCE_PERCENTAGE_TEXT = "% de Cumplimiento";
 
     public byte[] generateInformeAsBytes(FormatDto format) {
@@ -45,6 +53,8 @@ public class GenerateWordFormat {
 
             setDocumentMargins(document);
             XWPFHeader header = document.createHeader(HeaderFooterType.DEFAULT);
+            XWPFParagraph spacer3 = document.createParagraph();
+            spacer3.setSpacingBefore(200);
             XWPFTable table = header.createTable(6, 9);
             int[] columnWidthsTableHeader = {
                     760,760,1846,
@@ -62,6 +72,7 @@ public class GenerateWordFormat {
             this.createRow4Blocks(table, format);
             this.createRow5Blocks(table, format);
 
+
             XWPFTable tableGeneralInfo = document.createTable(4,12);
             int[] columnWidthsTableGeneralInfo = {
                     842,842,842,842,
@@ -71,8 +82,9 @@ public class GenerateWordFormat {
             setTableBorders(tableGeneralInfo);
             centerTable(tableGeneralInfo);
             setRowsHeight06CmPrecise(tableGeneralInfo);
+
             this.createTableGeneralInfo(tableGeneralInfo, format);
-            this.createSpacer(document, 200);
+            this.createSpacer(document, 1);
 
             this.createTableProjects(this.projectService.findByFormatId(format.getFormatId()), document);
             this.createSpacer(document, 1);
@@ -84,6 +96,10 @@ public class GenerateWordFormat {
             this.createSpacer(document, 1);
 
             this.createTableOtherActivities(this.otherActivityService.findByFormatId(format.getFormatId()), document);
+            this.createSpacer(document, 1);
+
+            this.createProductTable(document, this.productService.findByFormatIdGrouped(format.getFormatId()));
+            this.createSpacer(document, 1);
 
             // Aplicar bordes negros a cada celda individualmente
             for (XWPFTableRow row : table.getRows()) {
@@ -96,13 +112,13 @@ public class GenerateWordFormat {
             return out.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Error generando el documento", e);
+            throw new BadRequestException(new ErrorResponse());
         }
     }
 
     private void createSpacer(XWPFDocument document, int spacer){
         XWPFParagraph spacer3 = document.createParagraph();
-        spacer3.setSpacingAfter(spacer);
+        spacer3.setSpacingBefore(spacer);
     }
 
     private void createGeneralInfoTitleFixed(XWPFTable table, FormatDto format) {
@@ -713,6 +729,145 @@ public class GenerateWordFormat {
         }
     }
 
+    private void createProductTable(XWPFDocument document, Map<String, List<ProductDto>> products){
+
+        XWPFTable tableTitle;
+        tableTitle = document.createTable(1, 4);
+        int[] columnWidthsTable= {2325, 3575, 2600, 1600};
+        setTableColumnWidths(tableTitle, columnWidthsTable);
+        setTableBorders(tableTitle);
+        centerTable(tableTitle);
+        setRowsHeight06CmPrecise(tableTitle);
+
+        XWPFTableRow rowSectionName = tableTitle.getRow(0);
+        rowSectionName.setHeight(370);
+
+        XWPFTableCell cell1 = rowSectionName.getCell(0);
+        CTTcPr tcPr1 = getCellCTTcPr(cell1);
+        CTShd shd1 = tcPr1.isSetShd() ? tcPr1.getShd() : tcPr1.addNewShd();
+        shd1.setVal(STShd.CLEAR);
+        shd1.setColor("auto");
+        shd1.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell2 = rowSectionName.getCell(1);
+        CTTcPr tcPr2 = getCellCTTcPr(cell2);
+        CTShd shd2 = tcPr2.isSetShd() ? tcPr2.getShd() : tcPr2.addNewShd();
+        shd2.setVal(STShd.CLEAR);
+        shd2.setColor("auto");
+        shd2.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell3 = rowSectionName.getCell(2);
+        CTTcPr tcPr3 = getCellCTTcPr(cell3);
+        CTShd shd3 = tcPr3.isSetShd() ? tcPr3.getShd() : tcPr3.addNewShd();
+        shd3.setVal(STShd.CLEAR);
+        shd3.setColor("auto");
+        shd3.setFill(GREY_COLOR_CODE);
+
+        XWPFTableCell cell4 = rowSectionName.getCell(3);
+        CTTcPr tcPr4 = getCellCTTcPr(cell4);
+        CTShd shd4 = tcPr4.isSetShd() ? tcPr4.getShd() : tcPr4.addNewShd();
+        shd4.setVal(STShd.CLEAR);
+        shd4.setColor("auto");
+        shd4.setFill(GREY_COLOR_CODE);
+
+        addTextToCell(cell1, "PRODUCTO", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell2, "DESCRIPCIÓN", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell3, "RESPONSABLE", ParagraphAlignment.CENTER, true);
+        addTextToCell(cell4, "FECHA", ParagraphAlignment.CENTER, true);
+
+        XWPFTable tableProducts;
+        tableProducts = document.createTable(8, 4);
+        int[] tableProductsColumnsWidth = {2325, 3575, 2600, 1600};
+        setTableColumnWidths(tableProducts, tableProductsColumnsWidth);
+        setTableBorders(tableProducts);
+        centerTable(tableProducts);
+        setRowsHeight06CmPrecise(tableProducts);
+
+        XWPFTableRow rowProduct1 = tableProducts.getRow(0);
+        XWPFTableRow rowProduct2 = tableProducts.getRow(1);
+        XWPFTableRow rowProduct3 = tableProducts.getRow(2);
+        XWPFTableRow rowProduct4 = tableProducts.getRow(3);
+        XWPFTableRow rowProduct5 = tableProducts.getRow(4);
+        XWPFTableRow rowProduct6 = tableProducts.getRow(5);
+        XWPFTableRow rowProduct7 = tableProducts.getRow(6);
+        XWPFTableRow rowProduct8 = tableProducts.getRow(7);
+
+        XWPFTableCell cell5 = rowProduct1.getCell(0);
+        CTTcPr tcPr5 = getCellCTTcPr(cell5);
+        CTShd shd5 = tcPr5.isSetShd() ? tcPr5.getShd() : tcPr5.addNewShd();
+        shd5.setVal(STShd.CLEAR);
+        shd5.setColor("auto");
+        shd5.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell6 = rowProduct2.getCell(0);
+        CTTcPr tcPr6 = getCellCTTcPr(cell6);
+        CTShd shd6 = tcPr6.isSetShd() ? tcPr6.getShd() : tcPr6.addNewShd();
+        shd6.setVal(STShd.CLEAR);
+        shd6.setColor("auto");
+        shd6.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell7 = rowProduct3.getCell(0);
+        CTTcPr tcPr7 = getCellCTTcPr(cell7);
+        CTShd shd7 = tcPr7.isSetShd() ? tcPr7.getShd() : tcPr7.addNewShd();
+        shd7.setVal(STShd.CLEAR);
+        shd7.setColor("auto");
+        shd7.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell8 = rowProduct4.getCell(0);
+        CTTcPr tcPr8 = getCellCTTcPr(cell8);
+        CTShd shd8 = tcPr8.isSetShd() ? tcPr8.getShd() : tcPr8.addNewShd();
+        shd8.setVal(STShd.CLEAR);
+        shd8.setColor("auto");
+        shd8.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell9 = rowProduct5.getCell(0);
+        CTTcPr tcPr9 = getCellCTTcPr(cell9);
+        CTShd shd9 = tcPr9.isSetShd() ? tcPr9.getShd() : tcPr9.addNewShd();
+        shd9.setVal(STShd.CLEAR);
+        shd9.setColor("auto");
+        shd9.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell10 = rowProduct6.getCell(0);
+        CTTcPr tcPr10 = getCellCTTcPr(cell10);
+        CTShd shd10 = tcPr10.isSetShd() ? tcPr10.getShd() : tcPr10.addNewShd();
+        shd10.setVal(STShd.CLEAR);
+        shd10.setColor("auto");
+        shd10.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell11 = rowProduct7.getCell(0);
+        CTTcPr tcPr11 = getCellCTTcPr(cell11);
+        CTShd shd11 = tcPr11.isSetShd() ? tcPr11.getShd() : tcPr11.addNewShd();
+        shd11.setVal(STShd.CLEAR);
+        shd11.setColor("auto");
+        shd11.setFill(CURUBA_COLOR_CODE);
+
+        XWPFTableCell cell12 = rowProduct8.getCell(0);
+        CTTcPr tcPr12 = getCellCTTcPr(cell12);
+        CTShd shd12 = tcPr12.isSetShd() ? tcPr12.getShd() : tcPr12.addNewShd();
+        shd12.setVal(STShd.CLEAR);
+        shd12.setColor("auto");
+        shd12.setFill(CURUBA_COLOR_CODE);
+
+        addTextToCellProducts(cell5, "Actualización GrupLAC Actualización CGIS", ParagraphAlignment.LEFT, false);
+        addTextToCellProducts(cell6, "Participación convocatoria de reconocimiento Minciencias", ParagraphAlignment.LEFT, false);
+        addTextToCellProducts(cell7, "Proyectos terminados y/o ejecución, avalados con financiación interna (FINU) o externa", ParagraphAlignment.LEFT, false);
+        addTextToCellProducts(cell8, "Artículo publicado o remitido revista científica", ParagraphAlignment.LEFT, false);
+
+        addTextToCellProducts(cell9, "Participación propuesta investigación en convocatoria interna o externa", ParagraphAlignment.LEFT, false);
+        addTextToCellProducts(cell10, "Ponencia evento académico regional nacional o internacional", ParagraphAlignment.LEFT, false);
+        addTextToCellProducts(cell11, "Dirección trabajo de grado (post-grado, maestría)", ParagraphAlignment.LEFT, false);
+        addTextToCellProducts(cell12, "Otros productos", ParagraphAlignment.LEFT, false);
+
+        rowProduct1.setHeight(rowProduct1.getHeight()*3);
+        rowProduct2.setHeight(rowProduct2.getHeight()*3);
+        rowProduct3.setHeight(rowProduct3.getHeight()*3);
+        rowProduct4.setHeight(rowProduct4.getHeight()*3);
+        rowProduct5.setHeight(rowProduct5.getHeight()*3);
+        rowProduct6.setHeight(rowProduct6.getHeight()*3);
+        rowProduct7.setHeight(rowProduct7.getHeight()*3);
+        rowProduct8.setHeight(rowProduct8.getHeight()*3);
+    }
+
     private void createNamesFormatBlock(XWPFTable table) {
         XWPFTableCell firstCell = null;
         for (int rowIndex = 2; rowIndex <= 3; rowIndex++) {
@@ -904,6 +1059,32 @@ public class GenerateWordFormat {
             // Crear un nuevo párrafo para el texto
             XWPFParagraph paragraph = cell.addParagraph();
             paragraph.setAlignment(alignment);
+
+            XWPFRun run = paragraph.createRun();
+            run.setText(text);
+            run.setBold(bold);
+            run.setFontSize(9);
+            run.setFontFamily("Arial");
+
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    private void addTextToCellProducts(XWPFTableCell cell, String text, ParagraphAlignment alignment, boolean bold) {
+        try {
+            // Limpiar paragrafos existentes en la celda
+            while (!cell.getParagraphs().isEmpty()) {
+                cell.removeParagraph(0);
+            }
+
+            // Crear un nuevo párrafo para el texto
+            XWPFParagraph paragraph = cell.addParagraph();
+            paragraph.setAlignment(alignment);
+            paragraph.setSpacingBeforeLines(50);
+            paragraph.setSpacingAfterLines(50);
+
+            cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
 
             XWPFRun run = paragraph.createRun();
             run.setText(text);

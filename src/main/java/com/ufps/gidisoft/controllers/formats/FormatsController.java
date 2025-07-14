@@ -15,15 +15,24 @@ import com.ufps.gidisoft.services.formats.projects.ProjectService;
 import com.ufps.gidisoft.services.formats.projects.ProjectUserService;
 import com.ufps.gidisoft.services.groups.InvestigationGroupService;
 import com.ufps.gidisoft.services.users.UserService;
+import com.ufps.gidisoft.services.utils.LibreOfficeConverterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.xwpf.usermodel.Document;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
 
 @Controller
 @RequiredArgsConstructor
@@ -65,24 +74,53 @@ public class FormatsController {
 
     // <-------- GET METHODS -------->
 
+//    @GetMapping("/{id}/download")
+//    public ResponseEntity<byte[]> descargarInforme(@PathVariable Long id, @RequestParam String format) {
+//        byte[] archivo = this.formatService.generateWordFormat(id);
+//
+//        String filename = "InformeGestion." + format;
+//        String mimeType = switch (format) {
+//            case "pdf" -> "application/pdf";
+//            case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+//            default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+//        };
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+//                .contentType(MediaType.parseMediaType(mimeType))
+//                .body(archivo);
+//    }
+
     @GetMapping("/{id}/download")
     public ResponseEntity<byte[]> descargarInforme(@PathVariable Long id, @RequestParam String format) {
-        byte[] archivo = switch (format) {
-            case "docx" -> this.formatService.generateWordFormat(id);
-            default -> null;
-        };
+        try {
+            // 1. Generar el documento Word en memoria
+            byte[] bytes = null;
 
-        String filename = "InformeGestion." + format;
-        String mimeType = switch (format) {
-            case "pdf" -> "application/pdf";
-            case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-        };
+            if (format.equals("docx")){
+                bytes = this.formatService.generateWordFormat(id);
+            } else if (format.equals("pdf")){
+                bytes = this.formatService.generatePdfFormat(id);
+            }
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType(mimeType))
-                .body(archivo);
+            // 5. Definir nombre y tipo MIME
+            String filename = "InformeGestion." + format;
+            String mimeType = switch (format.toLowerCase()) {
+                case "pdf" -> "application/pdf";
+                case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                default -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            };
+
+            // 6. Devolver la respuesta con el archivo
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                    .contentType(MediaType.parseMediaType(mimeType))
+                    .body(bytes);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(("Error al generar el archivo: " + e.getMessage()).getBytes());
+        }
     }
 
     @GetMapping(value = "/{id}")

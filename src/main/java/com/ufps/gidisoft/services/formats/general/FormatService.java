@@ -15,11 +15,14 @@ import com.ufps.gidisoft.services.faculties.FacultyService;
 import com.ufps.gidisoft.services.formats.projects.ProjectStatusService;
 import com.ufps.gidisoft.services.groups.InvestigationGroupService;
 import com.ufps.gidisoft.services.users.UserService;
+import com.ufps.gidisoft.utils.GeneratePdfFormat;
 import com.ufps.gidisoft.utils.GenerateWordFormat;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -41,6 +44,7 @@ public class FormatService {
     private final InvestigationGroupService investigationGroupService;
     private final FacultyService facultyService;
     private final GenerateWordFormat generateWordFormat;
+    private final GeneratePdfFormat generatePdfFormat;
 
     public FormatDto findFormatById(Long formatId) {
         return new FormatDto(formatRepository.findById(formatId).orElseThrow(()
@@ -128,5 +132,9 @@ public class FormatService {
 
     public byte[] generateWordFormat(Long formatId) {
         return this.generateWordFormat.generateInformeAsBytes(this.findFormatById(formatId));
+    }
+
+    public byte[] generatePdfFormat(Long formatId) throws IOException {
+        return this.generatePdfFormat.generateInformeAsBytes(this.findFormatById(formatId));
     }
 }

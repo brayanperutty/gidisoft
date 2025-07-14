@@ -43,7 +43,7 @@ public class UserService {
     //    private final JavaMailSender mailSender;
     private final PasswordResetTokenService passwordResetTokenService;
 
-    @Value("${DEFEAT_PASSWORD}")
+    @Value("${gidisoft.password-users}")
     private String defeatPassword;
 
 //    @Value("${spring.mail.username}")
