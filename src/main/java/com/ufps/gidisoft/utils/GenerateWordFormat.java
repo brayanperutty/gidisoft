@@ -23,8 +23,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -783,7 +785,6 @@ public class GenerateWordFormat {
         centerTable(tableProducts);
         setRowsHeight06CmPrecise(tableProducts);
 
-        XWPFTableRow rowProduct1 = tableProducts.getRow(0);
         XWPFTableRow rowProduct2 = tableProducts.getRow(1);
         XWPFTableRow rowProduct3 = tableProducts.getRow(2);
         XWPFTableRow rowProduct4 = tableProducts.getRow(3);
@@ -792,12 +793,6 @@ public class GenerateWordFormat {
         XWPFTableRow rowProduct7 = tableProducts.getRow(6);
         XWPFTableRow rowProduct8 = tableProducts.getRow(7);
 
-        XWPFTableCell cell5 = rowProduct1.getCell(0);
-        CTTcPr tcPr5 = getCellCTTcPr(cell5);
-        CTShd shd5 = tcPr5.isSetShd() ? tcPr5.getShd() : tcPr5.addNewShd();
-        shd5.setVal(STShd.CLEAR);
-        shd5.setColor("auto");
-        shd5.setFill(CURUBA_COLOR_CODE);
 
         XWPFTableCell cell6 = rowProduct2.getCell(0);
         CTTcPr tcPr6 = getCellCTTcPr(cell6);
@@ -848,7 +843,41 @@ public class GenerateWordFormat {
         shd12.setColor("auto");
         shd12.setFill(CURUBA_COLOR_CODE);
 
-        addTextToCellProducts(cell5, "Actualización GrupLAC Actualización CGIS", ParagraphAlignment.LEFT, false);
+
+        products.forEach((key, value) -> {
+
+            List<XWPFTableRow> rowList = new LinkedList<>();
+            for (int i = 0; i < value.size(); i++) {
+
+                XWPFTableRow rowProduct = tableProducts.getRow(i);
+                rowList.add(rowProduct);
+            }
+
+            for (int j = 0; j < rowList.size(); j++) {
+
+                XWPFTableCell cellDescription = rowList.get(j).getCell(1);
+                XWPFTableCell cellResponsible = rowList.get(j).getCell(2);
+                XWPFTableCell cellDate = rowList.get(j).getCell(3);
+
+
+                addTextToCellProducts(cellDescription, value.get(j).getDescription(), ParagraphAlignment.LEFT, false);
+                addTextToCellProducts(cellResponsible, value.get(j).getResponsibles(), ParagraphAlignment.LEFT, false);
+                addTextToCellProducts(cellDate, value.get(j).getDateFormatter(), ParagraphAlignment.LEFT, false);
+            }
+
+            for (int k = 0; k < rowList.size(); k++) {
+
+            }
+
+            XWPFTableCell cell = rowProduct.getCell(0);
+            CTTcPr tcPr = getCellCTTcPr(cell);
+            tcPr.addNewGridSpan().setVal(BigInteger.valueOf(value.size()));
+            CTShd shd5 = tcPr.isSetShd() ? tcPr.getShd() : tcPr.addNewShd();
+            shd5.setVal(STShd.CLEAR);
+            shd5.setColor("auto");
+            shd5.setFill(CURUBA_COLOR_CODE);
+        });
+
         addTextToCellProducts(cell6, "Participación convocatoria de reconocimiento Minciencias", ParagraphAlignment.LEFT, false);
         addTextToCellProducts(cell7, "Proyectos terminados y/o ejecución, avalados con financiación interna (FINU) o externa", ParagraphAlignment.LEFT, false);
         addTextToCellProducts(cell8, "Artículo publicado o remitido revista científica", ParagraphAlignment.LEFT, false);
@@ -858,7 +887,6 @@ public class GenerateWordFormat {
         addTextToCellProducts(cell11, "Dirección trabajo de grado (post-grado, maestría)", ParagraphAlignment.LEFT, false);
         addTextToCellProducts(cell12, "Otros productos", ParagraphAlignment.LEFT, false);
 
-        rowProduct1.setHeight(rowProduct1.getHeight()*3);
         rowProduct2.setHeight(rowProduct2.getHeight()*3);
         rowProduct3.setHeight(rowProduct3.getHeight()*3);
         rowProduct4.setHeight(rowProduct4.getHeight()*3);

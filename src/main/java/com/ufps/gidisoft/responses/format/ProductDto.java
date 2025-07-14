@@ -21,6 +21,8 @@ public class ProductDto {
     private String createdByName;
     private List<String> editorsNames;
     private List<String> files;
+    private Long productType;
+    private String productName;
 
     public ProductDto(Product product, List<String> editorsNames) {
         DateTimeFormatter formatters = DateTimeFormatter.ofPattern(DateFormatEnum.DD_MM_YYYY.getValue());
@@ -34,5 +36,7 @@ public class ProductDto {
         this.createdByName = product.getCreatedBy().getName();
         this.editorsNames = editorsNames;
         this.files = product.getFiles();
+        this.productType = product.getProductType().getId();
+        this.productName = product.getProductType().getName();
     }
 }
